@@ -1,30 +1,62 @@
 #!/usr/bin/env python3
 """
-Read live race data from Mario Kart Wii (Dolphin).
-Position: stable pointer 0x809c27f8 -> block, position at block+0x3e (PAL).
+Read live race data from Mario Kart Wii (Dolphin, PAL).
 
-  sudo python3 read_race.py
+Trusted reads:
+- Position: u8(u32(0x809c27f8) + 0x3e)
+- Course code: u8(u32(0x809c27f8) + 0x13)
+
+Note: course code is MKW slot code (for example Mario Circuit=0x00), not
+cup-order index 0-31.
+
+Run:
+  sudo python3 source/read_race.py
 """
 
 import dolphin_memory_engine as dme
 import struct
-import sys
 
 dme.hook()
 
 BASE = 0x80000000
 STABLE_PTR = 0x809c27f8
 POSITION_OFFSET = 0x3e
-# Item: block+offset only works in the same race you measured; next race it usually fails.
-# For a stable item path, run find_item_via_neighbours.py (or see STATUS.md for other ideas).
-ITEM_OFFSETS_FROM_BLOCK = [0x136277, 0x29e123]  # optional; often wrong after one race
-
-ITEM_NAMES = {
-    0: "Green Shell", 1: "Red Shell", 2: "Banana", 3: "Fake Item Box", 4: "Mushroom",
-    5: "Triple Mushroom", 6: "Bob-omb", 7: "Spiny Shell", 8: "Lightning", 9: "Star",
-    10: "Golden Mushroom", 11: "Mega Mushroom", 12: "Blooper", 13: "POW Block", 14: "Thunder Cloud",
-    15: "Bullet Bill", 16: "Triple Green Shells", 17: "Triple Red Shells", 18: "Triple Bananas",
-    19: "(unused)", 20: "empty",
+# Canonical course path from testers/tracks/CONFIRMED_TRACK_PATHS.md.
+# If needed, this can be swapped to another confirmed (slot, offset) pair.
+COURSE_CODE_OFFSET = 0x13
+COURSE_NAMES = {
+    0x00: "Mario Circuit",
+    0x01: "Moo Moo Meadows",
+    0x02: "Mushroom Gorge",
+    0x03: "Grumble Volcano",
+    0x04: "Toad's Factory",
+    0x05: "Coconut Mall",
+    0x06: "DK Summit",
+    0x07: "Wario's Gold Mine",
+    0x08: "Luigi Circuit",
+    0x09: "Daisy Circuit",
+    0x0A: "Moonview Highway",
+    0x0B: "Maple Treeway",
+    0x0C: "Bowser's Castle",
+    0x0D: "Rainbow Road",
+    0x0E: "Dry Dry Ruins",
+    0x0F: "Koopa Cape",
+    0x10: "GCN Peach Beach",
+    0x11: "GCN Mario Circuit",
+    0x12: "GCN Waluigi Stadium",
+    0x13: "GCN DK Mountain",
+    0x14: "DS Yoshi Falls",
+    0x15: "DS Desert Hills",
+    0x16: "DS Peach Gardens",
+    0x17: "DS Delfino Square",
+    0x18: "SNES Mario Circuit 3",
+    0x19: "SNES Ghost Valley 2",
+    0x1A: "N64 Mario Raceway",
+    0x1B: "N64 Sherbet Land",
+    0x1C: "N64 Bowser's Castle",
+    0x1D: "N64 DK's Jungle Parkway",
+    0x1E: "GBA Bowser Castle 3",
+    0x1F: "GBA Shy Guy Beach",
 }
 
 
@@ -45,16 +77,8 @@ def read():
     position = u8(block + POSITION_OFFSET)
     if position < 1 or position > 12:
         return None
-    item = None
-    for off in ITEM_OFFSETS_FROM_BLOCK:
-        try:
-            b = u8(block + off)
-            if 0 <= b <= 20:
-                item = b
-                break
-        except Exception:
-            pass
-    return {"position": position, "block": block, "item": item}
+    course_code = u8(block + COURSE_CODE_OFFSET)
+    return {"position": position, "block": block, "course_code": course_code}
 
 
 def main():
@@ -62,12 +86,11 @@ def main():
     if r is None:
         print("in_race=False")
         return
-    item = r.get("item")
-    if item is not None:
-        item_str = "%d (%s)" % (item, ITEM_NAMES.get(item, "?"))
-    else:
-        item_str = "?"
-    print("position=%d  in_race=True  item=%s" % (r["position"], item_str))
+    code = r["course_code"]
+    print(
+        "position=%d  in_race=True  course_code=0x%02x (%s)"
+        % (r["position"], code, COURSE_NAMES.get(code, "?"))
+    )
 
 
 if __name__ == "__main__":
