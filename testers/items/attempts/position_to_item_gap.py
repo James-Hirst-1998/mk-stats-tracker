@@ -21,8 +21,8 @@ POSITION_OFFSET = 0x3e
 
 # From item_finder.py output (same race).
 ITEM_ADDRESSES = [
-    0x81249ab7,
-    0x81384253,
+  0x8124a057,
+  0x813b1f03
 ]
 
 

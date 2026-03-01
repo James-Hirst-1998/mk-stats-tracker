@@ -15,10 +15,9 @@ dme.hook()
 BASE = 0x80000000
 STABLE_PTR = 0x809c27f8
 POSITION_OFFSET = 0x3e
-# Offsets from BLOCK to item byte (from position_to_item_gap.py, same race as item_finder).
-# Gap is from the block (what 0x809c27f8 points to), not from the position byte. These often
-# change each race — if item shows ? next race, re-run item_finder + position_to_item_gap and update.
-ITEM_OFFSETS_FROM_BLOCK = [0x135c97, 0x270433]
+# Item: block+offset only works in the same race you measured; next race it usually fails.
+# For a stable item path, run find_item_via_neighbours.py (or see STATUS.md for other ideas).
+ITEM_OFFSETS_FROM_BLOCK = [0x136277, 0x29e123]  # optional; often wrong after one race
 
 ITEM_NAMES = {
     0: "Green Shell", 1: "Red Shell", 2: "Banana", 3: "Fake Item Box", 4: "Mushroom",
