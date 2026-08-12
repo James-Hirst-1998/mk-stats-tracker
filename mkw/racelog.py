@@ -27,7 +27,7 @@ import os
 
 from mkw import addresses as A
 from mkw.events import Field, TRACK_HZ, JUMP
-from mkw.names import COURSES
+from mkw.names import course_name
 
 VERSION = 1
 
@@ -49,7 +49,7 @@ def filename(course, when=None, root=None):
     when = when or datetime.datetime.now()
     return os.path.join(root or RACES, "%s-%s.jsonl" % (
         when.strftime("%Y%m%d-%H%M%S"),
-        slug(COURSES.get(course, "course-%02x" % (course or 0)))))
+        slug(course_name(course))))
 
 
 def save(race, path=None, source=None, notes=None, root=None):
@@ -172,7 +172,7 @@ class RaceLog:
 
     @property
     def course_name(self):
-        return COURSES.get(self.course, "course 0x%02x" % (self.course or 0))
+        return course_name(self.course)
 
     @property
     def local_slot(self):

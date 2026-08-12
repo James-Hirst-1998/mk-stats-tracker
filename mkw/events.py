@@ -19,7 +19,7 @@ import bisect
 from collections import Counter
 
 from mkw import addresses as A
-from mkw.names import (COURSES, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
+from mkw.names import (course_name, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
                        DAMAGE_FROM_OBJECT, CHARACTERS, VEHICLES)
 
 EMPTY = A.EMPTY_ITEM
@@ -145,10 +145,9 @@ def describe(ev, field):
     go through here, so they cannot say different things."""
     t, k = ev["type"], ev
     if t == "start":
-        return "race start - %s" % COURSES.get(
-            ev.get("course"), "course 0x%02x" % (ev.get("course") or 0))
+        return "race start - %s" % course_name(ev.get("course"))
     if t == "field":
-        return ev["text"]
+        return ev.get("text", "")
     if t == "box":
         return "%s hit a box - roulette will land on %s" % (
             field.who(k["slot"]), ITEMS.get(k["item"], k["item"]))
@@ -211,6 +210,7 @@ class Race:
         self.begins = 0.0           # race time of the first frame actually seen
         self.missed = 0
         self.restarted = 0
+        self.peak = 0.0             # highest race clock seen in this race
         self.track = {}             # slot -> progress samples, TRACK_HZ apart
         self.next_sample = 0.0
         self.prev_track = (0.0, {})
@@ -450,8 +450,14 @@ class Race:
         # that the clock has gone back to the countdown. That, not the course,
         # is what separates the races in a session - the course only changes
         # between them if the next race is somewhere else.
+        # Against the highest clock this race has reached, not against the last
+        # frame: once one frame has been seen at 0 the last frame is 0 too, so
+        # comparing with that makes the second frame look normal and the run of
+        # them never reaches RESTART. Two races on the same course then end up
+        # in one file, which is the whole thing this is here to prevent.
         course = r["course_code"]
-        back = self.started and (r.get("race_time") or 0.0) < self.clock
+        now = r.get("race_time") or 0.0
+        back = self.started and now < self.peak
         self.restarted = self.restarted + 1 if back else 0
         moved = (course is not None and self.course is not None
                  and course != self.course)
@@ -466,7 +472,8 @@ class Race:
 
         # The race clock, not the per-racer frame counter: that one starts at
         # the intro camera 412 frames early and freezes when a racer finishes.
-        self.clock = r.get("race_time") or 0.0
+        self.clock = now
+        self.peak = max(self.peak, now)
         self.name_racers(r.get("racers"))
 
         if not self.started and r.get("race_frames"):

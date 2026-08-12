@@ -23,7 +23,7 @@ from mkw import addresses as A
 from mkw import reader
 from mkw import session as sess
 from mkw.events import Race, fmt, readable, DROPOUT
-from mkw.names import COURSES, ITEMS, DAMAGE_TYPES, VEHICLES
+from mkw.names import course_name, ITEMS, DAMAGE_TYPES, VEHICLES
 
 REFRESH = 0.05
 EVENTS_SHOWN = 14
@@ -44,7 +44,10 @@ def header(race, rec):
 def render(r, race, rec):
     if r is None:
         return header(race, rec) + "\n\nwaiting for a race..."
-    code = r["course_code"]
+    # `race.course`, not this frame's read: `read_course` returns None while
+    # the pointer is being rebuilt between races, which is precisely when the
+    # next race is starting.
+    code = r["course_code"] if r["course_code"] is not None else race.course
     me = next(p for p in r["players"] if p["slot"] == A.LOCAL_SLOT)
     mine = racer(r, A.LOCAL_SLOT)
     # The race clock, which is zero until GO. The per-racer counter at +0x2C
@@ -52,7 +55,7 @@ def render(r, race, rec):
     # used to show a clock ticking over the track flyover before the countdown.
     clock = r.get("race_time")
     head = ("%-22s  %s   P%d  lap %d   holding: %s%s"
-            % (COURSES.get(code, "course 0x%02x" % code),
+            % (course_name(code),
                fmt(clock) if race.started else "-- countdown --",
                me["position"],
                min(me["lap"], me["lap_reached"]),
@@ -115,6 +118,7 @@ def main():
 
     race = Race(on_end=store)
     shown = 0
+    problems = 0
     last = None
     if not quiet:
         print("\033[?25l", end="")            # hide cursor
@@ -129,16 +133,29 @@ def main():
                 last = r
             elif race.missed >= DROPOUT:
                 last = None
-            if quiet:
-                lines = readable(race.events)
-                if len(lines) < shown:      # a new race reset the log
-                    shown = 0
-                for e in lines[shown:]:
-                    print("  %9s  %s" % (fmt(e["t"]), race.text(e)), flush=True)
-                shown = len(lines)
-            else:
-                print("\033[H\033[J" + render(last, race, rec)
-                      + "\n\n(ctrl-c to stop)", end="", flush=True)
+            # Drawing the screen is not what this is for. A bug in it must
+            # never take down a session that is recording correctly - James
+            # lost one to `read_course` returning None between races, which is
+            # a value it is entitled to return.
+            try:
+                if quiet:
+                    lines = readable(race.events)
+                    if len(lines) < shown:      # a new race reset the log
+                        shown = 0
+                    for e in lines[shown:]:
+                        print("  %9s  %s" % (fmt(e["t"]), race.text(e)),
+                              flush=True)
+                    shown = len(lines)
+                else:
+                    print("\033[H\033[J" + render(last, race, rec)
+                          + "\n\n(ctrl-c to stop)", end="", flush=True)
+            except Exception as exc:
+                problems += 1
+                print("\033[H\033[J%s\n\nstill recording; the display "
+                      "failed %d time%s, latest: %r"
+                      % (header(race, rec), problems,
+                         "" if problems == 1 else "s", exc),
+                      end="", flush=True)
             time.sleep(REFRESH)
     except KeyboardInterrupt:
         pass
@@ -156,7 +173,7 @@ def main():
           % (rec.dir, len(rec), "" if len(rec) == 1 else "s"))
     for row in rec.meta["races"]:
         print("  %2d  %-22s  you finished P%s"
-              % (row["n"], COURSES.get(row["course"], "?"),
+              % (row["n"], course_name(row["course"]),
                  row["your_position"]))
     print("\nread it back with:  mk/bin/python3 -m tools.report")
     return 0

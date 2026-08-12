@@ -64,6 +64,20 @@ COURSES = {
     0x1F: "GBA Shy Guy Beach",
 }
 
+
+def course_name(code):
+    """A course's name, or something honest when there is not one.
+
+    `read_course` returns None while the course pointer is being rebuilt
+    between races - which is exactly when a second race is starting, so this
+    is a normal value and not an error. Formatting it as course 0 would name
+    it Mario Circuit, which is a lie; the callers that used to do their own
+    `"course 0x%02x" % code` either did that or crashed on it.
+    """
+    if code is None:
+        return "(course unknown)"
+    return COURSES.get(code, "course 0x%02x" % code)
+
 # What a racer is holding. 20 means nothing.
 ITEMS = {
     0: "Green Shell", 1: "Red Shell", 2: "Banana", 3: "Fake Item Box",

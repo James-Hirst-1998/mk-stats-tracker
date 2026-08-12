@@ -24,7 +24,7 @@ import os
 
 from mkw import racelog
 from mkw.events import Field
-from mkw.names import COURSES, VS_POINTS
+from mkw.names import course_name, VS_POINTS
 
 VERSION = 1
 
@@ -63,8 +63,7 @@ class Recorder:
     def add(self, race):
         """Store a finished `events.Race`. Returns the path, or None."""
         n = len(self.meta["races"]) + 1
-        name = racelog.slug(COURSES.get(race.course,
-                                        "course-%02x" % (race.course or 0)))
+        name = racelog.slug(course_name(race.course))
         os.makedirs(self.dir, exist_ok=True)
         path = os.path.join(self.dir, "%02d-%s.jsonl" % (n, name))
         racelog.save(race, path=path, source="live")
