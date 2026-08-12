@@ -122,3 +122,10 @@ DAMAGE_FROM_OBJECT = {0: {2, 5, 9}, 2: {0, 1, 7}, 7: {5, 9}}
 # The item ids that produce each object type, for sanity-checking a name
 # against the throw that spawned it.
 OBJECT_FROM_ITEM = {0: {0, 16}, 1: {1, 17}, 2: {2, 18}, 5: {7}, 7: {3}, 9: {6}}
+
+# Points per finishing position in a VS race. The published MKW table, NOT
+# read out of memory - the game's own running total has not been found. So a
+# session's points are computed from the finishing positions, which are read,
+# and will be right for a VS sequence and meaningless for unrelated races.
+VS_POINTS = {1: 15, 2: 12, 3: 10, 4: 8, 5: 7, 6: 6,
+             7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0}

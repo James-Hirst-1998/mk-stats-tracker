@@ -9,10 +9,11 @@ else is a count over the event stream, or a value the game itself reported and
 the log kept verbatim.
 """
 
+import os
 from collections import Counter, defaultdict
 
 from mkw import addresses as A
-from mkw.events import fmt, ordinal, describe, readable
+from mkw.events import fmt, ordinal, describe, readable, QUIET
 from mkw.names import (ITEMS, DAMAGE_TYPES, OBJECT_TYPES, BY_ITEM, CHARACTERS,
                        VEHICLES)
 
@@ -225,4 +226,81 @@ def render(log, events=True, quiet=True):
         lines.append("  positions:   %s" % ", ".join(
             "P%d %.1fs" % (p, v)
             for p, v in sorted(me["position_time"].items())))
+    return "\n".join(lines)
+
+
+def render_replay(log, step=1.0):
+    """The race played back, `step` seconds at a time.
+
+    Order and gaps come from the stored progress samples; the events are the
+    ones that happened in that second. This is the check that the progress
+    track is worth its size: if the order here disagrees with the `pos` events,
+    one of the two is wrong.
+    """
+    lines = ["%s   replay at %.1fs steps   gaps are fractions of a lap"
+             % (log.course_name, step), ""]
+    times = log.track_times()
+    if not times:
+        return "\n".join(lines + ["no progress samples stored"])
+    end = times[-1]
+    t = times[0]
+    while t <= end:
+        order = log.order_at(t)
+        prog = log.progress_at(t)
+        lead = prog.get(order[0], 0.0) if order else 0.0
+        lines.append("%9s  %s" % (fmt(t), "  ".join(
+            "%d.%s%s" % (i + 1, log.field.name(s),
+                         "" if i == 0 else "(-%.3f)" % (lead - prog[s]))
+            for i, s in enumerate(order))))
+        for e in log.events_between(t, t + step):
+            if e["type"] not in QUIET:
+                lines.append("%9s     %s" % ("", describe(e, log.field)))
+        t += step
+    return "\n".join(lines)
+
+
+def render_session(s):
+    """A whole sitting: each race, then the standings across all of them."""
+    m = s.meta
+    lines = ["session %s   %d race%s   %s"
+             % (s.name, len(s), "" if len(s) == 1 else "s",
+                m.get("started", "")),
+             ""]
+    if m.get("notes"):
+        lines.append("notes: %s" % m["notes"])
+
+    row = "%-3s %-22s %-9s %-9s %-6s %-6s %s"
+    lines.append(row % ("#", "course", "your time", "best lap", "you",
+                        "boxes", "what hit you"))
+    for race, meta in zip(s.races, m.get("races", [])):
+        me = summary(race).get(race.local_slot, {})
+        what = ", ".join("%dx %s" % (n, OBJECT_TYPES.get(o, "item %d" % o))
+                         for o, n in me.get("hits_by_item", {}).most_common())
+        lines.append(row % (
+            meta["n"], race.course_name,
+            fmt(me.get("time")) if me.get("finished") else "(dnf)",
+            "%.3f" % me["best_lap"] if me.get("best_lap") else "-",
+            "P%s" % me.get("position"), me.get("boxes", 0),
+            what or "-"))
+
+    lines.append("")
+    if not s.same_field():
+        lines.append("the field is not the same in every race, so adding these "
+                     "up is not a series - the rows below are by slot, not by "
+                     "racer:")
+    else:
+        lines.append("across the session, on MKW's VS points table:")
+    pts = s.points()
+    row = "%-4s %-19s %-7s %-8s %s"
+    lines.append(row % ("", "racer", "points", "avg", "finishes"))
+    ranked = sorted(pts.items(), key=lambda kv: -kv[1]["points"])
+    for i, (slot, p) in enumerate(ranked):
+        fin = p["finishes"]
+        lines.append(row % (
+            "%d." % (i + 1), s.field.name(slot), p["points"],
+            "%.1f" % (sum(fin) / len(fin)) if fin else "-",
+            " ".join("P%d" % f for f in fin)))
+    lines.append("")
+    lines.append("a race in full:  python3 -m tools.report %s <n>"
+                 % os.path.basename(s.path).split("-", 2)[-1])
     return "\n".join(lines)

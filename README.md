@@ -14,6 +14,8 @@ All twelve racers, every frame, straight from the game's own memory:
   game's own reported position 98–99% of the time
 - **Lap splits and finish times** — from the game's timers, not a stopwatch
 - **Time spent in first place**, and time spent in every other position
+- **Where everyone was, five times a second** — enough to replay a race and
+  read the gaps off it
 - **The race clock** — the game's own, which starts at GO and not at the intro
   camera, so a time in the log is the time on screen
 - **Items** — what each racer picked up and when they used it, by name, and
@@ -39,16 +41,20 @@ have different addresses and will not work without redoing the discovery.
 python3 -m venv mk && mk/bin/pip install dolphin-memory-engine numpy zstandard
 ```
 
-## Watch a race
+## Track a session
 
-Start Dolphin, load the game, then:
+Start Dolphin, load the game, then start this and play. Every race you play
+until you stop it is stored.
 
 ```bash
-sudo mk/bin/python3 -m tools.live
+sudo mk/bin/python3 -m tools.track versus-night
 ```
 
-`sudo` is needed to read another process's memory. The view redraws 20 times a
-second and prints an event log underneath:
+`sudo` is needed to read another process's memory. Leave it running across a
+whole VS sequence — it notices each race starting and ending on its own, and
+writes the race out the moment it finishes, so ctrl-c costs at most the race
+you are in the middle of. The view redraws 20 times a second and prints an
+event log underneath:
 
 ```
    0:00.000  race start - Mushroom Gorge
@@ -65,21 +71,29 @@ A hit line appears once the item that caused it has been destroyed, which is
 0.33s later for a shell and 1–2s for an explosion. That is the delay that
 makes naming it possible, so the line is held back rather than printed twice.
 
-## Keep a race
+## Read it back
 
-Every race that starts is written to `races/` as an event log when it ends —
-the whole event stream plus the final standings, **about 54 kB**. Nothing else
-is needed to say what happened afterwards:
+One directory per session, one file per race inside it, **about 119 kB a
+race**. Nothing else is needed to say what happened:
 
 ```bash
-mk/bin/python3 -m tools.report            # the most recent race
-mk/bin/python3 -m tools.report --list     # everything stored
-mk/bin/python3 -m tools.report peach      # by name
+mk/bin/python3 -m tools.report                       # the last session
+mk/bin/python3 -m tools.report --list                # everything stored
+mk/bin/python3 -m tools.report versus-night 2        # race 2, in full
+mk/bin/python3 -m tools.report versus-night 2 --replay
 ```
 
-That rebuilds the whole thing from the file — every event, lap splits, who hit
-whom with what, items used, hits taken by type, time spent in each position.
-No Dolphin, no recording, no sudo.
+No Dolphin, no recording, no sudo. The session view gives every race and the
+standings across them on MKW's VS points table; a race gives every event, lap
+splits, who hit whom with what, items used, hits taken by type, and time spent
+in each position. `--replay` plays the race back second by second:
+
+```
+ 0:32.067  1.Baby Peach  2.Birdo(-0.030)  3.Waluigi(-0.034)  4.Baby Daisy(-0.038) ...
+              Birdo used Golden Mushroom
+              Birdo completed lap 1 in 0:32.307
+              Diddy Kong hit a box - roulette will land on Bullet Bill
+```
 
 The format, and how to add a new kind of event to it, is in
 [docs/RACE_LOG.md](docs/RACE_LOG.md). It is deliberately dull: JSON Lines, one
@@ -114,8 +128,8 @@ mk/bin/python3 -m tools.replay_live mushroom-gorge --save   # and store it
 |---|---|
 | `mkw/` | the library: addresses, names, live reads, event stream |
 | `mkw/capture/` | the recorder and the offline replay harness |
-| `tools/` | things you run: `live`, `report`, `record`, `verify`, `probe`, `replay_live` |
-| `races/` | saved races, one small file each. Git-ignored by default |
+| `tools/` | things you run: `track`, `report`, `record`, `verify`, `probe`, `replay_live` |
+| `races/` | saved sessions, one small file per race. Git-ignored by default |
 | `analysis/` | offline checks that produce the evidence for what's claimed |
 | `lab/` | exploration, including everything that failed. Kept on purpose |
 | `docs/` | how it works, the memory map, and the full experiment log |

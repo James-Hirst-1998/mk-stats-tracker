@@ -4,15 +4,37 @@ What a race is kept as once it has been read out of memory.
 
 A recording is a gigabyte because it is every byte of the console's memory,
 twenty times a second. Almost none of that matters once the events have been
-pulled out of it. A race log keeps the events and nothing else — **34–71 kB per
-race, 54 kB on average**, measured over the seven recordings — and everything
-`tools/report.py` prints is rebuilt from that file alone.
+pulled out of it. A race log keeps the events, plus every racer's progress five
+times a second — **78–155 kB per race, 119 kB on average**, measured over the
+seven recordings — and everything `tools/report.py` prints, including a
+second-by-second replay, is rebuilt from that file alone.
 
-That is about **20,000 races per gigabyte**. Storage is not a constraint on
-this and is not worth optimising; a thousand races is 53 MB.
+That is about **8,800 races per gigabyte**. Storage is not a constraint on this
+and is not worth optimising; a thousand races is 116 MB.
 
-Written by `mkw/racelog.py`. Read back by the same. Logs go in `races/`, or
-wherever `MKW_RACES` points.
+Written by `mkw/racelog.py`. Read back by the same.
+
+## Sessions
+
+Races are recorded in sittings. `tools/track.py` makes one directory per run
+and drops a race into it every time one ends:
+
+```
+races/20260812-2013-versus-night/
+  session.json          what it was, and a line per race
+  01-luigi-circuit.jsonl
+  02-moo-moo-meadows.jsonl
+  03-mushroom-gorge.jsonl
+```
+
+Each race is a complete object on its own — `mkw/racelog.py` reads one without
+knowing sessions exist. The session is what makes "how did we all do across the
+night" answerable, and `mkw/session.py` adds up MKW's VS points across it. It
+checks the field is the same twelve racers in the same slots first, because
+adding up unrelated races by slot number would otherwise look like a series.
+
+The index is rewritten after every race, so ctrl-c costs at most the race in
+progress. Sessions live in `races/`, or wherever `MKW_RACES` points.
 
 ## The file
 
@@ -22,6 +44,7 @@ without this repo. Three kinds of record:
 ```
 {"type": "race", ...}          exactly one, first
 {"t": 12.3, "type": "use", …}  the events, in race order
+{"type": "progress", ...}      exactly one: where everyone was, 5 times a second
 {"type": "standings", ...}     exactly one, last
 ```
 
@@ -45,6 +68,7 @@ every old file reads correctly.
 | `racers` | slot, character, vehicle, type, cpu, grid — one per racer |
 | `source` | `live`, or `replay:<recording>` |
 | `notes` | free text, carried over from a recording's notes |
+| `settings` | RaceConfig's settings block, raw. Only word 0 is understood — it is the course id. Kept undecoded so a question asked later can be answered from races already stored, rather than needing new ones |
 
 ### Events
 
@@ -73,6 +97,32 @@ without it came from watching the item that hit them get destroyed.
 `pos` is about two thirds of the events in a file and most of them are the
 scramble off the grid. They are what "who was in front, and when" is rebuilt
 from, so they are kept; `tools/report.py` hides them unless you pass `--all`.
+
+### Progress
+
+The one record that is not events: every racer's progress on a fixed 5 Hz grid.
+
+```json
+{"type": "progress", "hz": 5, "t0": 0.0,
+ "completion": {"0": [0.9812, 0.9903, ...], "1": [...], ...}}
+```
+
+Sample `k` is the value at `t0 + k/hz`, interpolated from the frames either
+side so it is the value at the time it claims rather than the first read after
+it. Progress is lap plus fraction of a lap, so the difference between two
+racers is the gap between them, and sorting by it is the running order.
+
+This is what makes a race replayable — `RaceLog.progress_at(t)` and
+`order_at(t)` give the state at any moment, and `tools/report.py --replay`
+prints it. Measured against the full-rate reads: median error **0.00003 laps**,
+99.8–100% of samples within 0.01 of a lap.
+
+Two things to know. Position comes from the `pos` events, not from this —
+ranking by progress reproduces the game's own position 98–99% of the time and
+no better. And progress **wraps at the finish**: crossing the line puts it back
+to the start of the last lap, 3.9994 then 3.0002, so it is not a monotonic
+distance travelled. Both the sampler and the reader treat a step of more than
+half a lap as the jump it is instead of interpolating through it.
 
 ### Standings
 
@@ -114,3 +164,7 @@ can tell the difference, the way `hit.guess` does.
   is not seen at all.
 - **Throws inside a triple.** The held item id does not change as the second
   and third are thrown, so they are one `use`.
+- **Which race of a VS sequence this is.** Not decoded. The settings block is
+  stored raw so it can be worked out from stored races later; until then a
+  session is however many races were played between starting the tool and
+  stopping it, which needs nothing read from memory at all.

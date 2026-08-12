@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
-"""Live race view in the terminal. Updates 20x a second until ctrl-c.
+"""Start this, play, stop it. Every race in between is stored.
 
-    sudo python3 -m tools.live
+    sudo mk/bin/python3 -m tools.track                 # a session called "session"
+    sudo mk/bin/python3 -m tools.track versus-night    # give it a name
+    sudo mk/bin/python3 -m tools.track versus-night --quiet
 
 Needs sudo because reading another process's memory does.
 
-Every race that actually starts is written out to `races/` as an event log
-when it ends - a course change, the game leaving the race, or ctrl-c. That
-file is a few tens of kB and everything in `tools/report.py` is rebuilt from
-it, so the gigabyte recordings are only needed for finding new things.
+Leave it running across a whole VS sequence. Each race is written the moment
+it ends, into one session directory, so ctrl-c at any point costs at most the
+race you are in the middle of. Read it back afterwards with `tools/report.py`,
+which needs neither Dolphin nor sudo.
+
+`--quiet` prints one line per event instead of redrawing the live table, which
+is what you want if you are going to scroll back through it.
 """
 
+import sys
 import time
 
 from mkw import addresses as A
-from mkw import racelog
 from mkw import reader
+from mkw import session as sess
 from mkw.events import Race, fmt, readable, DROPOUT
 from mkw.names import COURSES, ITEMS, DAMAGE_TYPES, VEHICLES
 
@@ -27,9 +33,17 @@ def racer(r, slot):
     return next((x for x in (r.get("racers") or []) if x["slot"] == slot), None)
 
 
-def render(r, race):
+def header(race, rec):
+    """One line saying where the session is up to, above everything else."""
+    return "session %s   %d race%s stored   %s" % (
+        rec.name, len(rec), "" if len(rec) == 1 else "s",
+        "recording race %d" % (len(rec) + 1) if race.started
+        else "waiting for the lights")
+
+
+def render(r, race, rec):
     if r is None:
-        return "waiting for a race..."
+        return header(race, rec) + "\n\nwaiting for a race..."
     code = r["course_code"]
     me = next(p for p in r["players"] if p["slot"] == A.LOCAL_SLOT)
     mine = racer(r, A.LOCAL_SLOT)
@@ -54,7 +68,7 @@ def render(r, race):
         kind, cause = DAMAGE_TYPES.get(me["damage"], ("Hit", "something"))
         head += "   *** %s - %s ***" % (kind.upper(), cause)
 
-    out = [head, "",
+    out = [header(race, rec), "", head, "",
            "%-4s %-18s %-5s %-5s %-9s %-20s %-24s %s"
            % ("pos", "racer", "slot", "lap", "progress", "holding",
               "lap splits", "")]
@@ -79,20 +93,31 @@ def render(r, race):
 
 
 def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    quiet = "--quiet" in sys.argv[1:]
     if not reader.hook():
         print("not hooked to Dolphin - is the emulator running?")
-        return
+        return 1
+
+    rec = sess.Recorder(name=args[0] if args else None)
+    print("session -> %s" % rec.dir)
+    print("play as many races as you like; ctrl-c when you are done.")
+    print("nothing is written until a race actually finishes.\n")
+
     saved = []
 
     def store(race):
         try:
-            saved.append(racelog.save(race, source="live"))
-        except Exception as exc:            # never lose the race for a bad write
-            saved.append("FAILED to save: %s" % exc)
+            saved.append(rec.add(race))
+            print("\n>> race %d stored: %s\n" % (len(rec), saved[-1]))
+        except Exception as exc:        # never lose the session for a bad write
+            print("\n>> FAILED to store race %d: %s\n" % (len(rec) + 1, exc))
 
     race = Race(on_end=store)
+    shown = 0
     last = None
-    print("\033[?25l", end="")            # hide cursor
+    if not quiet:
+        print("\033[?25l", end="")            # hide cursor
     try:
         while True:
             try:
@@ -100,25 +125,42 @@ def main():
             except Exception:
                 r = None
             race.update(r)
-            # Hold the last good frame through a torn read rather than
-            # flashing "waiting for a race" for one refresh.
             if r is not None:
                 last = r
             elif race.missed >= DROPOUT:
                 last = None
-            print("\033[H\033[J" + render(last, race)
-                  + "\n\n(ctrl-c to stop; %d race%s saved)"
-                  % (len(saved), "" if len(saved) == 1 else "s"),
-                  end="", flush=True)
+            if quiet:
+                lines = readable(race.events)
+                if len(lines) < shown:      # a new race reset the log
+                    shown = 0
+                for e in lines[shown:]:
+                    print("  %9s  %s" % (fmt(e["t"]), race.text(e)), flush=True)
+                shown = len(lines)
+            else:
+                print("\033[H\033[J" + render(last, race, rec)
+                      + "\n\n(ctrl-c to stop)", end="", flush=True)
             time.sleep(REFRESH)
     except KeyboardInterrupt:
         pass
     finally:
-        print("\033[?25h")                # show cursor
+        # Whatever happened, put the cursor back and keep the race in progress.
+        if not quiet:
+            print("\033[?25h")
         race.end()
-        for path in saved:
-            print("saved -> %s" % path)
+        rec.write_index()
+
+    if not len(rec):
+        print("\nno races were played, so nothing was written.")
+        return 0
+    print("\nsession %s: %d race%s"
+          % (rec.dir, len(rec), "" if len(rec) == 1 else "s"))
+    for row in rec.meta["races"]:
+        print("  %2d  %-22s  you finished P%s"
+              % (row["n"], COURSES.get(row["course"], "?"),
+                 row["your_position"]))
+    print("\nread it back with:  mk/bin/python3 -m tools.report")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

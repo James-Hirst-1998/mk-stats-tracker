@@ -34,6 +34,16 @@ TYPE_LOCAL, TYPE_CPU, TYPE_ONLINE = 0, 1, 2
 MAX_CHARACTER = 0x30            # ids above the 24 named ones are Miis
 MAX_VEHICLE = 0x24
 
+# The settings for the race, immediately after the twelve racer structs. Only
+# the first word is decoded: it equals the course id from the validated
+# `COURSE_PTR` path in all seven recordings. Everything after it is kept in a
+# race log as raw hex rather than guessed at - which race of a VS sequence this
+# is should be in here, and the way to find out is to record a VS sequence and
+# look at what moves.
+OFF_SETTINGS = 0x28 + N_PLAYERS * RACER_STRIDE      # 0xB68
+SETTINGS_WORDS = 16
+OFF_SETTINGS_COURSE = 0x00
+
 # --- course ---------------------------------------------------------------
 COURSE_PTR = 0x809C27F8
 COURSE_OFFSET = 0x13

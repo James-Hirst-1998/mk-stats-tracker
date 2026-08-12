@@ -19,9 +19,15 @@ Started as an item-tracking log, which is why the early entries are all items.
   proxy and is not verified as one.
 - **How many laps the race is** is not read anywhere. `+0x26` is the highest
   lap a racer has reached, not the length of the race, so a race log derives
-  the count from whoever finished. RaceConfig's settings block before
-  `cfg + 0x24` is the obvious place to look; every recording here is a 3-lap
-  race, so "it reads 3" would not be evidence.
+  the count from whoever finished. `RaceConfig + 0xB68` is the settings block
+  and a byte in it reads 3; every recording here is a 3-lap race, so "it reads
+  3" is not evidence.
+- **Which race of a VS sequence is in progress.** Same block, same problem: no
+  recording here is part of a sequence, so nothing in it can be told from a
+  constant. The block is now stored raw in every race log, so the next VS
+  session James records answers it without a gigabyte recording.
+- **The game's own VS points total** has not been located. A session adds up
+  the published table from the finishing positions instead.
 - **Quantity remaining in a triple.** The held id stays put while all three
   are thrown.
 - MEM2 above `0x91800000` has never been captured. Nothing has needed it yet.
@@ -172,3 +178,12 @@ Started as an item-tracking log, which is why the early entries are all items.
 - `2026-08-12`: position changes are now events. They were not tracked at all before. 585 per race on average, about two thirds of a file, most of them the scramble off the grid - kept, and hidden from the printed stream, because time-in-position cannot be rebuilt without them.
 - `2026-08-12`: `analysis/validate_race_log.py` -> **7 of 7 recordings pass both checks.** Round trip: replay the recording, write the log, read it back and render every event from the file - 6,044 events, every line identical to the live one. Independent check: time in first place rebuilt from the stored position changes matches `+0x30`, which the rebuild never sees, for all twelve racers in every race, within one 20 Hz sample per crossing into or out of first.
 - `2026-08-12`: **a race costs 34-71 kB, 54 kB on average** - 62-66 bytes per event, 0.24-0.51 kB per second of racing. About 20,000 races per gigabyte, against roughly one race per gigabyte for a recording. Storage is not a constraint here and is not worth optimising.
+- `2026-08-12`: **sessions.** A race log per race was the wrong unit on its own - James plays a VS sequence and wants the three or four races together. `tools/track.py` is now the one command: start it, play, ctrl-c, and every race in between is a file in one session directory with an index rewritten after each. Nothing about that needs a memory read - a session is however many races were played between starting the tool and stopping it - which is why it works today rather than after the VS race index is found.
+- `2026-08-12`: races are separated by the race clock going back to zero, not by the course changing. Two races on the same course would otherwise have been one file. Three consecutive frames of it are required for the same reason `DROPOUT` is 20: a live snapshot can tear, and the countdown lasts 137 frames at 20 Hz so there is no hurry.
+- `2026-08-12`: `tools/live.py` deleted; `tools/track.py` renders the same view and stores what it sees. Two commands that differed only in whether they threw the race away was not worth the duplication.
+- `2026-08-12`: **progress is now stored, 5 times a second.** Events say what happened; this says where everyone was while it happened, which is what a gap or a chase is made of, and it is what makes a race replayable rather than just readable. 12 racers x 5 Hz x 3 minutes is about 65 kB, which takes a race from 54 kB to 119 kB - 8,800 races per gigabyte against roughly one for a recording.
+- `2026-08-12`: first attempt sampled whatever value the current frame happened to hold, which is up to a frame late - a quarter of a 5 Hz step. Interpolating each racer to the exact grid time from the frames either side took the median error against the 20 Hz reads from 0.00070 laps to **0.00003**, and the share within 0.01 of a lap to 99.8-100%.
+- `2026-08-12`: **CORRECTION -> race completion `+0x0C` is not monotonic.** Crossing the line on the final lap puts it back to the start of that lap: 3.9994 then 3.0002 on GCN Peach Beach. Interpolating through that step produced values a whole lap out, which is what the worst-case error in `analysis/validate_session.py` was measuring before the step was recognised for what it is. Both the sampler and the reader now treat a jump of more than half a lap as a discontinuity.
+- `2026-08-12`: `RaceConfig + 0x28 + 12*0xF0` (= `cfg + 0xB68`) is the race's settings block - `settings[0]` is the course id and agrees with the validated `COURSE_PTR` path 7/7. The rest is NOT decoded and is deliberately not guessed at: every recording is a single race, so nothing in the block can be told from a constant. All sixteen words are now stored raw in every race log so a VS sequence recorded later answers it.
+- `2026-08-12`: `analysis/validate_session.py` -> **all checks pass.** Seven recordings fed back to back through one `Race` and one session `Recorder` come out as seven separate races, every one with the same event count the live run produced, and progress reproducing the full-rate reads as above.
+- `2026-08-12`: session points use the published MKW VS table (15/12/10/8/7/6/5/4/3/2/1/0) applied to the finishing positions, not a total read from memory - that has not been found. `Session.same_field` checks the same twelve racers are in the same slots in every race first, because adding up unrelated races by slot number would otherwise look like a series.

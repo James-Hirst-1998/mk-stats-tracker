@@ -105,6 +105,24 @@ counter agree with the same quantity rebuilt from position changes for all
 twelve racers across all seven recordings. `mkw/report.py` subtracts it; the
 stored value stays raw.
 
+**How.** The layout follows SeekyCt's public `mkw-structures` documentation of
+`RaceinfoPlayer`, used as a source of candidates and then checked here. Two
+things differ in PAL: the `Timer*` pair sits 4 bytes later than documented,
+and `Timer` carries a vtable at `+0x00`.
+
+**Confidence.** Ranking the twelve racers by `+0x0C` reproduces the game's own
+reported position 98–99% of the time across four recordings. Which is why
+`+0x20` stays the authority on position and `+0x0C` is used for gaps.
+
+**Watch out.** `+0x0C` is not monotonic. Crossing the line on the final lap
+puts it back to the start of that lap — 3.9994 then 3.0002 on GCN Peach Beach —
+so it is progress through the race, not distance travelled, and interpolating
+across that step gives a value a whole lap out.
+
+**Watch out.** `PLAYER_DELTA` was `0x140` for a while, which is one struct
+early — every field read the *next* racer's value and still looked plausible.
+The `+0x0B0` progress claim that came from it measured at chance.
+
 ## The race clock
 
 ```
@@ -134,18 +152,6 @@ race clock after the finish either.
 - at every lap boundary it agrees with the game's own cumulative lap `Timer`,
   reached by an entirely different pointer path, to within 0.18s at worst,
   against a 20 Hz sampling interval
-
-**How.** The layout follows SeekyCt's public `mkw-structures` documentation of
-`RaceinfoPlayer`, used as a source of candidates and then checked here. Two
-things differ in PAL: the `Timer*` pair sits 4 bytes later than documented,
-and `Timer` carries a vtable at `+0x00`.
-
-**Confidence.** Ranking the twelve racers by `+0x0C` reproduces the game's own
-reported position 98–99% of the time across four recordings.
-
-**Watch out.** `PLAYER_DELTA` was `0x140` for a while, which is one struct
-early — every field read the *next* racer's value and still looked plausible.
-The `+0x0B0` progress claim that came from it measured at chance.
 
 ## Items — `KartItem`
 
@@ -343,6 +349,22 @@ Read-only, for anyone re-deriving the above.
 | `0x808B5468` | per-item-type handler table, stride 12 |
 
 `lab/ppc.py` disassembles any of these straight out of a recording.
+
+## Race settings
+
+```
+settings = u32(0x809BD728) + 0x28 + 12*0xF0      # = cfg + 0xB68
+```
+
+Immediately after the twelve racer structs. Only the first word is decoded:
+`settings[0]` is the course id, and it equals the validated `COURSE_PTR` read
+on all seven recordings — an independent second source for the same thing.
+
+The rest is **not decoded**. Which race of a VS sequence is in progress is
+almost certainly in here, but every recording available is a single race, so
+nothing in the block can be told from a constant. A race log stores all sixteen
+words raw, so the question can be answered from races already saved rather than
+needing new recordings.
 
 ## Capture coverage
 

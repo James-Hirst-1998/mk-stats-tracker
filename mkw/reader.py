@@ -155,6 +155,20 @@ def read_racers():
     return out
 
 
+def read_settings():
+    """The race's settings block, as raw words, or None.
+
+    Only `[0]` is understood - it is the course id, and it agrees with the
+    `COURSE_PTR` path on every recording. The rest is stored undecoded so that
+    a question asked later (which race of a VS sequence is this?) can be
+    answered from races already saved instead of needing new ones.
+    """
+    cfg = u32(A.RACE_CONFIG)
+    if not in_mem2(cfg):
+        return None
+    return [u32(cfg + A.OFF_SETTINGS + i * 4) for i in range(A.SETTINGS_WORDS)]
+
+
 def item_base():
     director = u32(A.ITEM_DIRECTOR)
     if not in_mem1(director):
@@ -238,6 +252,7 @@ def read():
     frames = read_race_frames()
     return {"course_code": read_course(), "players": players,
             "racers": read_racers(), "world_items": read_world_items(),
+            "settings": read_settings(),
             "race_frames": frames,
             "race_time": None if frames is None else frames / 60.0}
 

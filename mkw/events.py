@@ -45,6 +45,26 @@ KEEP = 6.0                      # seconds of despawn history worth holding
 # across seven recordings, because a recording is one consistent image.
 DROPOUT = 20                    # unreadable frames in a row before giving up
 
+# The race clock resets to 0 for the next countdown, which is how a second race
+# is told from the first even when it is on the same course. One frame of it is
+# not trusted for the same reason one unreadable frame is not: a live snapshot
+# can tear. Two in a row cannot be a tear, and the countdown lasts 137 frames
+# at 20 Hz, so there is no hurry.
+RESTART = 3
+
+# How often the racers' progress is sampled, in race seconds. This is what a
+# race is replayed from - position and gap at any moment come out of it - and
+# it is the only thing here that is not an event. 5 Hz costs about 70 kB in a
+# 3-minute race and progress is smooth enough between samples to interpolate.
+TRACK_HZ = 5
+
+# Progress is lap plus fraction of a lap and climbs smoothly, EXCEPT at the
+# finish, where crossing the line puts it back to the start of the last lap -
+# 3.9994 then 3.0002, measured on GCN Peach Beach. Interpolating across that
+# gives a value a whole lap out, so a step this big is treated as the jump it
+# is and the nearer of the two readings is taken instead.
+JUMP = 0.5
+
 # Stored, but not printed. Twelve racers jostling produce a few hundred
 # position swaps in a race, most of them in the first two seconds off the grid.
 # They are what "who was in front, and when" is rebuilt from, so they are kept;
@@ -185,10 +205,15 @@ class Race:
         self.born = {}              # object address -> the item id thrown
         self.clock = 0.0
         self.course = None
+        self.settings = None
         self.started = False
         self.field_logged = False
         self.begins = 0.0           # race time of the first frame actually seen
         self.missed = 0
+        self.restarted = 0
+        self.track = {}             # slot -> progress samples, TRACK_HZ apart
+        self.next_sample = 0.0
+        self.prev_track = (0.0, {})
         self.last = None            # last readable snapshot, for the standings
         self.field = Field(None, self.local_slot)
 
@@ -333,6 +358,29 @@ class Race:
         """Report everything still waiting; for the end of a race."""
         self.settle(self.clock, force=True)
 
+    # --- progress over time ------------------------------------------------
+
+    def sample(self, r):
+        """Every racer's progress, on a fixed grid, for replaying the race.
+
+        The events say what happened; this says where everyone was while it
+        happened, which is what a gap, a chase or an overtake is made of. On a
+        grid rather than per frame so a sample index is a time and the arrays
+        stay the same length - a dropped frame repeats the last value rather
+        than shifting everything after it.
+        """
+        now = {p["slot"]: p["completion"] for p in r["players"]}
+        if not self.started:
+            self.prev_track = (self.clock, now)
+            return
+        while self.clock >= self.next_sample:
+            for slot, value in now.items():
+                self.track.setdefault(slot, []).append(
+                    round(between(self.prev_track, (self.clock, now),
+                                  slot, self.next_sample), 4))
+            self.next_sample += 1.0 / TRACK_HZ
+        self.prev_track = (self.clock, now)
+
     # --- the end of a race -------------------------------------------------
 
     def standings(self):
@@ -397,13 +445,24 @@ class Race:
                 self.reset()
             return
         self.missed = 0
-        if self.course is None:
-            self.course = r["course_code"]
-        elif r["course_code"] != self.course:
+
+        # A second race on the same course looks identical to the first except
+        # that the clock has gone back to the countdown. That, not the course,
+        # is what separates the races in a session - the course only changes
+        # between them if the next race is somewhere else.
+        course = r["course_code"]
+        back = self.started and (r.get("race_time") or 0.0) < self.clock
+        self.restarted = self.restarted + 1 if back else 0
+        moved = (course is not None and self.course is not None
+                 and course != self.course)
+        if moved or self.restarted >= RESTART:
             self.end()
             self.reset()
-            self.course = r["course_code"]
+        if course is not None:
+            self.course = course
         self.last = r
+        if r.get("settings"):
+            self.settings = r["settings"]
 
         # The race clock, not the per-racer frame counter: that one starts at
         # the intro camera 412 frames early and freezes when a racer finishes.
@@ -416,9 +475,11 @@ class Race:
             # lights have gone out. Everything before this was never seen, and
             # a reader has to know that rather than assume the grid held.
             self.begins = self.clock
+            self.next_sample = self.clock       # anchor the progress grid
             self.log(self.clock, "start", course=self.course)
         if self.started and not self.field_logged:
             self.log_field()
+        self.sample(r)
 
         for p in r["players"]:
             s = p["slot"]
@@ -466,6 +527,23 @@ class Race:
         # frame as the throw can still be tied to it.
         self.watch_items(self.clock, r.get("world_items"))
         self.settle(self.clock)
+
+
+def between(before, after, slot, t):
+    """One racer's progress at exactly `t`, from the frames either side.
+
+    The sampler is driven by frames arriving at 20 Hz and the grid is 5 Hz, so
+    without this a sample would carry the value from up to a frame after the
+    time it claims - a quarter of a grid step, and a whole lap out if that
+    frame is the one where the racer crossed the line.
+    """
+    (t0, a), (t1, b) = before, after
+    if slot not in a or slot not in b or t1 <= t0:
+        return b.get(slot, a.get(slot, 0.0))
+    f = min(max((t - t0) / (t1 - t0), 0.0), 1.0)
+    if abs(b[slot] - a[slot]) > JUMP:
+        return a[slot] if f < 0.5 else b[slot]
+    return a[slot] + (b[slot] - a[slot]) * f
 
 
 def splits(cumulative):
