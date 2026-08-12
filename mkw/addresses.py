@@ -1,0 +1,73 @@
+"""Every memory address and offset this project relies on, in one place.
+
+Mario Kart Wii, PAL / RMCP01, running under Dolphin. All of it was found and
+checked on that build; nothing here is guessed from another region.
+
+How each path was established is in `docs/MEMORY_MAP.md`, and the full trail of
+what was tried is in `docs/EXPERIMENTS.md`.
+"""
+
+MEM1 = (0x80000000, 0x81800000)
+
+N_PLAYERS = 12
+LOCAL_SLOT = 0                  # the human player is always racer 0 here
+
+# --- course ---------------------------------------------------------------
+COURSE_PTR = 0x809C27F8
+COURSE_OFFSET = 0x13
+
+# --- racers: RaceinfoPlayer, one per racer --------------------------------
+PLAYER_PTR = 0x809BD730
+PLAYER_DELTA = 0x120
+PLAYER_STRIDE = 0xC4
+
+OFF_COMPLETION = 0x0C           # float, lap + fraction of the current lap
+OFF_LAP_FRACTION = 0x18         # float, 0..1 through the current lap
+OFF_POSITION = 0x20             # u8, 1..12
+OFF_CURRENT_LAP = 0x24          # u16, becomes maxLap + 1 on finishing
+OFF_MAX_LAP = 0x26              # u8
+OFF_FRAME_COUNTER = 0x2C        # u32 at 60Hz, freezes when that racer finishes
+OFF_FRAMES_IN_FIRST = 0x30      # u32 at 60Hz, time spent leading
+OFF_LAP_TIMES = 0x3C            # Timer*, one per lap, cumulative
+OFF_FINISH_TIME = 0x40          # Timer*
+
+# --- Timer ----------------------------------------------------------------
+TIMER_SIZE = 0x0C
+TIMER_MINUTES = 0x04            # u16
+TIMER_SECONDS = 0x06            # u8
+TIMER_MILLIS = 0x08             # u16
+TIMER_SET = 0x0A                # non-zero once the game has filled it in
+
+# --- items: KartItem, one per racer ---------------------------------------
+ITEM_DIRECTOR = 0x809C3618
+OFF_ITEM_ARRAY = 0x14
+ITEM_STRIDE = 0x248
+
+OFF_ROULETTE = 0x077            # u8, what the spin has already chosen
+OFF_HELD = 0x08F                # u8, 20 = nothing
+EMPTY_ITEM = 20
+
+# --- damage ---------------------------------------------------------------
+# KartItem is a KartObjectProxy, so it can be walked to the object the
+# collision code writes a hit into.
+OFF_ACCESSOR_SUB = 0x2C         # accessor -> damage sub-object
+OFF_DAMAGE = 0x1C               # s32, -1 when the racer is not hit
+OFF_LAST_DAMAGE_ENTRY = 0xC0    # -> DAMAGE_TABLE + type*12, kept after the hit
+OFF_DAMAGE_PRIORITY = 0xF6      # s16, a stronger hit overrides a weaker one
+DAMAGE_TABLE = 0x808B4C58
+NO_DAMAGE = -1
+
+# --- items in the world ---------------------------------------------------
+# The shells, bananas and boxes actually lying on the track or in flight.
+OFF_OBJECT_ARRAY = 0x264        # ItemDirector + this, then i*4
+MAX_OBJECTS = 16
+OFF_OBJECT_TYPE = 0x04          # u32, indexes OBJECT_HANDLER_TABLE
+OFF_OBJECT_OWNER = 0x6C         # u8, the racer who fired it
+OBJECT_HANDLER_TABLE = 0x808B5468   # stride 0xC, function pointer at +8
+
+# --- code, for anyone wanting to re-derive the above ----------------------
+# These are read-only landmarks in the executable, not data.
+CODE_DAMAGE_THUNK = 0x80590D5C      # (proxy, damageType) -> virtual dispatch
+CODE_DAMAGE_HANDLER = 0x805675DC    # stores the type at sub+0x1C
+CODE_GET_PLAYER_IDX = 0x80590A5C    # proxy -> [0] -> [0] -> u8 at +0x10
+CODE_COLLISION_LOOP = 0x805725E8    # walks the world item objects

@@ -1,13 +1,106 @@
 # mk-stats-tracker
 
-Minimal repo structure for iterative Mario Kart Wii stat discovery.
+Race stats for Mario Kart Wii, read live out of a running Dolphin.
 
-## Structure
-- `source/`: proven scripts only.
-- `testers/`: experiments and failed attempts.
-- `STATUS.md`: short current project status.
+It exists to settle arguments. Your friend did not get hit by four blue shells.
+He got hit by one blue shell, two bananas he drove into himself, and a Pokey.
+Now there is a log.
 
-## Current
-- Stable script: `source/read_race.py` (local player position + course code).
-- Course discovery/validation artifacts: `testers/tracks/`.
-- Item discovery work: `testers/items/`.
+## What it reads
+
+All twelve racers, every frame, straight from the game's own memory:
+
+- **Position, lap and progress** — ranking racers by progress reproduces the
+  game's own reported position 98–99% of the time
+- **Lap splits and finish times** — from the game's timers, not a stopwatch
+- **Time spent in first place**
+- **Items** — what each racer picked up and when they used it, by name, and
+  what the roulette has already secretly decided about 3.5 seconds early
+- **Being hit, and what hit you** — spin-out, knockback, launched, crushed,
+  POW'd, and which of those came from an item versus a track hazard
+- **Blue shells specifically**, told apart from bob-ombs
+- **Course**
+
+Everything above is validated across seven recorded races from seven separate
+Dolphin launches. What is *not* solved yet is listed in
+[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) under "Open" — including who fired
+the shell that hit you, and telling a green shell from a red one.
+
+## Setup
+
+Mario Kart Wii **PAL / RMCP01** in Dolphin, on macOS or Linux. Other regions
+have different addresses and will not work without redoing the discovery.
+
+```bash
+python3 -m venv mk && mk/bin/pip install dolphin-memory-engine numpy zstandard
+```
+
+## Watch a race
+
+Start Dolphin, load the game, then:
+
+```bash
+sudo mk/bin/python3 -m tools.live
+```
+
+`sudo` is needed to read another process's memory. The view redraws 20 times a
+second and prints an event log underneath:
+
+```
+   0:36.917  you were hit - Banana (spin-out)
+   1:09.717  slot 11 was hit - Blue Shell (slot 6's) (launched)
+   1:09.867  slot 2 was hit - Blue Shell (slot 6's) (launched)
+   1:18.900  you were hit - Blue Shell (slot 1's) (launched)
+```
+
+## Record a race to work on offline
+
+Live debugging against a moving race is miserable. Record once, then test
+every idea against the recording as many times as you like.
+
+```bash
+sudo mk/bin/python3 -m tools.probe     # once per machine
+sudo mk/bin/python3 -m tools.record    # ctrl-c to stop
+mk/bin/python3 -m tools.verify         # must say USABLE
+```
+
+A recording is a 20 Hz page-delta capture of the console's memory, roughly
+1–2 GB per race. They live in `recordings/` and are git-ignored. Keep the
+screen recording of the same race next to it — the video is often the only
+ground truth you have.
+
+Then replay the real reader over it:
+
+```bash
+mk/bin/python3 -m tools.replay_live mushroom-gorge
+```
+
+## Layout
+
+| path | what it is |
+|---|---|
+| `mkw/` | the library: addresses, names, live reads, event stream |
+| `mkw/capture/` | the recorder and the offline replay harness |
+| `tools/` | things you run: `live`, `record`, `verify`, `probe`, `replay_live` |
+| `analysis/` | offline checks that produce the evidence for what's claimed |
+| `lab/` | exploration, including everything that failed. Kept on purpose |
+| `docs/` | how it works, the memory map, and the full experiment log |
+
+## How any of this was found
+
+Short version: record a whole race, then test hypotheses offline against the
+recording instead of against a live game. The long version, including the
+several approaches that did not work, is in [docs/METHOD.md](docs/METHOD.md)
+and [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md). The addresses themselves are
+in [docs/MEMORY_MAP.md](docs/MEMORY_MAP.md).
+
+One thing worth knowing up front: the recordings contain the game's
+executable, because that lives in the same memory being captured. The hardest
+result here — knowing what hit you — came from disassembling the game's own
+code out of a recording, after three rounds of searching memory for it had
+failed.
+
+## Contributing
+
+Read [CLAUDE.md](CLAUDE.md) first. It is short and mostly about writing things
+down.

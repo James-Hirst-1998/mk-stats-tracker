@@ -1,1 +1,17 @@
-mk
+# virtualenvs
+mk/
+.venv/
+venv/
+
+# python
+__pycache__/
+*.pyc
+
+# recordings are large and machine-local; MKW_RECORDINGS can point elsewhere
+recordings
+recordings/
+*.zst
+*.mov
+
+# scratch
+.DS_Store
