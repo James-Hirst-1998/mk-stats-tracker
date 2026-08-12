@@ -13,7 +13,8 @@ mk/bin/python3 -m lab.progress.find_progress
 
 | folder | what was being chased |
 |---|---|
-| `items/` | finding the held item and the item array. Several dead ends before the roulette/held pair came out |
+| `items/` | finding the held item and the item array, then the world item pools. Several dead ends before the roulette/held pair came out, and a wrong "live items" array before the per-type pools |
+| `ppc.py` | a small PowerPC disassembler, for reading the game's code out of a recording |
 | `damage/` | three failed rounds of searching memory for hit state, before the answer came from the game's code instead |
 | `progress/` | race progress, and the stall-based hit detection that the damage field later showed to be wrong |
 | `race/` | race clock, pause flag, "is a race running" |

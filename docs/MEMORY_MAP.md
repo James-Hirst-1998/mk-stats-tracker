@@ -155,36 +155,81 @@ Clouds, which pass between karts.
 
 **Not available here.** The collision code passes `r8 = 12` to the damage
 call, which is the "no attacker" value, so the victim never learns who fired.
+The item object does — see "Naming the item behind a hit" below.
 
 ## Items in the world
 
-The shells and bananas actually on the track.
+The shells, bananas and boxes actually on the track. One pool per item type,
+in a table hanging off `ItemDirector`:
 
 ```
-director = u32(0x809C3618)
-objects  = director + 0x264 + i*4,  i < 16
+entry = u32(0x809C3618) + 0x48 + type*0x24
 ```
 
 | offset | type | field |
 |---|---|---|
-| `+0x04` | u32 | item type — a different enum from the held-item ids |
+| `+0x00` | u32 | item type — equal to the entry's own index |
+| `+0x04` | ptr | array of pointers to that type's objects |
+| `+0x08` | u32 | capacity |
+| `+0x10` | u32 | how many are live right now |
+
+The live objects are `array[0 .. live-1]`, densely packed. Each object:
+
+| offset | type | field |
+|---|---|---|
+| `+0x04` | u32 | item type again |
 | `+0x6C` | u8 | owner: the racer who fired it |
 
-Type indexes a table of 3-word member-pointer descriptors at `0x808B5468`,
-stride `0xC`, with the function at `+8`. So `getDamageType` for type *t* is at
-`u32(0x808B5470 + t*0xC)`.
+A pool slot keeps its address for the whole race, so an address is a stable
+identity and an address leaving the live set is that item being destroyed.
+
+Capacities in a 12-player race: 14 green shells, 10 red, 18 bananas, 6 fake
+item boxes, 3 bob-ombs, 1 blue shell.
 
 | type | item | how known |
 |---|---|---|
-| 0 | green shell | resolves to the shell handler, paired with 1 |
-| 1 | red shell | 5/6 votes from watching spawns after a known use |
-| 2 | banana | 25/33 votes, and the banana handler |
-| 5 | blue shell | 1/1 vote, and the blue shell handler |
-| 7 | fake item box | 5/5 votes |
-| 9 | bob-omb | the bob-omb handler |
+| 0 | green shell | 66/66 spawns follow a green or triple-green use |
+| 1 | red shell | 65/65 |
+| 2 | banana | 163/163 |
+| 5 | blue shell | 15/15, capacity 1 |
+| 7 | fake item box | 29/29 |
+| 9 | bob-omb | 6/6 |
+| 4, 12 | star, golden mushroom | 1 and 3 spawns; they never hit anyone |
 
-This is read but **not yet used** — correlating an object vanishing with a
-racer being hit is unfinished. See `EXPERIMENTS.md`, "Open".
+**Watch out.** `ItemDirector + 0x264` looks like a live-item array and this
+repo read it as one. It is not: `0x80799CAC` fills it with the objects near
+**one kart**, capped at 16, and the collision loop consumes it per kart. That
+is why it never showed more than three items at once. The pools show up to 22.
+
+Type also indexes a table of 3-word member-pointer descriptors at `0x808B5468`,
+stride `0xC`, function at `+8`, so `getDamageType` for type *t* is at
+`u32(0x808B5470 + t*0xC)`. Disassembling those gives which object types can
+cause which damage type, with no scoring involved:
+
+| damage | object types | handler |
+|---|---|---|
+| 0 spin-out | 2 | `neg r3,r0` — 0 or -1 |
+| 2 knockback | 0, 1, 7 | `li r3,2` |
+| 7 launched | 5, 9 | `li r3,7` once it has gone off, else 0 |
+
+## Naming the item behind a hit
+
+The damage field says "knockback" and never says which shell. The object that
+did it is destroyed a fixed delay after the hit, while it breaks or explodes,
+so the pool that loses an entry names the item — and `+0x6C` names the thrower,
+which the damage path deliberately does not carry.
+
+Delay measured across seven recordings, not assumed:
+
+| damage | despawn follows the hit by |
+|---|---|
+| 0, 2 | 0.25–0.40s, i.e. 20 game frames, sharply peaked |
+| 7 | 1–2s, the longer explosion |
+
+**Confidence.** 165 of 182 item-caused hits get a name. 149 of those can be
+traced further back to the throw that spawned the object, read from the
+held-item field, which is a different field reached by a different path:
+**149 agree, 0 disagree**. See `analysis/name_hit_items.py`.
 
 ## Code landmarks
 
@@ -195,9 +240,12 @@ Read-only, for anyone re-deriving the above.
 | `0x80590D5C` | damage thunk, `(proxy, damageType)` |
 | `0x805675DC` | damage handler, stores the type |
 | `0x80590A5C` | `proxy -> [0] -> [0] -> u8 at +0x10` = player index |
-| `0x805725E8` | collision loop over the world item objects |
+| `0x805725E8` | collision loop, over the per-kart candidate buffer |
+| `0x80799CAC` | fills that buffer from the pools; returns how many |
 | `0x808B4C58` | damage type table, stride 12 |
 | `0x808B5468` | per-item-type handler table, stride 12 |
+
+`lab/ppc.py` disassembles any of these straight out of a recording.
 
 ## Capture coverage
 

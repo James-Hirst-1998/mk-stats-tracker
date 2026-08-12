@@ -53,6 +53,10 @@ def in_mem1(p):
     return A.MEM1[0] <= p < A.MEM1[1]
 
 
+def in_heap(p):
+    return A.HEAP[0] <= p < A.HEAP[1]
+
+
 def read_timer(addr):
     """Seconds, or None if the game has not filled this timer in yet."""
     if not in_mem1(addr) or not u8(addr + A.TIMER_SET):
@@ -140,22 +144,33 @@ def read_damage(base):
 
 
 def read_world_items():
-    """Items actually on the track: [(type, owner)], or None.
+    """Every item in the world as {object address: (type, owner)}, or None.
 
-    Not yet used for naming a hit - see `docs/EXPERIMENTS.md`, "open".
+    One pool per item type; the live ones are the front of each pool's array.
+    A pool slot keeps its address for the whole race, so the key is a stable
+    identity and an address disappearing is that item being destroyed.
+
+    Fails closed: every pool entry states its own type index and every object
+    repeats it, so a bad read is caught rather than returned.
     """
     director = u32(A.ITEM_DIRECTOR)
     if not in_mem1(director):
         return None
-    out = []
-    for i in range(A.MAX_OBJECTS):
-        p = u32(director + A.OFF_OBJECT_ARRAY + i * 4)
-        if not (0x80900000 <= p < 0x81800000):
-            continue
-        typ = u32(p + A.OFF_OBJECT_TYPE)
-        owner = u8(p + A.OFF_OBJECT_OWNER)
-        if typ < 24 and owner <= A.N_PLAYERS:
-            out.append((typ, owner))
+    out = {}
+    for t in range(A.N_OBJECT_TYPES):
+        e = director + A.OFF_POOL_TABLE + t * A.POOL_STRIDE
+        if u32(e + A.OFF_POOL_TYPE) != t:
+            return None
+        array = u32(e + A.OFF_POOL_ARRAY)
+        cap = u32(e + A.OFF_POOL_CAP)
+        live = u32(e + A.OFF_POOL_LIVE)
+        if not in_heap(array) or not 0 < cap <= A.MAX_POOL or live > cap:
+            return None
+        for k in range(live):
+            obj = u32(array + k * 4)
+            if not in_heap(obj) or u32(obj + A.OFF_OBJECT_TYPE) != t:
+                return None
+            out[obj] = (t, u8(obj + A.OFF_OBJECT_OWNER))
     return out
 
 
@@ -171,7 +186,8 @@ def read():
         r["item"] = items[0][r["slot"]] if items else None
         r["roulette"] = items[1][r["slot"]] if items else None
         r["damage"] = damage[r["slot"]] if damage else None
-    return {"course_code": read_course(), "players": players}
+    return {"course_code": read_course(), "players": players,
+            "world_items": read_world_items()}
 
 
 def splits_of(cumulative):

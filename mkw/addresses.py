@@ -58,16 +58,28 @@ DAMAGE_TABLE = 0x808B4C58
 NO_DAMAGE = -1
 
 # --- items in the world ---------------------------------------------------
-# The shells, bananas and boxes actually lying on the track or in flight.
-OFF_OBJECT_ARRAY = 0x264        # ItemDirector + this, then i*4
-MAX_OBJECTS = 16
-OFF_OBJECT_TYPE = 0x04          # u32, indexes OBJECT_HANDLER_TABLE
+# The shells, bananas and boxes actually lying on the track or in flight. One
+# pool per item type, in a table hanging off ItemDirector. A pool slot keeps
+# its address for the whole race, so an address is a stable identity.
+HEAP = (0x80900000, 0x81800000)
+
+OFF_POOL_TABLE = 0x48           # ItemDirector + this is pool entry 0
+POOL_STRIDE = 0x24
+OFF_POOL_TYPE = 0x00            # u32, equal to the entry's own index
+OFF_POOL_ARRAY = 0x04           # -> array of pointers to that type's objects
+OFF_POOL_CAP = 0x08             # u32
+OFF_POOL_LIVE = 0x10            # u32, live objects sit at array[0..live-1]
+N_OBJECT_TYPES = 15
+MAX_POOL = 64                   # sanity bound on a capacity
+
+OFF_OBJECT_TYPE = 0x04          # u32, same value as its pool's index
 OFF_OBJECT_OWNER = 0x6C         # u8, the racer who fired it
-OBJECT_HANDLER_TABLE = 0x808B5468   # stride 0xC, function pointer at +8
+OBJECT_HANDLER_TABLE = 0x808B5468   # stride 0xC, getDamageType at +8
 
 # --- code, for anyone wanting to re-derive the above ----------------------
 # These are read-only landmarks in the executable, not data.
 CODE_DAMAGE_THUNK = 0x80590D5C      # (proxy, damageType) -> virtual dispatch
 CODE_DAMAGE_HANDLER = 0x805675DC    # stores the type at sub+0x1C
 CODE_GET_PLAYER_IDX = 0x80590A5C    # proxy -> [0] -> [0] -> u8 at +0x10
-CODE_COLLISION_LOOP = 0x805725E8    # walks the world item objects
+CODE_COLLISION_LOOP = 0x805725E8    # consumes the per-kart candidate buffer
+CODE_ITEM_QUERY = 0x80799CAC        # fills that buffer, ItemDirector + 0x264

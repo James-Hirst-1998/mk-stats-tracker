@@ -55,9 +55,22 @@ DAMAGE_TYPES = {
 BY_ITEM = {0, 2, 7, 10, 11, 13, 17}
 
 # Item objects in the world use their own enum, separate from ITEMS above.
-# Learned by watching which object appears when a known item is used, and
-# cross-checked against the handler each index resolves to.
+# Learned by watching which object pool gains an entry when a known item is
+# used: 66/66 for green, 65/65 red, 163/163 banana, 15/15 blue, 29/29 fake box,
+# 6/6 bob-omb across seven recordings. The remaining indexes exist as pools but
+# never spawned in those races.
 OBJECT_TYPES = {
-    0: "Green Shell", 1: "Red Shell", 2: "Banana", 5: "Blue Shell",
-    7: "Fake Item Box", 9: "Bob-omb",
+    0: "Green Shell", 1: "Red Shell", 2: "Banana", 4: "Star",
+    5: "Blue Shell", 7: "Fake Item Box", 9: "Bob-omb",
+    12: "Golden Mushroom",
 }
+
+# Which object types can produce a given damage type. Not guessed: each type's
+# getDamageType is `u32(OBJECT_HANDLER_TABLE + type*0xC + 8)`, and disassembling
+# them gives `li r3,2` for 0, 1 and 7, `neg r3,r0` (0 or -1) for 2, and
+# `li r3,7` for 5 and 9 once the shell or bomb has gone off.
+DAMAGE_FROM_OBJECT = {0: {2, 5, 9}, 2: {0, 1, 7}, 7: {5, 9}}
+
+# The item ids that produce each object type, for sanity-checking a name
+# against the throw that spawned it.
+OBJECT_FROM_ITEM = {0: {0, 16}, 1: {1, 17}, 2: {2, 18}, 5: {7}, 7: {3}, 9: {6}}

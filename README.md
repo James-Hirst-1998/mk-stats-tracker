@@ -18,13 +18,13 @@ All twelve racers, every frame, straight from the game's own memory:
   what the roulette has already secretly decided about 3.5 seconds early
 - **Being hit, and what hit you** — spin-out, knockback, launched, crushed,
   POW'd, and which of those came from an item versus a track hazard
-- **Blue shells specifically**, told apart from bob-ombs
+- **Which item, by name, and who threw it** — green shell, red shell, fake
+  item box, banana, bob-omb, blue shell. 165 of 182 hits across the recordings
 - **Course**
 
 Everything above is validated across seven recorded races from seven separate
 Dolphin launches. What is *not* solved yet is listed in
-[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) under "Open" — including who fired
-the shell that hit you, and telling a green shell from a red one.
+[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) under "Open".
 
 ## Setup
 
@@ -47,11 +47,18 @@ sudo mk/bin/python3 -m tools.live
 second and prints an event log underneath:
 
 ```
-   0:36.917  you were hit - Banana (spin-out)
+   0:36.917  you were hit - Banana (slot 2's) (spin-out)
+   1:05.467  slot 1 was hit - Red Shell (yours) (knockback)
    1:09.717  slot 11 was hit - Blue Shell (slot 6's) (launched)
    1:09.867  slot 2 was hit - Blue Shell (slot 6's) (launched)
+   1:17.117  slot 10 was hit - Green Shell (slot 7's) (knockback)
    1:18.900  you were hit - Blue Shell (slot 1's) (launched)
+   1:33.433  slot 1 was hit - Fake Item Box (slot 2's) (knockback)
 ```
+
+A hit line appears once the item that caused it has been destroyed, which is
+0.33s later for a shell and 1–2s for an explosion. That is the delay that
+makes naming it possible, so the line is held back rather than printed twice.
 
 ## Record a race to work on offline
 

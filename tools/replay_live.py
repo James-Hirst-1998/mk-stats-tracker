@@ -62,6 +62,7 @@ def main():
         race.update(r)
         if r is not None:
             last = r
+    race.flush()                    # hits still inside their despawn window
 
     print("%s" % os.path.basename(dirs[0]))
     print("%d events\n" % len(race.events))

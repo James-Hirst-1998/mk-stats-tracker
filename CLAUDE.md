@@ -14,6 +14,9 @@ recorded sessions, never by poking at a live race.
 ## Working rules
 
 - **Never work on `main`.** Branch for everything, push the branch, open a PR.
+- **Start every piece of work by pulling `main` and branching off it.** Not off
+  whatever branch happens to be checked out — the last one has usually landed
+  already, and building on it duplicates work that is already in.
 - One branch at a time. Don't start a second line of work before the first
   lands.
 - Nothing enters `mkw/` until it holds across recordings from **separate

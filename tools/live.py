@@ -10,7 +10,7 @@ import time
 
 from mkw import addresses as A
 from mkw import reader
-from mkw.events import Race, fmt
+from mkw.events import Race, fmt, DROPOUT
 from mkw.names import COURSES, ITEMS, DAMAGE_TYPES
 
 REFRESH = 0.05
@@ -57,6 +57,7 @@ def main():
         print("not hooked to Dolphin - is the emulator running?")
         return
     race = Race()
+    last = None
     print("\033[?25l", end="")            # hide cursor
     try:
         while True:
@@ -65,7 +66,13 @@ def main():
             except Exception:
                 r = None
             race.update(r)
-            print("\033[H\033[J" + render(r, race) + "\n\n(ctrl-c to stop)",
+            # Hold the last good frame through a torn read rather than
+            # flashing "waiting for a race" for one refresh.
+            if r is not None:
+                last = r
+            elif race.missed >= DROPOUT:
+                last = None
+            print("\033[H\033[J" + render(last, race) + "\n\n(ctrl-c to stop)",
                   end="", flush=True)
             time.sleep(REFRESH)
     except KeyboardInterrupt:
