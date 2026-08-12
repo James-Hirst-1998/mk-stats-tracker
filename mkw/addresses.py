@@ -34,6 +34,16 @@ TYPE_LOCAL, TYPE_CPU, TYPE_ONLINE = 0, 1, 2
 MAX_CHARACTER = 0x30            # ids above the 24 named ones are Miis
 MAX_VEHICLE = 0x24
 
+# The settings for the race, immediately after the twelve racer structs. Only
+# the first word is decoded: it equals the course id from the validated
+# `COURSE_PTR` path in all seven recordings. Everything after it is kept in a
+# race log as raw hex rather than guessed at - which race of a VS sequence this
+# is should be in here, and the way to find out is to record a VS sequence and
+# look at what moves.
+OFF_SETTINGS = 0x28 + N_PLAYERS * RACER_STRIDE      # 0xB68
+SETTINGS_WORDS = 16
+OFF_SETTINGS_COURSE = 0x00
+
 # --- course ---------------------------------------------------------------
 COURSE_PTR = 0x809C27F8
 COURSE_OFFSET = 0x13
@@ -46,12 +56,25 @@ PLAYER_STRIDE = 0xC4
 OFF_COMPLETION = 0x0C           # float, lap + fraction of the current lap
 OFF_LAP_FRACTION = 0x18         # float, 0..1 through the current lap
 OFF_POSITION = 0x20             # u8, 1..12
-OFF_CURRENT_LAP = 0x24          # u16, becomes maxLap + 1 on finishing
-OFF_MAX_LAP = 0x26              # u8
+OFF_CURRENT_LAP = 0x24          # u16, becomes lap_reached + 1 on finishing
+# The highest lap this racer has reached, NOT how many laps the race is. It
+# follows +0x24 up through the race and stops there when they cross the line,
+# which is what makes `lap > lap_reached` mean "finished".
+OFF_LAP_REACHED = 0x26          # u8
 OFF_FRAME_COUNTER = 0x2C        # u32 at 60Hz, freezes when that racer finishes
 OFF_FRAMES_IN_FIRST = 0x30      # u32 at 60Hz, time spent leading
 OFF_LAP_TIMES = 0x3C            # Timer*, one per lap, cumulative
 OFF_FINISH_TIME = 0x40          # Timer*
+
+# --- the race clock -------------------------------------------------------
+# Sits in Raceinfo just past the twelve racer structs (0x120 + 12*0xC4 = 0xA50).
+# u32 at 60Hz. Zero for the whole intro and countdown, so it doubles as "the
+# race has started", and unlike the per-racer counter above it keeps running
+# after a racer finishes.
+OFF_RACE_FRAMES = 0xA98
+# The per-racer counter at +0x2C starts at the intro, this one at GO, and the
+# gap is exactly this in every recording. Documentation, not used for a read.
+COUNTDOWN_FRAMES = 412
 
 # --- Timer ----------------------------------------------------------------
 TIMER_SIZE = 0x0C

@@ -1,15 +1,25 @@
 """Turn per-frame snapshots into a stream of race events.
 
+An event is a small dict: a race time `t`, a `type`, and whatever that type
+needs. Ids are stored, never names - `mkw.names` turns 7 into "Blue Shell", and
+a better name later should not mean re-running a race. The text the live view
+prints is produced from the same dicts by `describe`, so what is shown and what
+is stored cannot drift apart.
+
+Adding a new event type is: detect it in `update`, give it a name and fields
+here, add a line to `describe`, and say what it means in `docs/RACE_LOG.md`.
+Readers ignore types they do not know, so old files keep working.
+
 Everything here is derived from `mkw.reader` output only. The one piece of
-inference left is `name_launched`, which is marked as such and is now only a
-fallback.
+inference left is `name_launched`, which is marked as such in the event itself
+(`"guess": true`) and is only a fallback.
 """
 
 import bisect
 from collections import Counter
 
 from mkw import addresses as A
-from mkw.names import (COURSES, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
+from mkw.names import (course_name, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
                        DAMAGE_FROM_OBJECT, CHARACTERS, VEHICLES)
 
 EMPTY = A.EMPTY_ITEM
@@ -35,6 +45,36 @@ KEEP = 6.0                      # seconds of despawn history worth holding
 # across seven recordings, because a recording is one consistent image.
 DROPOUT = 20                    # unreadable frames in a row before giving up
 
+# The race clock resets to 0 for the next countdown, which is how a second race
+# is told from the first even when it is on the same course. One frame of it is
+# not trusted for the same reason one unreadable frame is not: a live snapshot
+# can tear. Two in a row cannot be a tear, and the countdown lasts 137 frames
+# at 20 Hz, so there is no hurry.
+RESTART = 3
+
+# How often the racers' progress is sampled, in race seconds. This is what a
+# race is replayed from - position and gap at any moment come out of it - and
+# it is the only thing here that is not an event. 5 Hz costs about 70 kB in a
+# 3-minute race and progress is smooth enough between samples to interpolate.
+TRACK_HZ = 5
+
+# Progress is lap plus fraction of a lap and climbs smoothly, EXCEPT at the
+# finish, where crossing the line puts it back to the start of the last lap -
+# 3.9994 then 3.0002, measured on GCN Peach Beach. Interpolating across that
+# gives a value a whole lap out, so a step this big is treated as the jump it
+# is and the nearer of the two readings is taken instead.
+JUMP = 0.5
+
+# Stored, but not printed. Twelve racers jostling produce a few hundred
+# position swaps in a race, most of them in the first two seconds off the grid.
+# They are what "who was in front, and when" is rebuilt from, so they are kept;
+# they are just not something to read past.
+QUIET = ("pos",)
+
+
+def readable(events):
+    return [e for e in events if e["type"] not in QUIET]
+
 
 def fmt(sec):
     if sec is None:
@@ -50,11 +90,108 @@ def ordinal(n):
     return "%d%s" % (n, suffix)
 
 
-class Race:
-    """Consumes snapshots, emits (clock, text) events."""
+class Field:
+    """Display names for the twelve slots.
 
-    def __init__(self, local_slot=A.LOCAL_SLOT):
+    Characters are unique in every race seen so far, so the character name on
+    its own identifies a racer. It is not guaranteed - Miis and online races
+    can repeat one - so a repeat gets a number rather than two racers sharing
+    a name. Built the same way from a live read and from a stored log, so a
+    replayed race reads identically to the one that was played.
+    """
+
+    def __init__(self, racers=None, local_slot=A.LOCAL_SLOT):
         self.local_slot = local_slot
+        self.racers = racers
+        self.names = {}
+        if racers:
+            repeated = Counter(r["character"] for r in racers)
+            used = Counter()
+            for r in racers:
+                c = r["character"]
+                name = CHARACTERS.get(
+                    c, "Mii" if c > max(CHARACTERS) else "?%d" % c)
+                if repeated[c] > 1:
+                    used[c] += 1
+                    name = "%s #%d" % (name, used[c])
+                self.names[r["slot"]] = name
+
+    def who(self, slot):
+        if slot == self.local_slot:
+            return "you"
+        return self.names.get(slot, "slot %d" % slot)
+
+    def name(self, slot):
+        return self.names.get(slot, "slot %d" % slot)
+
+    def whose(self, slot):
+        if slot == self.local_slot:
+            return "yours"
+        n = self.name(slot)
+        return n + ("'" if n.endswith("s") else "'s")
+
+    def owners(self, slots):
+        if not slots:
+            return None
+        return " and ".join(self.whose(s) for s in slots)
+
+    def me(self):
+        return next((r for r in (self.racers or [])
+                     if r["slot"] == self.local_slot), None)
+
+
+def describe(ev, field):
+    """One line of English for an event. The live view and the stored log both
+    go through here, so they cannot say different things."""
+    t, k = ev["type"], ev
+    if t == "start":
+        return "race start - %s" % course_name(ev.get("course"))
+    if t == "field":
+        return ev.get("text", "")
+    if t == "box":
+        return "%s hit a box - roulette will land on %s" % (
+            field.who(k["slot"]), ITEMS.get(k["item"], k["item"]))
+    if t == "hold":
+        return "%s now holding %s" % (field.who(k["slot"]),
+                                      ITEMS.get(k["item"], k["item"]))
+    if t == "use":
+        return "%s used %s" % (field.who(k["slot"]),
+                               ITEMS.get(k["item"], k["item"]))
+    if t == "swap":
+        return "%s %s -> %s" % (field.who(k["slot"]),
+                                ITEMS.get(k["from"], k["from"]),
+                                ITEMS.get(k["to"], k["to"]))
+    if t == "hit":
+        kind, cause = DAMAGE_TYPES.get(k["damage"], ("Hit", "something"))
+        named = None
+        if k.get("object") is not None:
+            named = "%s (%s)" % (
+                OBJECT_TYPES.get(k["object"], "item %d" % k["object"]),
+                field.owners(k.get("by")) or "unknown")
+        return "%s hit - %s (%s)%s%s" % (
+            "you were" if k["slot"] == field.local_slot
+            else "%s was" % field.who(k["slot"]),
+            named or cause, kind.lower(),
+            "" if k["damage"] in BY_ITEM else ", not an item",
+            "?" if k.get("guess") else "")
+    if t == "lap":
+        return "%s completed lap %d in %s" % (field.who(k["slot"]), k["lap"],
+                                              fmt(k["split"]))
+    if t == "finish":
+        return "%s FINISHED P%d in %s" % (field.who(k["slot"]), k["position"],
+                                          fmt(k["time"]))
+    if t == "pos":
+        return "%s P%d -> P%d" % (field.who(k["slot"]), k["from"], k["to"])
+    return "%s %s" % (t, {a: b for a, b in ev.items()
+                          if a not in ("t", "type")})
+
+
+class Race:
+    """Consumes snapshots, emits events. Call `end` when the race is over."""
+
+    def __init__(self, local_slot=A.LOCAL_SLOT, on_end=None):
+        self.local_slot = local_slot
+        self.on_end = on_end
         self.reset()
 
     def reset(self):
@@ -67,68 +204,70 @@ class Race:
         self.born = {}              # object address -> the item id thrown
         self.clock = 0.0
         self.course = None
+        self.settings = None
         self.started = False
+        self.field_logged = False
+        self.begins = 0.0           # race time of the first frame actually seen
         self.missed = 0
-        self.racers = None
-        self.names = {}
+        self.restarted = 0
+        self.peak = 0.0             # highest race clock seen in this race
+        self.track = {}             # slot -> progress samples, TRACK_HZ apart
+        self.next_sample = 0.0
+        self.prev_track = (0.0, {})
+        self.last = None            # last readable snapshot, for the standings
+        self.field = Field(None, self.local_slot)
 
     # --- who is driving ----------------------------------------------------
 
-    def name_racers(self, racers):
-        """Build a display name per slot. Falls back to the slot number.
+    @property
+    def racers(self):
+        return self.field.racers
 
-        Characters are unique in every race seen so far, so the character name
-        on its own identifies a racer. It is not guaranteed - Miis and online
-        races can repeat one - so a repeat gets a number rather than two racers
-        sharing a name.
-        """
-        if racers is None or racers == self.racers:
-            return
-        self.racers = racers
-        repeated = Counter(r["character"] for r in racers)
-        used = Counter()
-        self.names = {}
-        for r in racers:
-            c = r["character"]
-            name = CHARACTERS.get(c, "Mii" if c > max(CHARACTERS) else "?%d" % c)
-            if repeated[c] > 1:
-                used[c] += 1
-                name = "%s #%d" % (name, used[c])
-            self.names[r["slot"]] = name
+    @property
+    def names(self):
+        return self.field.names
 
     def who(self, slot):
-        if slot == self.local_slot:
-            return "you"
-        return self.names.get(slot, "slot %d" % slot)
+        return self.field.who(slot)
 
-    def whose(self, slot):
-        if slot == self.local_slot:
-            return "yours"
-        name = self.names.get(slot, "slot %d" % slot)
-        return name + ("'" if name.endswith("s") else "'s")
+    def name_racers(self, racers):
+        if racers is None or racers == self.field.racers:
+            return
+        self.field = Field(racers, self.local_slot)
 
     def log_field(self):
-        """One line naming everyone, so the log says who the CPUs were."""
+        """Lines naming everyone, so the log says who the CPUs were.
+
+        RaceConfig can be unreadable at the moment the lights go out - it is a
+        separate pointer path in MEM2 and `read_racers` refuses to guess - so
+        the race starts without a field and picks the names up on a later
+        frame. That is a missing line, not a reason to stop.
+        """
         if not self.racers:
             return
-        me = next((r for r in self.racers if r["slot"] == self.local_slot), None)
+        self.field_logged = True
+        me = self.field.me()
         if me is not None:
-            self.log(0.0, "you are %s on the %s, starting %s"
-                     % (self.names.get(me["slot"], "?"),
+            self.log(self.begins, "field", text="you are %s on the %s, starting %s"
+                     % (self.field.name(me["slot"]),
                         VEHICLES.get(me["vehicle"], "vehicle %d" % me["vehicle"]),
                         ordinal(me["grid"])))
         for cpu in (False, True):
-            who = [self.names[r["slot"]] for r in self.racers
+            who = [self.field.name(r["slot"]) for r in self.racers
                    if r["cpu"] == cpu and r["slot"] != self.local_slot]
             if who:
-                self.log(0.0, "%d %s: %s"
+                self.log(self.begins, "field", text="%d %s: %s"
                          % (len(who), "CPU" if cpu else "human", ", ".join(who)))
 
-    def log(self, t, text):
+    def log(self, t, type, **fields):
         """Insert in race order; a hit is logged after later events arrive."""
-        i = bisect.bisect_right([e[0] for e in self.events], t)
-        self.events.insert(i, (t, text))
-        del self.events[:-300]
+        ev = dict(t=round(t, 3), type=type, **fields)
+        i = bisect.bisect_right([e["t"] for e in self.events], ev["t"])
+        self.events.insert(i, ev)
+        return ev
+
+    def text(self, ev):
+        return describe(ev, self.field)
 
     # --- items in the world ------------------------------------------------
 
@@ -156,7 +295,7 @@ class Race:
     # --- hits --------------------------------------------------------------
 
     def name_hit(self, t, slot, damage):
-        """Which item did it, from the object destroyed by the hit.
+        """(object type, owners) for the item that did it, or None.
 
         Only object types whose `getDamageType` can return this damage type are
         considered - that mapping is read out of the game's code, not guessed -
@@ -174,12 +313,10 @@ class Race:
         pick = [d for d in cand if d[2] != slot] or cand
         if len({d[1] for d in pick}) != 1:
             return None
-        owners = sorted({d[2] for d in pick})
-        return "%s (%s)" % (OBJECT_TYPES.get(pick[0][1], "item %d" % pick[0][1]),
-                            " and ".join(self.whose(o) for o in owners))
+        return pick[0][1], sorted({d[2] for d in pick})
 
     def name_launched(self, t):
-        """Fallback for a launch whose object was missed.
+        """Fallback for a launch whose object was missed. Marked as a guess.
 
         A Bob-omb and a Blue Shell both write damage type 7, so the damage field
         alone says only "launched". Measured across seven recordings, 21 of 23
@@ -190,21 +327,22 @@ class Race:
                 if u[2] == BLUE_SHELL and 3.5 <= t - u[0] <= 7.0]
         bomb = [u for u in self.uses if u[2] == BOB_OMB and t - u[0] <= 3.0]
         if blue and not bomb:
-            return "Blue Shell (slot %d's)" % blue[-1][1]
+            return 5, [blue[-1][1]]
         if bomb and not blue:
-            return "Bob-omb (slot %d's)" % bomb[-1][1]
+            return 9, [bomb[-1][1]]
         return None
 
     def log_hit(self, t, slot, damage):
-        kind, cause = DAMAGE_TYPES.get(damage, ("Hit", "something"))
         named = self.name_hit(t, slot, damage)
+        guess = False
         if named is None and damage == LAUNCHED:
             named = self.name_launched(t)
-        self.log(t, "%s hit - %s (%s)%s"
-                 % ("you were" if slot == self.local_slot
-                    else "%s was" % self.who(slot),
-                    named or cause, kind.lower(),
-                    "" if damage in BY_ITEM else ", not an item"))
+            guess = named is not None
+        obj, by = named if named else (None, None)
+        ev = dict(slot=slot, damage=damage, object=obj, by=by)
+        if guess:
+            ev["guess"] = True
+        self.log(t, "hit", **ev)
 
     def settle(self, now, force=False):
         """Report any hit whose object has had time to despawn."""
@@ -220,6 +358,82 @@ class Race:
         """Report everything still waiting; for the end of a race."""
         self.settle(self.clock, force=True)
 
+    # --- progress over time ------------------------------------------------
+
+    def sample(self, r):
+        """Every racer's progress, on a fixed grid, for replaying the race.
+
+        The events say what happened; this says where everyone was while it
+        happened, which is what a gap, a chase or an overtake is made of. On a
+        grid rather than per frame so a sample index is a time and the arrays
+        stay the same length - a dropped frame repeats the last value rather
+        than shifting everything after it.
+        """
+        now = {p["slot"]: p["completion"] for p in r["players"]}
+        if not self.started:
+            self.prev_track = (self.clock, now)
+            return
+        while self.clock >= self.next_sample:
+            for slot, value in now.items():
+                self.track.setdefault(slot, []).append(
+                    round(between(self.prev_track, (self.clock, now),
+                                  slot, self.next_sample), 4))
+            self.next_sample += 1.0 / TRACK_HZ
+        self.prev_track = (self.clock, now)
+
+    # --- the end of a race -------------------------------------------------
+
+    def standings(self):
+        """Final state per racer, straight off the last readable snapshot.
+
+        Stored alongside the events so a report does not have to replay them,
+        and so the game's own numbers - lap times, finish time, time spent
+        leading - are kept as read rather than re-derived.
+
+        `finish` reads back the *current* race time for a racer still going, so
+        it is only kept once they have actually crossed the line.
+        """
+        if self.last is None:
+            return []
+        return [{"slot": p["slot"], "position": p["position"],
+                 "finished": p["finished"],
+                 "time": p["finish"] if p["finished"] else None,
+                 "lap_reached": p["lap_reached"],
+                 "laps": splits(p["cumulative"]),
+                 # +0x30 as read. It starts at the intro, not at GO, so
+                 # whoever is on pole is credited the countdown - about 6.87s
+                 # they did not spend racing. Kept raw and corrected where it
+                 # is used, rather than fudged here.
+                 "leading": round(p["leading"], 3),
+                 # +0x2C stops when this racer's race ends, so this is how long
+                 # they were racing: their finish time, or where they got to
+                 # when the race ended around them.
+                 "raced": round(p["clock"] - A.COUNTDOWN_FRAMES / 60.0, 3)}
+                for p in sorted(self.last["players"],
+                                key=lambda x: x["position"])]
+
+    def lap_count(self):
+        """How many laps the race was.
+
+        Not a field the game exposes anywhere this repo has found: +0x26 is the
+        highest lap a racer has *reached*, not the length of the race. Whoever
+        finished reached the last lap, so the maximum over the field is it. A
+        race abandoned before anyone finished will under-report.
+        """
+        return max((s["lap_reached"] for s in self.standings()), default=None)
+
+    def worth_keeping(self):
+        """A race that never started is menu noise, not a race."""
+        return self.started and any(e["type"] not in ("start", "field")
+                                    for e in self.events)
+
+    def end(self):
+        """Close the race off and hand it to `on_end`. Safe to call twice."""
+        self.flush()
+        if self.on_end and self.worth_keeping():
+            self.on_end(self)
+        self.started = False
+
     # --- the snapshot loop -------------------------------------------------
 
     def update(self, r):
@@ -227,19 +441,52 @@ class Race:
             # One unreadable frame is a torn read, not the end of the race.
             self.missed += 1
             if self.prev and self.missed >= DROPOUT:
-                self.flush()
+                self.end()
                 self.reset()
             return
         self.missed = 0
-        if self.course is None:
-            self.course = r["course_code"]
-        elif r["course_code"] != self.course:
-            self.flush()
-            self.reset()
-            self.course = r["course_code"]
 
-        self.clock = max(p["clock"] for p in r["players"])
+        # A second race on the same course looks identical to the first except
+        # that the clock has gone back to the countdown. That, not the course,
+        # is what separates the races in a session - the course only changes
+        # between them if the next race is somewhere else.
+        # Against the highest clock this race has reached, not against the last
+        # frame: once one frame has been seen at 0 the last frame is 0 too, so
+        # comparing with that makes the second frame look normal and the run of
+        # them never reaches RESTART. Two races on the same course then end up
+        # in one file, which is the whole thing this is here to prevent.
+        course = r["course_code"]
+        now = r.get("race_time") or 0.0
+        back = self.started and now < self.peak
+        self.restarted = self.restarted + 1 if back else 0
+        moved = (course is not None and self.course is not None
+                 and course != self.course)
+        if moved or self.restarted >= RESTART:
+            self.end()
+            self.reset()
+        if course is not None:
+            self.course = course
+        self.last = r
+        if r.get("settings"):
+            self.settings = r["settings"]
+
+        # The race clock, not the per-racer frame counter: that one starts at
+        # the intro camera 412 frames early and freezes when a racer finishes.
+        self.clock = now
+        self.peak = max(self.peak, now)
         self.name_racers(r.get("racers"))
+
+        if not self.started and r.get("race_frames"):
+            self.started = True
+            # Not always 0: a recording, or the tool, can be started after the
+            # lights have gone out. Everything before this was never seen, and
+            # a reader has to know that rather than assume the grid held.
+            self.begins = self.clock
+            self.next_sample = self.clock       # anchor the progress grid
+            self.log(self.clock, "start", course=self.course)
+        if self.started and not self.field_logged:
+            self.log_field()
+        self.sample(r)
 
         for p in r["players"]:
             s = p["slot"]
@@ -247,30 +494,26 @@ class Race:
             self.prev[s] = dict(p)
             if old is None:
                 continue
-            t = p["clock"]
-
-            if not self.started and p["completion"] > old["completion"] + 1e-4:
-                self.started = True
-                self.log(0.0, "race start - %s"
-                         % COURSES.get(self.course,
-                                       "course 0x%02x" % (self.course or 0)))
-                self.log_field()
+            t = self.clock
 
             if p["lap"] > old["lap"]:
                 sp = splits(p["cumulative"])
                 done = old["lap"]
                 if p["finished"]:
                     self.log(p["finish"] if p["finish"] is not None else t,
-                             "%s FINISHED P%d in %s"
-                             % (self.who(s), p["position"], fmt(p["finish"])))
+                             "finish", slot=s, position=p["position"],
+                             time=p["finish"])
                 elif 0 < done <= len(sp):
-                    self.log(t, "%s completed lap %d in %s"
-                             % (self.who(s), done, fmt(sp[done - 1])))
+                    self.log(t, "lap", slot=s, lap=done, split=sp[done - 1],
+                             total=p["cumulative"][done - 1])
+
+            if p["position"] != old["position"] and self.started:
+                self.log(t, "pos", slot=s, **{"from": old["position"],
+                                              "to": p["position"]})
 
             a, b = old.get("roulette"), p.get("roulette")
             if a == EMPTY and b not in (None, EMPTY):
-                self.log(t, "%s hit a box - roulette will land on %s"
-                         % (self.who(s), ITEMS.get(b, b)))
+                self.log(t, "box", slot=s, item=b)
 
             a, b = old.get("damage"), p.get("damage")
             if a is not None and b is not None and a != b and b >= 0:
@@ -279,15 +522,13 @@ class Race:
             a, b = old.get("item"), p.get("item")
             if a is not None and b is not None and a != b:
                 if a == EMPTY:
-                    self.log(t, "%s now holding %s"
-                             % (self.who(s), ITEMS.get(b, b)))
+                    self.log(t, "hold", slot=s, item=b)
                 elif b == EMPTY:
                     self.uses.append((t, s, a))
                     self.uses = [u for u in self.uses if t - u[0] <= 20.0]
-                    self.log(t, "%s used %s" % (self.who(s), ITEMS.get(a, a)))
+                    self.log(t, "use", slot=s, item=a)
                 else:
-                    self.log(t, "%s %s -> %s"
-                             % (self.who(s), ITEMS.get(a, a), ITEMS.get(b, b)))
+                    self.log(t, "swap", slot=s, **{"from": a, "to": b})
 
         # After the item uses above, so an object that appears in the same
         # frame as the throw can still be tied to it.
@@ -295,11 +536,28 @@ class Race:
         self.settle(self.clock)
 
 
+def between(before, after, slot, t):
+    """One racer's progress at exactly `t`, from the frames either side.
+
+    The sampler is driven by frames arriving at 20 Hz and the grid is 5 Hz, so
+    without this a sample would carry the value from up to a frame after the
+    time it claims - a quarter of a grid step, and a whole lap out if that
+    frame is the one where the racer crossed the line.
+    """
+    (t0, a), (t1, b) = before, after
+    if slot not in a or slot not in b or t1 <= t0:
+        return b.get(slot, a.get(slot, 0.0))
+    f = min(max((t - t0) / (t1 - t0), 0.0), 1.0)
+    if abs(b[slot] - a[slot]) > JUMP:
+        return a[slot] if f < 0.5 else b[slot]
+    return a[slot] + (b[slot] - a[slot]) * f
+
+
 def splits(cumulative):
     out, prev = [], 0.0
     for c in cumulative:
         if c is None:
             break
-        out.append(c - prev)
+        out.append(round(c - prev, 3))
         prev = c
     return out

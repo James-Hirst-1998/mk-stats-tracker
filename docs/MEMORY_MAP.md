@@ -74,15 +74,36 @@ base = u32(0x809BD730) + 0x120,  12 entries of 0xC4
 | `+0x0C` | f32 | race completion — lap number plus fraction of the current lap |
 | `+0x18` | f32 | lap completion, 0..1 |
 | `+0x20` | u8 | position, 1..12 |
-| `+0x24` | u16 | current lap; becomes `maxLap + 1` on finishing |
-| `+0x26` | u8 | laps in this race |
-| `+0x2C` | u32 | frame counter at 60 Hz; freezes when that racer finishes |
-| `+0x30` | u32 | frames spent in first place |
+| `+0x24` | u16 | current lap; becomes `+0x26 + 1` on finishing |
+| `+0x26` | u8 | highest lap **reached** — not the length of the race |
+| `+0x2C` | u32 | frame counter at 60 Hz, from the intro; stops when that racer's race ends |
+| `+0x30` | u32 | frames spent in first place, counted from the intro |
 | `+0x3C` | `Timer*` | lap finish times, one per lap, cumulative |
 | `+0x40` | `Timer*` | race finish time |
 
 `Timer`, size `0xC`: `+0x00` vtable, `+0x04` u16 minutes, `+0x06` u8 seconds,
 `+0x08` u16 milliseconds, `+0x0A` set-yet flag.
+
+**Watch out — three of these are not what they look like.**
+
+`+0x26` is *not* how many laps the race is. It follows `+0x24` up through the
+race and stops where that racer stopped: it reads 1, then 2, then 3. It looks
+like a lap count in a finished race and only in a finished race. Nothing found
+so far reads the race's length directly, so `mkw/racelog.py` takes the maximum
+over the field, which is right whenever somebody finished. What makes
+`+0x24 > +0x26` mean "finished" is that `+0x24` alone goes one past it.
+
+`+0x2C` is not the race clock — see below. It also does not only stop on
+finishing: in two of the seven recordings the human never crossed the line and
+it stopped anyway, at the moment the last CPU finished. It is that racer's
+race ending, however it ended.
+
+`+0x30` starts at the intro too, so whoever lines up on pole is credited the
+whole countdown — about 6.87s — as time in first. Measured, not assumed: it is
+the same 412 frames the two clocks differ by, and taking it off makes the
+counter agree with the same quantity rebuilt from position changes for all
+twelve racers across all seven recordings. `mkw/report.py` subtracts it; the
+stored value stays raw.
 
 **How.** The layout follows SeekyCt's public `mkw-structures` documentation of
 `RaceinfoPlayer`, used as a source of candidates and then checked here. Two
@@ -90,11 +111,47 @@ things differ in PAL: the `Timer*` pair sits 4 bytes later than documented,
 and `Timer` carries a vtable at `+0x00`.
 
 **Confidence.** Ranking the twelve racers by `+0x0C` reproduces the game's own
-reported position 98–99% of the time across four recordings.
+reported position 98–99% of the time across four recordings. Which is why
+`+0x20` stays the authority on position and `+0x0C` is used for gaps.
+
+**Watch out.** `+0x0C` is not monotonic. Crossing the line on the final lap
+puts it back to the start of that lap — 3.9994 then 3.0002 on GCN Peach Beach —
+so it is progress through the race, not distance travelled, and interpolating
+across that step gives a value a whole lap out.
 
 **Watch out.** `PLAYER_DELTA` was `0x140` for a while, which is one struct
 early — every field read the *next* racer's value and still looked plausible.
 The `+0x0B0` progress claim that came from it measured at chance.
+
+## The race clock
+
+```
+frames = u32(u32(0x809BD730) + 0xA98)      # 60 Hz, 0 until GO
+```
+
+The clock the game puts on screen, and what every event in a race log is timed
+against. It sits in `Raceinfo` just past the twelve racer structs
+(`0x120 + 12*0xC4 = 0xA50`).
+
+**Why not `+0x2C`.** That one starts at the intro camera, 412 frames — 6.867s
+— earlier, which is why the live view used to show a clock ticking over the
+track flyover before the countdown, and why every event was logged 6.87s later
+than it happened. It also stops when that racer's race ends, so it is not a
+race clock after the finish either.
+
+**Confidence.** `analysis/validate_race_clock.py`, all seven recordings:
+
+- exactly `0` for every frame of the intro and countdown, and its first
+  non-zero frame is never after the first frame any racer moves forward
+- `+0x2C - 0xA98 = 412` on 18,437 of 18,441 frames where both counters
+  advance. The four exceptions read 408, 410, 410 and 411 — a snapshot landing
+  between the game's two writes, not a drift
+- where the two disagree it is always `0xA98` still counting and `+0x2C`
+  stopped. The reverse — the race clock stalling while the per-racer one runs
+  — happens on 0 frames of 21,926
+- at every lap boundary it agrees with the game's own cumulative lap `Timer`,
+  reached by an entirely different pointer path, to within 0.18s at worst,
+  against a 20 Hz sampling interval
 
 ## Items — `KartItem`
 
@@ -292,6 +349,22 @@ Read-only, for anyone re-deriving the above.
 | `0x808B5468` | per-item-type handler table, stride 12 |
 
 `lab/ppc.py` disassembles any of these straight out of a recording.
+
+## Race settings
+
+```
+settings = u32(0x809BD728) + 0x28 + 12*0xF0      # = cfg + 0xB68
+```
+
+Immediately after the twelve racer structs. Only the first word is decoded:
+`settings[0]` is the course id, and it equals the validated `COURSE_PTR` read
+on all seven recordings — an independent second source for the same thing.
+
+The rest is **not decoded**. Which race of a VS sequence is in progress is
+almost certainly in here, but every recording available is a single race, so
+nothing in the block can be told from a constant. A race log stores all sixteen
+words raw, so the question can be answered from races already saved rather than
+needing new recordings.
 
 ## Capture coverage
 
