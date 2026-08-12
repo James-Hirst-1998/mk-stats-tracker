@@ -13,5 +13,9 @@ recordings/
 *.zst
 *.mov
 
+# saved races: your own data, not the repo's. MKW_RACES can point elsewhere.
+# They are ~54 kB each, so drop this line if you want them committed.
+races/
+
 # scratch
 .DS_Store

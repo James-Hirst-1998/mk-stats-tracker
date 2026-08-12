@@ -75,6 +75,17 @@ def read_course():
     return u8(block + A.COURSE_OFFSET) if in_mem1(block) else None
 
 
+def read_race_frames():
+    """Frames since GO, or None. Zero through the intro and the countdown.
+
+    The per-racer counter at +0x2C is not this: it starts 412 frames earlier,
+    at the intro camera, and freezes when that racer finishes. This one is the
+    clock the game puts on screen.
+    """
+    obj = u32(A.PLAYER_PTR)
+    return u32(obj + A.OFF_RACE_FRAMES) if in_mem1(obj) else None
+
+
 def read_players():
     """Everything the race manager knows per racer, or None if not racing."""
     base = u32(A.PLAYER_PTR) + A.PLAYER_DELTA
@@ -83,24 +94,24 @@ def read_players():
     out = []
     for slot in range(A.N_PLAYERS):
         p = base + slot * A.PLAYER_STRIDE
-        max_lap = u8(p + A.OFF_MAX_LAP)
+        reached = u8(p + A.OFF_LAP_REACHED)
         lap_ptr = u32(p + A.OFF_LAP_TIMES)
         splits = []
         if in_mem1(lap_ptr):
-            for k in range(min(max_lap, 8)):
+            for k in range(min(reached, 8)):
                 splits.append(read_timer(lap_ptr + k * A.TIMER_SIZE))
         cur = u16(p + A.OFF_CURRENT_LAP)
         out.append({
             "slot": slot,
             "position": u8(p + A.OFF_POSITION),
             "lap": cur,
-            "max_lap": max_lap,
+            "lap_reached": reached,
             "completion": f32(p + A.OFF_COMPLETION),
             "lap_fraction": f32(p + A.OFF_LAP_FRACTION),
             "clock": u32(p + A.OFF_FRAME_COUNTER) / 60.0,
             "leading": u32(p + A.OFF_FRAMES_IN_FIRST) / 60.0,
             "cumulative": splits,
-            "finished": bool(max_lap) and cur > max_lap,
+            "finished": bool(reached) and cur > reached,
             "finish": read_timer(u32(p + A.OFF_FINISH_TIME)),
         })
     # A valid race always has each position 1..12 exactly once. This is the
@@ -224,8 +235,11 @@ def read():
         r["item"] = items[0][r["slot"]] if items else None
         r["roulette"] = items[1][r["slot"]] if items else None
         r["damage"] = damage[r["slot"]] if damage else None
+    frames = read_race_frames()
     return {"course_code": read_course(), "players": players,
-            "racers": read_racers(), "world_items": read_world_items()}
+            "racers": read_racers(), "world_items": read_world_items(),
+            "race_frames": frames,
+            "race_time": None if frames is None else frames / 60.0}
 
 
 def splits_of(cumulative):

@@ -19,3 +19,5 @@ mk/bin/python3 -m analysis.validate_damage
 | `validate_progress.py` | ranking by race progress reproduces reported position 98–99% |
 | `validate_held_item.py` | held-item ids are clean for all 12 racers across recordings |
 | `verify_raceinfo.py` | the racer struct and Timer layout in PAL |
+| `validate_race_clock.py` | `Raceinfo + 0xA98` is the race clock: 0 through the countdown, exactly 412 frames behind `+0x2C`, and agrees with the game's lap timers |
+| `validate_race_log.py` | a stored race log renders every event identically to the live view, and time in first rebuilt from it matches the game's own counter |

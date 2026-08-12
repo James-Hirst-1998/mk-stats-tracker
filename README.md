@@ -13,7 +13,9 @@ All twelve racers, every frame, straight from the game's own memory:
 - **Position, lap and progress** — ranking racers by progress reproduces the
   game's own reported position 98–99% of the time
 - **Lap splits and finish times** — from the game's timers, not a stopwatch
-- **Time spent in first place**
+- **Time spent in first place**, and time spent in every other position
+- **The race clock** — the game's own, which starts at GO and not at the intro
+  camera, so a time in the log is the time on screen
 - **Items** — what each racer picked up and when they used it, by name, and
   what the roulette has already secretly decided about 3.5 seconds early
 - **Being hit, and what hit you** — spin-out, knockback, launched, crushed,
@@ -63,6 +65,26 @@ A hit line appears once the item that caused it has been destroyed, which is
 0.33s later for a shell and 1–2s for an explosion. That is the delay that
 makes naming it possible, so the line is held back rather than printed twice.
 
+## Keep a race
+
+Every race that starts is written to `races/` as an event log when it ends —
+the whole event stream plus the final standings, **about 54 kB**. Nothing else
+is needed to say what happened afterwards:
+
+```bash
+mk/bin/python3 -m tools.report            # the most recent race
+mk/bin/python3 -m tools.report --list     # everything stored
+mk/bin/python3 -m tools.report peach      # by name
+```
+
+That rebuilds the whole thing from the file — every event, lap splits, who hit
+whom with what, items used, hits taken by type, time spent in each position.
+No Dolphin, no recording, no sudo.
+
+The format, and how to add a new kind of event to it, is in
+[docs/RACE_LOG.md](docs/RACE_LOG.md). It is deliberately dull: JSON Lines, one
+event per line, ids rather than names so fixing a name fixes every stored race.
+
 ## Record a race to work on offline
 
 Live debugging against a moving race is miserable. Record once, then test
@@ -83,6 +105,7 @@ Then replay the real reader over it:
 
 ```bash
 mk/bin/python3 -m tools.replay_live mushroom-gorge
+mk/bin/python3 -m tools.replay_live mushroom-gorge --save   # and store it
 ```
 
 ## Layout
@@ -91,7 +114,8 @@ mk/bin/python3 -m tools.replay_live mushroom-gorge
 |---|---|
 | `mkw/` | the library: addresses, names, live reads, event stream |
 | `mkw/capture/` | the recorder and the offline replay harness |
-| `tools/` | things you run: `live`, `record`, `verify`, `probe`, `replay_live` |
+| `tools/` | things you run: `live`, `report`, `record`, `verify`, `probe`, `replay_live` |
+| `races/` | saved races, one small file each. Git-ignored by default |
 | `analysis/` | offline checks that produce the evidence for what's claimed |
 | `lab/` | exploration, including everything that failed. Kept on purpose |
 | `docs/` | how it works, the memory map, and the full experiment log |

@@ -6,7 +6,10 @@ first. This swaps the four accessors in `mkw.reader` for reads out of a
 recorded frame, so the real read() and the real Race code run unmodified and
 the event stream printed here is exactly what the live view would print.
 
-    python3 -m tools.replay_live [recording-substring]
+    python3 -m tools.replay_live [recording-substring] [--save]
+
+`--save` writes the race out as an event log, the same way the live tool does,
+which is how the storage path gets tested without a live race.
 """
 
 import glob
@@ -15,6 +18,7 @@ import struct
 import sys
 
 from mkw import reader
+from mkw import racelog
 from mkw.capture import format as capfmt
 from mkw.capture.session import Session, RECORDINGS
 from mkw.events import Race, fmt
@@ -39,19 +43,29 @@ def install(session, state):
 
 
 def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    save = "--save" in sys.argv[1:]
     dirs = [d for d in sorted(glob.glob(os.path.join(RECORDINGS, "*")))
             if os.path.isfile(os.path.join(d, "meta.json"))]
-    which = sys.argv[1] if len(sys.argv) > 1 else ""
+    which = args[0] if args else ""
     if which:
         dirs = [d for d in dirs if which in d]
     if not dirs:
         print("no recording matching %r in %s" % (which, RECORDINGS))
         return
     s = Session(dirs[0])
+    name = os.path.basename(dirs[0])
+
+    written = []
+
+    def store(race):
+        written.append(racelog.save(
+            race, source="replay:%s" % name,
+            notes=s.meta.get("notes") or None))
 
     state = {"img": None}
     install(s, state)
-    race = Race()
+    race = Race(on_end=store if save else None)
     last = None
     for i, img in s.frames():
         state["img"] = img
@@ -62,27 +76,24 @@ def main():
         race.update(r)
         if r is not None:
             last = r
-    race.flush()                    # hits still inside their despawn window
+    race.end()                      # hits still inside their despawn window
 
-    print("%s" % os.path.basename(dirs[0]))
+    print("%s" % name)
     print("%d events\n" % len(race.events))
-    for t, text in race.events:
-        print("  %9s  %s" % (fmt(t), text))
+    for e in race.events:
+        print("  %9s  %s" % (fmt(e["t"]), race.text(e)))
 
-    if last is None:
-        return
-    print("\nfinal standings:")
-    for p in sorted(last["players"], key=lambda x: x["position"]):
-        sp = reader.splits_of(p["cumulative"])
-        who = next((x for x in (last.get("racers") or [])
-                    if x["slot"] == p["slot"]), None)
-        print("  P%-3d %-16s laps %-26s total %-10s leading %5.1fs"
-              % (p["position"],
-                 "%s%s" % (race.names.get(p["slot"], "slot %d" % p["slot"]),
-                           " (CPU)" if who and who["cpu"] else ""),
-                 " ".join("%.3f" % x for x in sp) or "-",
-                 fmt(p["finish"]) if p["finished"] else "(racing)",
-                 p["leading"]))
+    if last is not None:
+        print("\nfinal standings:")
+        for st in race.standings():
+            print("  P%-3d %-16s laps %-26s total %-10s leading %5.1fs"
+                  % (st["position"], race.who(st["slot"]),
+                     " ".join("%.3f" % x for x in st["laps"]) or "-",
+                     fmt(st["time"]) if st["finished"] else "(racing)",
+                     st["leading"]))
+
+    for path in written:
+        print("\nsaved -> %s (%.1f kB)" % (path, os.path.getsize(path) / 1024.0))
 
 
 if __name__ == "__main__":

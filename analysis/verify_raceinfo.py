@@ -40,7 +40,7 @@ N_PLAYERS = 12
 OFF_COMPLETION = 0x0C
 OFF_POSITION = 0x20
 OFF_CURRENT_LAP = 0x24
-OFF_MAX_LAP = 0x26
+OFF_LAP_REACHED = 0x26          # highest lap reached, not the race's length
 OFF_FRAME_COUNTER = 0x2C
 OFF_FRAMES_IN_FIRST = 0x30
 OFF_LAP_TIMES = 0x38
@@ -101,7 +101,7 @@ def main():
             o = bi + p * STRIDE
             pos = int(img[o + OFF_POSITION])
             lap = be_u16(img, o + OFF_CURRENT_LAP)
-            mx = int(img[o + OFF_MAX_LAP])
+            mx = int(img[o + OFF_LAP_REACHED])
             comp = float(np.frombuffer(
                 img[o + OFF_COMPLETION:o + OFF_COMPLETION + 4].tobytes(),
                 dtype=">f4")[0])
@@ -115,7 +115,7 @@ def main():
                     laps.append(timer(img, s.regions, lt_ptr + k * TIMER_SIZE))
             finish = (timer(img, s.regions, ft_ptr)
                       if 0x80000000 <= ft_ptr < 0x81800000 else None)
-            print("  P%-2d slot %-2d lap %d/%d comp %6.3f  clock %6.1fs  "
+            print("  P%-2d slot %-2d lap %d reached %d comp %6.3f  clock %6.1fs  "
                   "lead %5.1fs  laps %s  finish %s"
                   % (pos, p, lap, mx, comp, fc / 60.0, fif / 60.0,
                      " ".join(fmt(x) for x in laps), fmt(finish)))
