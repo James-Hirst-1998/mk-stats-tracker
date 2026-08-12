@@ -10,7 +10,7 @@ this prints live is exactly what the offline checks verify.
 import struct
 
 from mkw import addresses as A
-from mkw.names import DAMAGE_TYPES
+from mkw.names import DAMAGE_TYPES, PLAYER_TYPES
 
 _dme = None
 
@@ -51,6 +51,14 @@ def s32(addr):
 
 def in_mem1(p):
     return A.MEM1[0] <= p < A.MEM1[1]
+
+
+def in_heap(p):
+    return A.HEAP[0] <= p < A.HEAP[1]
+
+
+def in_mem2(p):
+    return A.MEM2[0] <= p < A.MEM2[1]
 
 
 def read_timer(addr):
@@ -102,6 +110,40 @@ def read_players():
     return out
 
 
+def read_racers():
+    """Who each racer is, or None. Fixed for a race, so cheap to re-read.
+
+    RaceConfig lives in MEM2. `_read` subtracts MEM1's base, which is also what
+    the recorder does, and Dolphin's flat address space continues into MEM2 at
+    that offset - so MEM2 addresses read correctly without a special case.
+    """
+    cfg = u32(A.RACE_CONFIG)
+    if not in_mem2(cfg):
+        return None
+    count = u8(cfg + A.OFF_RACER_COUNT)
+    if not 0 < count <= A.N_PLAYERS:
+        return None
+    out = []
+    for slot in range(A.N_PLAYERS):
+        p = cfg + A.OFF_RACERS + slot * A.RACER_STRIDE
+        character = u32(p + A.OFF_CHARACTER)
+        vehicle = u32(p + A.OFF_VEHICLE)
+        kind = u32(p + A.OFF_PLAYER_TYPE)
+        if character > A.MAX_CHARACTER or vehicle > A.MAX_VEHICLE:
+            return None
+        if kind not in PLAYER_TYPES:
+            return None
+        out.append({
+            "slot": slot,
+            "character": character,
+            "vehicle": vehicle,
+            "type": kind,
+            "cpu": kind == A.TYPE_CPU,
+            "grid": u8(p + A.OFF_GRID),
+        })
+    return out
+
+
 def item_base():
     director = u32(A.ITEM_DIRECTOR)
     if not in_mem1(director):
@@ -140,22 +182,33 @@ def read_damage(base):
 
 
 def read_world_items():
-    """Items actually on the track: [(type, owner)], or None.
+    """Every item in the world as {object address: (type, owner)}, or None.
 
-    Not yet used for naming a hit - see `docs/EXPERIMENTS.md`, "open".
+    One pool per item type; the live ones are the front of each pool's array.
+    A pool slot keeps its address for the whole race, so the key is a stable
+    identity and an address disappearing is that item being destroyed.
+
+    Fails closed: every pool entry states its own type index and every object
+    repeats it, so a bad read is caught rather than returned.
     """
     director = u32(A.ITEM_DIRECTOR)
     if not in_mem1(director):
         return None
-    out = []
-    for i in range(A.MAX_OBJECTS):
-        p = u32(director + A.OFF_OBJECT_ARRAY + i * 4)
-        if not (0x80900000 <= p < 0x81800000):
-            continue
-        typ = u32(p + A.OFF_OBJECT_TYPE)
-        owner = u8(p + A.OFF_OBJECT_OWNER)
-        if typ < 24 and owner <= A.N_PLAYERS:
-            out.append((typ, owner))
+    out = {}
+    for t in range(A.N_OBJECT_TYPES):
+        e = director + A.OFF_POOL_TABLE + t * A.POOL_STRIDE
+        if u32(e + A.OFF_POOL_TYPE) != t:
+            return None
+        array = u32(e + A.OFF_POOL_ARRAY)
+        cap = u32(e + A.OFF_POOL_CAP)
+        live = u32(e + A.OFF_POOL_LIVE)
+        if not in_heap(array) or not 0 < cap <= A.MAX_POOL or live > cap:
+            return None
+        for k in range(live):
+            obj = u32(array + k * 4)
+            if not in_heap(obj) or u32(obj + A.OFF_OBJECT_TYPE) != t:
+                return None
+            out[obj] = (t, u8(obj + A.OFF_OBJECT_OWNER))
     return out
 
 
@@ -171,7 +224,8 @@ def read():
         r["item"] = items[0][r["slot"]] if items else None
         r["roulette"] = items[1][r["slot"]] if items else None
         r["damage"] = damage[r["slot"]] if damage else None
-    return {"course_code": read_course(), "players": players}
+    return {"course_code": read_course(), "players": players,
+            "racers": read_racers(), "world_items": read_world_items()}
 
 
 def splits_of(cumulative):

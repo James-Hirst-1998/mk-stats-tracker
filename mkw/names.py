@@ -1,5 +1,53 @@
 """Names for the numbers the game stores: courses, items, damage types."""
 
+# Who is driving. Confirmed on this setup at three points: the recordings whose
+# notes say "birdo" have slot 0 reading 17 and the ones saying "luigi" read 7,
+# and a nameplate reading "Funky Kong" in the Waluigi Stadium video sits over
+# the racer whose id is 22. Ids run 0..23 and no id outside that appeared in
+# 84 racer entries. Anything higher is a Mii.
+CHARACTERS = {
+    0: "Mario", 1: "Baby Peach", 2: "Waluigi", 3: "Bowser", 4: "Baby Daisy",
+    5: "Dry Bones", 6: "Baby Mario", 7: "Luigi", 8: "Toad", 9: "Donkey Kong",
+    10: "Yoshi", 11: "Wario", 12: "Baby Luigi", 13: "Toadette",
+    14: "Koopa Troopa", 15: "Daisy", 16: "Peach", 17: "Birdo",
+    18: "Diddy Kong", 19: "King Boo", 20: "Bowser Jr.", 21: "Dry Bowser",
+    22: "Funky Kong", 23: "Rosalina",
+}
+
+# Weight class per character, 0 small, 1 medium, 2 large. Not decoration: MKW
+# only lets a racer pick a vehicle of their own class, so this is what checks
+# the two tables against each other. See `analysis/validate_racers.py`.
+CHARACTER_CLASS = {
+    0: 1, 1: 0, 2: 2, 3: 2, 4: 0, 5: 0, 6: 0, 7: 1, 8: 0, 9: 2, 10: 1, 11: 2,
+    12: 0, 13: 0, 14: 0, 15: 1, 16: 1, 17: 1, 18: 1, 19: 2, 20: 1, 21: 2,
+    22: 2, 23: 2,
+}
+
+# What they are driving. Only 22 = Mach Bike is confirmed here, from the
+# recording notes; the rest are the public ordering, which the class check
+# supports - ids 0-17 are karts and 18-35 bikes, and within each the class is
+# `id % 3`, which agrees with the character's class on all 84 entries. These
+# are the common English names; some PAL menu names differ.
+VEHICLES = {
+    0: "Standard Kart S", 1: "Standard Kart M", 2: "Standard Kart L",
+    3: "Baby Booster", 4: "Classic Dragster", 5: "Offroader",
+    6: "Mini Beast", 7: "Wild Wing", 8: "Flame Flyer",
+    9: "Cheep Charger", 10: "Super Blooper", 11: "Piranha Prowler",
+    12: "Tiny Titan", 13: "Daytripper", 14: "Jetsetter",
+    15: "Blue Falcon", 16: "Sprinter", 17: "Honeycoupe",
+    18: "Standard Bike S", 19: "Standard Bike M", 20: "Standard Bike L",
+    21: "Bullet Bike", 22: "Mach Bike", 23: "Flame Runner",
+    24: "Bit Bike", 25: "Sugarscoot", 26: "Wario Bike",
+    27: "Quacker", 28: "Zip Zip", 29: "Shooting Star",
+    30: "Magikruiser", 31: "Sneakster", 32: "Spear",
+    33: "Jet Bubble", 34: "Dolphin Dasher", 35: "Phantom",
+}
+
+# The value at RaceConfigPlayer +0x10. The collision code treats 0 and 2 alike
+# and 1 differently, which is what says 1 is the CPU.
+PLAYER_TYPES = {0: "human", 1: "CPU", 2: "human (online)", 3: "none",
+                4: "ghost"}
+
 COURSES = {
     0x00: "Mario Circuit", 0x01: "Moo Moo Meadows", 0x02: "Mushroom Gorge",
     0x03: "Grumble Volcano", 0x04: "Toad's Factory", 0x05: "Coconut Mall",
@@ -55,9 +103,22 @@ DAMAGE_TYPES = {
 BY_ITEM = {0, 2, 7, 10, 11, 13, 17}
 
 # Item objects in the world use their own enum, separate from ITEMS above.
-# Learned by watching which object appears when a known item is used, and
-# cross-checked against the handler each index resolves to.
+# Learned by watching which object pool gains an entry when a known item is
+# used: 66/66 for green, 65/65 red, 163/163 banana, 15/15 blue, 29/29 fake box,
+# 6/6 bob-omb across seven recordings. The remaining indexes exist as pools but
+# never spawned in those races.
 OBJECT_TYPES = {
-    0: "Green Shell", 1: "Red Shell", 2: "Banana", 5: "Blue Shell",
-    7: "Fake Item Box", 9: "Bob-omb",
+    0: "Green Shell", 1: "Red Shell", 2: "Banana", 4: "Star",
+    5: "Blue Shell", 7: "Fake Item Box", 9: "Bob-omb",
+    12: "Golden Mushroom",
 }
+
+# Which object types can produce a given damage type. Not guessed: each type's
+# getDamageType is `u32(OBJECT_HANDLER_TABLE + type*0xC + 8)`, and disassembling
+# them gives `li r3,2` for 0, 1 and 7, `neg r3,r0` (0 or -1) for 2, and
+# `li r3,7` for 5 and 9 once the shell or bomb has gone off.
+DAMAGE_FROM_OBJECT = {0: {2, 5, 9}, 2: {0, 1, 7}, 7: {5, 9}}
+
+# The item ids that produce each object type, for sanity-checking a name
+# against the throw that spawned it.
+OBJECT_FROM_ITEM = {0: {0, 16}, 1: {1, 17}, 2: {2, 18}, 5: {7}, 7: {3}, 9: {6}}

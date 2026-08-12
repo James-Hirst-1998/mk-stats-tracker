@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Offline: read the live item objects, and learn what their type index means.
+"""SUPERSEDED - kept as the record of a wrong read. Use `name_hit_items.py`.
+
+`ItemDirector + 0x264` is not a list of the items in the world. Disassembling
+`0x80799CAC` shows it packing the objects near ONE kart into that buffer,
+capped at 16, for the collision loop below to consume. That is why this script
+never saw more than three items at once. The real per-type pools are at
+`ItemDirector + 0x48`, and the type-enum votes below (red 5/6, banana 25/33)
+come out unanimous when taken from those instead.
+
+Offline: read the live item objects, and learn what their type index means.
 
 The damage field says "knockback", which covers a green shell, a red shell and
 a fake item box alike - the game never tells the victim which it was, because

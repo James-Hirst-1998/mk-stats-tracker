@@ -62,6 +62,7 @@ def main():
         race.update(r)
         if r is not None:
             last = r
+    race.flush()                    # hits still inside their despawn window
 
     print("%s" % os.path.basename(dirs[0]))
     print("%d events\n" % len(race.events))
@@ -73,8 +74,12 @@ def main():
     print("\nfinal standings:")
     for p in sorted(last["players"], key=lambda x: x["position"]):
         sp = reader.splits_of(p["cumulative"])
-        print("  P%-3d slot %-2d  laps %-26s total %-10s leading %5.1fs"
-              % (p["position"], p["slot"],
+        who = next((x for x in (last.get("racers") or [])
+                    if x["slot"] == p["slot"]), None)
+        print("  P%-3d %-16s laps %-26s total %-10s leading %5.1fs"
+              % (p["position"],
+                 "%s%s" % (race.names.get(p["slot"], "slot %d" % p["slot"]),
+                           " (CPU)" if who and who["cpu"] else ""),
                  " ".join("%.3f" % x for x in sp) or "-",
                  fmt(p["finish"]) if p["finished"] else "(racing)",
                  p["leading"]))
