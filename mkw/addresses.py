@@ -8,9 +8,31 @@ what was tried is in `docs/EXPERIMENTS.md`.
 """
 
 MEM1 = (0x80000000, 0x81800000)
+MEM2 = (0x90000000, 0x91800000)
 
 N_PLAYERS = 12
 LOCAL_SLOT = 0                  # the human player is always racer 0 here
+
+# --- who each racer is: RaceConfig ----------------------------------------
+# Lives in MEM2. The layout is the game's own, from 0x8052880C:
+#   lbz  r4,36(r3)      how many racers
+#   addi r6,r3,40       the array
+#   mulli r0,r0,240     stride
+#   lwz  r3,16(r3)      +0x10, compared against 0 and 2
+RACE_CONFIG = 0x809BD728
+OFF_RACER_COUNT = 0x24          # u8
+OFF_RACERS = 0x28
+RACER_STRIDE = 0xF0
+
+OFF_VEHICLE = 0x08              # u32
+OFF_CHARACTER = 0x0C            # u32
+OFF_PLAYER_TYPE = 0x10          # u32, see PLAYER_TYPES in names.py
+OFF_TEAM = 0xCC                 # u32, 2 when the race has no teams
+OFF_GRID = 0xE1                 # u8, starting position 1..12
+
+TYPE_LOCAL, TYPE_CPU, TYPE_ONLINE = 0, 1, 2
+MAX_CHARACTER = 0x30            # ids above the 24 named ones are Miis
+MAX_VEHICLE = 0x24
 
 # --- course ---------------------------------------------------------------
 COURSE_PTR = 0x809C27F8

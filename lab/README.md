@@ -17,6 +17,7 @@ mk/bin/python3 -m lab.progress.find_progress
 | `ppc.py` | a small PowerPC disassembler, for reading the game's code out of a recording |
 | `damage/` | three failed rounds of searching memory for hit state, before the answer came from the game's code instead |
 | `progress/` | race progress, and the stall-based hit detection that the damage field later showed to be wrong |
+| `players/` | who each racer is: finding RaceConfig in MEM2, and two wrong guesses at the array's phase before the code settled it |
 | `race/` | race clock, pause flag, "is a race running" |
 | `tracks/` | course code discovery |
 | `timer/` | lap and finish timers before the RaceinfoPlayer layout was understood |

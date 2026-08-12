@@ -6,10 +6,11 @@ fallback.
 """
 
 import bisect
+from collections import Counter
 
 from mkw import addresses as A
 from mkw.names import (COURSES, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
-                       DAMAGE_FROM_OBJECT)
+                       DAMAGE_FROM_OBJECT, CHARACTERS, VEHICLES)
 
 EMPTY = A.EMPTY_ITEM
 BLUE_SHELL, BOB_OMB = 7, 6
@@ -41,6 +42,14 @@ def fmt(sec):
     return "%d:%06.3f" % (int(sec // 60), sec % 60)
 
 
+def ordinal(n):
+    if n is None:
+        return "?"
+    suffix = "th" if 11 <= n % 100 <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(
+        n % 10, "th")
+    return "%d%s" % (n, suffix)
+
+
 class Race:
     """Consumes snapshots, emits (clock, text) events."""
 
@@ -60,12 +69,60 @@ class Race:
         self.course = None
         self.started = False
         self.missed = 0
+        self.racers = None
+        self.names = {}
+
+    # --- who is driving ----------------------------------------------------
+
+    def name_racers(self, racers):
+        """Build a display name per slot. Falls back to the slot number.
+
+        Characters are unique in every race seen so far, so the character name
+        on its own identifies a racer. It is not guaranteed - Miis and online
+        races can repeat one - so a repeat gets a number rather than two racers
+        sharing a name.
+        """
+        if racers is None or racers == self.racers:
+            return
+        self.racers = racers
+        repeated = Counter(r["character"] for r in racers)
+        used = Counter()
+        self.names = {}
+        for r in racers:
+            c = r["character"]
+            name = CHARACTERS.get(c, "Mii" if c > max(CHARACTERS) else "?%d" % c)
+            if repeated[c] > 1:
+                used[c] += 1
+                name = "%s #%d" % (name, used[c])
+            self.names[r["slot"]] = name
 
     def who(self, slot):
-        return "you" if slot == self.local_slot else "slot %d" % slot
+        if slot == self.local_slot:
+            return "you"
+        return self.names.get(slot, "slot %d" % slot)
 
     def whose(self, slot):
-        return "yours" if slot == self.local_slot else "slot %d's" % slot
+        if slot == self.local_slot:
+            return "yours"
+        name = self.names.get(slot, "slot %d" % slot)
+        return name + ("'" if name.endswith("s") else "'s")
+
+    def log_field(self):
+        """One line naming everyone, so the log says who the CPUs were."""
+        if not self.racers:
+            return
+        me = next((r for r in self.racers if r["slot"] == self.local_slot), None)
+        if me is not None:
+            self.log(0.0, "you are %s on the %s, starting %s"
+                     % (self.names.get(me["slot"], "?"),
+                        VEHICLES.get(me["vehicle"], "vehicle %d" % me["vehicle"]),
+                        ordinal(me["grid"])))
+        for cpu in (False, True):
+            who = [self.names[r["slot"]] for r in self.racers
+                   if r["cpu"] == cpu and r["slot"] != self.local_slot]
+            if who:
+                self.log(0.0, "%d %s: %s"
+                         % (len(who), "CPU" if cpu else "human", ", ".join(who)))
 
     def log(self, t, text):
         """Insert in race order; a hit is logged after later events arrive."""
@@ -145,7 +202,7 @@ class Race:
             named = self.name_launched(t)
         self.log(t, "%s hit - %s (%s)%s"
                  % ("you were" if slot == self.local_slot
-                    else "slot %d was" % slot,
+                    else "%s was" % self.who(slot),
                     named or cause, kind.lower(),
                     "" if damage in BY_ITEM else ", not an item"))
 
@@ -182,6 +239,7 @@ class Race:
             self.course = r["course_code"]
 
         self.clock = max(p["clock"] for p in r["players"])
+        self.name_racers(r.get("racers"))
 
         for p in r["players"]:
             s = p["slot"]
@@ -196,6 +254,7 @@ class Race:
                 self.log(0.0, "race start - %s"
                          % COURSES.get(self.course,
                                        "course 0x%02x" % (self.course or 0)))
+                self.log_field()
 
             if p["lap"] > old["lap"]:
                 sp = splits(p["cumulative"])

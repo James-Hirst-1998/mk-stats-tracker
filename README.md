@@ -20,6 +20,8 @@ All twelve racers, every frame, straight from the game's own memory:
   POW'd, and which of those came from an item versus a track hazard
 - **Which item, by name, and who threw it** — green shell, red shell, fake
   item box, banana, bob-omb, blue shell. 165 of 182 hits across the recordings
+- **Who everyone is** — character and vehicle by name, and which racers are
+  CPUs. No more "slot 7"
 - **Course**
 
 Everything above is validated across seven recorded races from seven separate
@@ -47,13 +49,14 @@ sudo mk/bin/python3 -m tools.live
 second and prints an event log underneath:
 
 ```
-   0:36.917  you were hit - Banana (slot 2's) (spin-out)
-   1:05.467  slot 1 was hit - Red Shell (yours) (knockback)
-   1:09.717  slot 11 was hit - Blue Shell (slot 6's) (launched)
-   1:09.867  slot 2 was hit - Blue Shell (slot 6's) (launched)
-   1:17.117  slot 10 was hit - Green Shell (slot 7's) (knockback)
-   1:18.900  you were hit - Blue Shell (slot 1's) (launched)
-   1:33.433  slot 1 was hit - Fake Item Box (slot 2's) (knockback)
+   0:00.000  race start - Mushroom Gorge
+   0:00.000  you are Luigi on the Mach Bike, starting 12th
+   0:00.000  11 CPU: Yoshi, Baby Luigi, Rosalina, Dry Bowser, Toadette, ...
+   0:36.917  you were hit - Banana (Baby Luigi's) (spin-out)
+   1:05.467  Yoshi was hit - Red Shell (yours) (knockback)
+   1:09.717  Toad was hit - Blue Shell (Bowser Jr.'s) (launched)
+   1:17.117  Daisy was hit - Green Shell (Rosalina's) (knockback)
+   1:33.433  Bowser was hit - Fake Item Box (Dry Bones') (knockback)
 ```
 
 A hit line appears once the item that caused it has been destroyed, which is

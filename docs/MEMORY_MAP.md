@@ -17,6 +17,52 @@ MKW course slot code, not cup order. Ten independent `(pointer, offset)` pairs
 were validated together and agreed 10/10 through menu and race transitions;
 this one was promoted. See `lab/tracks/`.
 
+## Who is racing — `RaceConfig`
+
+Lives in **MEM2**, unlike everything else here.
+
+```
+cfg    = u32(0x809BD728)
+count  = u8(cfg + 0x24)
+racers = cfg + 0x28,  12 entries of 0xF0
+```
+
+| offset | type | field |
+|---|---|---|
+| `+0x08` | u32 | vehicle id, 0–35 |
+| `+0x0C` | u32 | character id, 0–23, above that a Mii |
+| `+0x10` | u32 | 0 human, 1 CPU, 2 human online |
+| `+0xCC` | u32 | team; 2 when the race has no teams |
+| `+0xE1` | u8 | starting grid position, 1–12 |
+
+**How.** Straight out of the game's code at `0x8052880C`, which is why the
+count and the array base are exact rather than fitted:
+
+```
+lwz   r3,-10456(r3)   ; cfg = *(0x809BD728)
+lbz   r4,36(r3)       ; how many racers
+addi  r6,r3,40        ; the array
+mulli r0,r0,240       ; stride
+lwz   r3,16(r3)       ; +0x10, compared against 0 and 2
+```
+
+`+0xCC` is the field the item collision code reads as `cfg + i*0xF0 + 0xF4`,
+which is the same address, and it agrees.
+
+**Watch out.** `+0xE0` looks like the grid too and reads the same in a first
+race, where the grid is just the slot order reversed. It is not: on the two
+recordings that were not a first race it disagrees, and `+0xE1` is the one
+that matches the notes ("starting 1st" reads 1, "start 12th" reads 12).
+
+**Confidence.** Characters: the recordings whose notes say *birdo* read 17 at
+slot 0 and the ones saying *luigi* read 7, and a nameplate reading "Funky
+Kong" in the Waluigi Stadium video sits over the racer reading 22. Vehicles:
+only 22 = Mach Bike is confirmed by name. What supports the rest is that MKW
+only lets a racer pick a vehicle of their own weight class, and in the vehicle
+ordering the class is `id % 3` — so each racer is one constraint linking the
+two tables, and they agree **84/84**. Seventeen labels taken from the
+recordings' own notes all match. See `analysis/validate_racers.py`.
+
 ## Racers — `RaceinfoPlayer`
 
 ```

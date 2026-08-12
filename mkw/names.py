@@ -1,5 +1,53 @@
 """Names for the numbers the game stores: courses, items, damage types."""
 
+# Who is driving. Confirmed on this setup at three points: the recordings whose
+# notes say "birdo" have slot 0 reading 17 and the ones saying "luigi" read 7,
+# and a nameplate reading "Funky Kong" in the Waluigi Stadium video sits over
+# the racer whose id is 22. Ids run 0..23 and no id outside that appeared in
+# 84 racer entries. Anything higher is a Mii.
+CHARACTERS = {
+    0: "Mario", 1: "Baby Peach", 2: "Waluigi", 3: "Bowser", 4: "Baby Daisy",
+    5: "Dry Bones", 6: "Baby Mario", 7: "Luigi", 8: "Toad", 9: "Donkey Kong",
+    10: "Yoshi", 11: "Wario", 12: "Baby Luigi", 13: "Toadette",
+    14: "Koopa Troopa", 15: "Daisy", 16: "Peach", 17: "Birdo",
+    18: "Diddy Kong", 19: "King Boo", 20: "Bowser Jr.", 21: "Dry Bowser",
+    22: "Funky Kong", 23: "Rosalina",
+}
+
+# Weight class per character, 0 small, 1 medium, 2 large. Not decoration: MKW
+# only lets a racer pick a vehicle of their own class, so this is what checks
+# the two tables against each other. See `analysis/validate_racers.py`.
+CHARACTER_CLASS = {
+    0: 1, 1: 0, 2: 2, 3: 2, 4: 0, 5: 0, 6: 0, 7: 1, 8: 0, 9: 2, 10: 1, 11: 2,
+    12: 0, 13: 0, 14: 0, 15: 1, 16: 1, 17: 1, 18: 1, 19: 2, 20: 1, 21: 2,
+    22: 2, 23: 2,
+}
+
+# What they are driving. Only 22 = Mach Bike is confirmed here, from the
+# recording notes; the rest are the public ordering, which the class check
+# supports - ids 0-17 are karts and 18-35 bikes, and within each the class is
+# `id % 3`, which agrees with the character's class on all 84 entries. These
+# are the common English names; some PAL menu names differ.
+VEHICLES = {
+    0: "Standard Kart S", 1: "Standard Kart M", 2: "Standard Kart L",
+    3: "Baby Booster", 4: "Classic Dragster", 5: "Offroader",
+    6: "Mini Beast", 7: "Wild Wing", 8: "Flame Flyer",
+    9: "Cheep Charger", 10: "Super Blooper", 11: "Piranha Prowler",
+    12: "Tiny Titan", 13: "Daytripper", 14: "Jetsetter",
+    15: "Blue Falcon", 16: "Sprinter", 17: "Honeycoupe",
+    18: "Standard Bike S", 19: "Standard Bike M", 20: "Standard Bike L",
+    21: "Bullet Bike", 22: "Mach Bike", 23: "Flame Runner",
+    24: "Bit Bike", 25: "Sugarscoot", 26: "Wario Bike",
+    27: "Quacker", 28: "Zip Zip", 29: "Shooting Star",
+    30: "Magikruiser", 31: "Sneakster", 32: "Spear",
+    33: "Jet Bubble", 34: "Dolphin Dasher", 35: "Phantom",
+}
+
+# The value at RaceConfigPlayer +0x10. The collision code treats 0 and 2 alike
+# and 1 differently, which is what says 1 is the CPU.
+PLAYER_TYPES = {0: "human", 1: "CPU", 2: "human (online)", 3: "none",
+                4: "ghost"}
+
 COURSES = {
     0x00: "Mario Circuit", 0x01: "Moo Moo Meadows", 0x02: "Mushroom Gorge",
     0x03: "Grumble Volcano", 0x04: "Toad's Factory", 0x05: "Coconut Mall",

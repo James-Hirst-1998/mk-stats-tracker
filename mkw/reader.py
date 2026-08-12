@@ -10,7 +10,7 @@ this prints live is exactly what the offline checks verify.
 import struct
 
 from mkw import addresses as A
-from mkw.names import DAMAGE_TYPES
+from mkw.names import DAMAGE_TYPES, PLAYER_TYPES
 
 _dme = None
 
@@ -55,6 +55,10 @@ def in_mem1(p):
 
 def in_heap(p):
     return A.HEAP[0] <= p < A.HEAP[1]
+
+
+def in_mem2(p):
+    return A.MEM2[0] <= p < A.MEM2[1]
 
 
 def read_timer(addr):
@@ -103,6 +107,40 @@ def read_players():
     # cheapest way to tell a real race from a menu full of stale memory.
     if sorted(r["position"] for r in out) != list(range(1, A.N_PLAYERS + 1)):
         return None
+    return out
+
+
+def read_racers():
+    """Who each racer is, or None. Fixed for a race, so cheap to re-read.
+
+    RaceConfig lives in MEM2. `_read` subtracts MEM1's base, which is also what
+    the recorder does, and Dolphin's flat address space continues into MEM2 at
+    that offset - so MEM2 addresses read correctly without a special case.
+    """
+    cfg = u32(A.RACE_CONFIG)
+    if not in_mem2(cfg):
+        return None
+    count = u8(cfg + A.OFF_RACER_COUNT)
+    if not 0 < count <= A.N_PLAYERS:
+        return None
+    out = []
+    for slot in range(A.N_PLAYERS):
+        p = cfg + A.OFF_RACERS + slot * A.RACER_STRIDE
+        character = u32(p + A.OFF_CHARACTER)
+        vehicle = u32(p + A.OFF_VEHICLE)
+        kind = u32(p + A.OFF_PLAYER_TYPE)
+        if character > A.MAX_CHARACTER or vehicle > A.MAX_VEHICLE:
+            return None
+        if kind not in PLAYER_TYPES:
+            return None
+        out.append({
+            "slot": slot,
+            "character": character,
+            "vehicle": vehicle,
+            "type": kind,
+            "cpu": kind == A.TYPE_CPU,
+            "grid": u8(p + A.OFF_GRID),
+        })
     return out
 
 
@@ -187,7 +225,7 @@ def read():
         r["roulette"] = items[1][r["slot"]] if items else None
         r["damage"] = damage[r["slot"]] if damage else None
     return {"course_code": read_course(), "players": players,
-            "world_items": read_world_items()}
+            "racers": read_racers(), "world_items": read_world_items()}
 
 
 def splits_of(cumulative):
