@@ -80,19 +80,53 @@ Every event has `t` and `type`. The rest depends on the type.
 | `field` | `text` | who is racing, as a line of prose |
 | `box` | `slot`, `item` | hit an item box; `item` is what the roulette has already decided, about 3.5s before the player sees it |
 | `hold` | `slot`, `item` | the roulette settled and they are holding it |
-| `use` | `slot`, `item` | it left their hand |
+| `use` | `slot`, `item` | they threw it |
+| `lost` | `slot`, `item`, `damage` | it was knocked out of their hands — see below |
 | `swap` | `slot`, `from`, `to` | held item changed without passing through empty |
-| `hit` | `slot`, `damage`, `object`, `by`, `guess` | see below |
+| `hit` | `slot`, `damage`, `object`, `by`, `place`, `for`, `guess`, `caught`, `from`, `passed` | see below |
+| `cloud` | `slot` | won a Thunder Cloud. It is never held, so it appears nowhere in the item fields — the object in the world is the only thing that says who has one |
 | `lap` | `slot`, `lap`, `split`, `total` | crossed the line; `split` is that lap, `total` is cumulative, both from the game's own timers |
 | `finish` | `slot`, `position`, `time` | finished the race |
 | `pos` | `slot`, `from`, `to` | position change |
 
+Any event can also carry `after: true`, meaning it happened to a racer who had
+already crossed the line. It is kept because it happened, and left out of every
+total in a report, because a red shell catching somebody parked past the finish
+is not part of their race.
+
 `hit`: `damage` is the game's damage type (`DAMAGE_TYPES` in `mkw/names.py`).
-`object` is the world-item type that caused it, or `null` when it could not be
-named; `by` is the slots that owned it, normally one. `guess: true` marks the
-one inferred field in the whole format — a launched hit whose object was
-missed, named from the timing of a Blue Shell or Bob-omb use instead. Anything
-without it came from watching the item that hit them get destroyed.
+`object` is the world-item type that caused it, or `null` when there was no
+object — a Star, Mega or Bullet does its damage with the kart itself, and
+Lightning and the POW have nothing in the world at all. `by` is the slots
+behind it, normally one. `place` is the position the victim was in. `for` is
+how long the hit lasted, from the damage field's own start and end, and is
+absent if the end was never seen.
+
+`guess: true` marks anything not read directly. Naming the object that hit you
+is a read — the pool loses an entry and the object says who owned it. The three
+that are not are all marked: a launched hit whose object was missed and is
+placed by the timing of a Blue Shell or Bob-omb use; a ram, where the racer
+credited is the only one who both used a Star, Mega or Bullet recently and was
+within 0.004 laps at the time; and Lightning or a POW, where the racer credited
+is the one who used it and is not among the victims.
+
+`caught: true` means the racer was standing in somebody else's explosion rather
+than being the one it went for. A Blue Shell aims at whoever is leading, so in
+a multi-victim blast the leader is the hit and the rest were caught in it; a
+Bob-omb aims at nobody, so everybody it catches was caught in it.
+
+`from` and `passed` appear on a Thunder Cloud strike: `from` is the racer who
+won the cloud, read off the object, and `passed: true` means it went off on
+somebody else. Who passed it to whom is **not** recorded — the object's owner
+never changes as the cloud moves, and no byte in it tracks the carrier.
+
+`lost`: the held item going empty means one of two things, and calling both of
+them `use` made a Lightning read as eleven racers all choosing to use what they
+were holding in the same frame. Which one it was is a state, not a coincidence
+in time: the damage field is still reading the hit at the moment the item goes.
+Being flipped, flattened or shocked takes it (`DROPS_ITEM` in `mkw/names.py`);
+a spin-out or a knockback does not. 25 of 442 clearings across the seven
+recordings are losses. `damage` says what took it.
 
 `pos` is about two thirds of the events in a file and most of them are the
 scramble off the grid. They are what "who was in front, and when" is rebuilt
@@ -162,8 +196,13 @@ can tell the difference, the way `hit.guess` does.
 - **Sub-sample detail.** Everything is sampled at 20 Hz, so a position swap is
   seen up to 0.05s late and one that happens and reverses between two samples
   is not seen at all.
-- **Throws inside a triple.** The held item id does not change as the second
-  and third are thrown, so they are one `use`.
+- **Throws inside a triple, and this is on purpose.** A triple's held id clears
+  a median 0.05s after it settles — one sample — because the three objects go
+  into orbit straight away, so the `use` is the moment they start spinning
+  round the kart and not a throw. Getting the three throws would mean watching
+  each object's state change in the pools. Decided not worth it: when you got
+  them and when they deployed is what the log is for. Same for a Golden
+  Mushroom, which is one `use` covering every boost it gave.
 - **Which race of a VS sequence this is.** Not decoded. The settings block is
   stored raw so it can be worked out from stored races later; until then a
   session is however many races were played between starting the tool and

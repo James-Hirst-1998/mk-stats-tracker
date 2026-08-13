@@ -48,8 +48,11 @@ def render(r, race, rec):
     # the pointer is being rebuilt between races, which is precisely when the
     # next race is starting.
     code = r["course_code"] if r["course_code"] is not None else race.course
-    me = next(p for p in r["players"] if p["slot"] == A.LOCAL_SLOT)
-    mine = racer(r, A.LOCAL_SLOT)
+    # `race.local_slot`, not the constant: which racer is the human is
+    # read from RaceConfig, so a second person on the couch does not make this
+    # view describe somebody else's race.
+    me = next(p for p in r["players"] if p["slot"] == race.local_slot)
+    mine = racer(r, race.local_slot)
     # The race clock, which is zero until GO. The per-racer counter at +0x2C
     # starts 412 frames earlier at the intro camera, which is why this view
     # used to show a clock ticking over the track flyover before the countdown.
@@ -64,7 +67,7 @@ def render(r, race, rec):
                if me.get("roulette") not in (None, A.EMPTY_ITEM) else ""))
     if mine is not None:
         head = ("you are %s on the %s\n" % (
-            race.names.get(A.LOCAL_SLOT, "?"),
+            race.field.name(race.local_slot),
             VEHICLES.get(mine["vehicle"], "vehicle %d" % mine["vehicle"]))
         ) + head
     if (me.get("damage") or -1) >= 0:
@@ -87,7 +90,7 @@ def render(r, race, rec):
                       p["completion"],
                       ITEMS.get(p.get("item"), "?"),
                       " ".join("%.3f" % x for x in sp) or "-",
-                      "<- you" if p["slot"] == A.LOCAL_SLOT else
+                      "<- you" if p["slot"] == race.local_slot else
                       ("done %s" % fmt(p["finish"]) if p["finished"] else "")))
     out.append("")
     for e in readable(race.events)[-EVENTS_SHOWN:]:

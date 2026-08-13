@@ -19,11 +19,21 @@ All twelve racers, every frame, straight from the game's own memory:
 - **The race clock** — the game's own, which starts at GO and not at the intro
   camera, so a time in the log is the time on screen
 - **Items** — what each racer picked up and when they used it, by name, and
-  what the roulette has already secretly decided about 3.5 seconds early
-- **Being hit, and what hit you** — spin-out, knockback, launched, crushed,
-  POW'd, and which of those came from an item versus a track hazard
-- **Which item, by name, and who threw it** — green shell, red shell, fake
-  item box, banana, bob-omb, blue shell. 165 of 182 hits across the recordings
+  what the roulette has already secretly decided about 3.5 seconds early.
+  Being flipped or shocked takes what you were holding, and that is logged as
+  losing it rather than throwing it
+- **Being hit, what hit you, and how long it cost you** — spin-out, knockback,
+  launched, crushed, POW'd, which of those came from an item versus a track
+  hazard, and how long each one lasted
+- **Who did it** — 312 of 365 hits across the recordings carry somebody's name.
+  Green shell, red shell, fake item box, banana, bob-omb and blue shell come
+  from watching the object that hit you get destroyed; a Star, Mega or Bullet
+  ram and a Lightning or POW leave nothing behind and are worked out instead,
+  and say so
+- **Caught in it, or hit by it** — a Blue Shell aims at whoever is leading, so
+  everybody else in the crater was standing nearby, which is a different thing
+- **The Thunder Cloud** — who won it, who it went off on, and whether it was
+  passed on in between
 - **Who everyone is** — character and vehicle by name, and which racers are
   CPUs. No more "slot 7"
 - **Course**
@@ -60,11 +70,12 @@ event log underneath:
    0:00.000  race start - Mushroom Gorge
    0:00.000  you are Luigi on the Mach Bike, starting 12th
    0:00.000  11 CPU: Yoshi, Baby Luigi, Rosalina, Dry Bowser, Toadette, ...
-   0:36.917  you were hit - Banana (Baby Luigi's) (spin-out)
-   1:05.467  Yoshi was hit - Red Shell (yours) (knockback)
-   1:09.717  Toad was hit - Blue Shell (Bowser Jr.'s) (launched)
-   1:17.117  Daisy was hit - Green Shell (Rosalina's) (knockback)
-   1:33.433  Bowser was hit - Fake Item Box (Dry Bones') (knockback)
+   0:36.917  you were hit - Banana (Baby Luigi's) (spin-out), out 0.7s
+   1:05.467  Yoshi was hit - Red Shell (yours) (knockback), out 1.7s
+   1:09.717  Toad was hit - Blue Shell (Bowser Jr.'s) (launched), out 2.0s
+   1:09.817  you were caught in the blast - Blue Shell (Bowser Jr.'s) (launched), out 2.1s
+   1:17.117  Daisy was hit - Green Shell (Rosalina's) (knockback), out 1.7s
+   1:33.433  Bowser was hit - Mega Mushroom (Dry Bones') (crushed)?, out 0.4s
 ```
 
 A hit line appears once the item that caused it has been destroyed, which is

@@ -41,6 +41,10 @@ This is the part that matters. The value of this repo is the log, not the code.
   established, not just the address.
 - Corrections are first-class. If an earlier claim turns out to be wrong, add
   a new dated line saying so and why. Don't quietly edit the old one.
+- **A decision not to do something gets written down too**, so it doesn't get
+  proposed again. Say it's a decision rather than a failure, and say what the
+  method would have been, so a later change of mind starts from where this one
+  stopped.
 - Write minimally. Short sentences, no adjectives doing work that evidence
   should be doing. If a number is claimed, the line should say how it was
   measured.

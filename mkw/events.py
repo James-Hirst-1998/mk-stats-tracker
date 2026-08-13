@@ -20,11 +20,37 @@ from collections import Counter
 
 from mkw import addresses as A
 from mkw.names import (course_name, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
-                       DAMAGE_FROM_OBJECT, CHARACTERS, VEHICLES)
+                       DAMAGE_FROM_OBJECT, DROPS_ITEM, CHARACTERS, VEHICLES)
 
 EMPTY = A.EMPTY_ITEM
 BLUE_SHELL, BOB_OMB = 7, 6
 LAUNCHED = 7
+BLUE_SHELL_OBJECT = 5
+THUNDER_CLOUD = 14              # both the item id and its object pool's index
+
+# A Star, a Mega Mushroom and a Bullet Bill leave no object behind: the damage
+# is the kart itself hitting you, so all that is left is that somebody used one
+# recently and was right beside you when it landed. Both halves are needed -
+# in a busy race two or three racers have used a Star in the last ten seconds,
+# and proximity alone cannot tell a ram from a Cataquack.
+#
+# Measured over the seven recordings, taking only hits with exactly one racer
+# who qualifies on both counts: 32 of 37 Star rams, 17 of 17 Bullet rams and 22
+# of 22 Mega crushes. The gap between the two karts is 0.0001-0.0030 laps and
+# the lag from the item being used is 0.6-9.1s. `lab/events/measure.py`.
+RAMMED = {3: 9, 6: 15, 13: 11}  # damage type -> the item that causes it
+RAM_WINDOW = 12.0               # wider than the 9.1s longest measured lag
+RAM_NEAR = 0.004                # laps; wider than the 0.0030 largest measured
+
+# Lightning and the POW Block hit a group at once and leave nothing behind
+# either, but they need no proximity: the racer who used it is the one racer
+# not in the list. Lightning lands in the same frame it is used (lag 0.000s
+# over 27 hits) and a POW 1.95s later, and in neither case is the user among
+# the victims.
+FIELD_WIDE = {10: (8, 1.0), 11: (13, 3.0)}   # damage -> (item, how long after)
+
+# Victims of one explosion, for telling a hit apart from being caught in it.
+BLAST = 1.0
 
 # The object that hit you is destroyed a fixed delay later, while it breaks or
 # explodes. Measured across seven recordings, not assumed: for a shell, banana
@@ -33,6 +59,14 @@ LAUNCHED = 7
 # therefore held back until its window has passed and then reported with the
 # item named, rather than reported twice.
 LAG = {0: (0.20, 0.45), 2: (0.20, 0.45), 7: (0.60, 2.50)}
+
+# How long a hit waits before it is reported. For the ones named from an object
+# that is the despawn window above. Lightning and the POW are held back for a
+# different reason: the item field clears a sample AFTER the damage lands, so
+# the use that caused them is not always known yet - ten of the eleven victims
+# of one Lightning went out unattributed without this.
+HOLD = {d: v[1] for d, v in LAG.items()}
+HOLD.update({10: 1.0, 11: 1.0})
 SPAWN_WINDOW = 1.0              # a thrown item appears within this of the throw
 KEEP = 6.0                      # seconds of despawn history worth holding
 
@@ -73,7 +107,12 @@ QUIET = ("pos",)
 
 
 def readable(events):
-    return [e for e in events if e["type"] not in QUIET]
+    """What is worth reading in the stream, as opposed to what is worth
+    keeping. Position swaps are too many to read past, and anything landing on
+    a racer who has already finished did not affect their race - it stays in
+    the file and out of the way."""
+    return [e for e in events
+            if e["type"] not in QUIET and not e.get("after")]
 
 
 def fmt(sec):
@@ -157,10 +196,16 @@ def describe(ev, field):
     if t == "use":
         return "%s used %s" % (field.who(k["slot"]),
                                ITEMS.get(k["item"], k["item"]))
+    if t == "lost":
+        return "%s lost %s - %s" % (
+            field.who(k["slot"]), ITEMS.get(k["item"], k["item"]),
+            DAMAGE_TYPES.get(k["damage"], ("hit", "something"))[1])
     if t == "swap":
         return "%s %s -> %s" % (field.who(k["slot"]),
                                 ITEMS.get(k["from"], k["from"]),
                                 ITEMS.get(k["to"], k["to"]))
+    if t == "cloud":
+        return "%s won a Thunder Cloud" % field.who(k["slot"])
     if t == "hit":
         kind, cause = DAMAGE_TYPES.get(k["damage"], ("Hit", "something"))
         named = None
@@ -168,12 +213,21 @@ def describe(ev, field):
             named = "%s (%s)" % (
                 OBJECT_TYPES.get(k["object"], "item %d" % k["object"]),
                 field.owners(k.get("by")) or "unknown")
-        return "%s hit - %s (%s)%s%s" % (
+        elif k.get("by"):
+            named = "%s (%s)" % (cause, field.owners(k["by"]))
+        elif k.get("from") is not None:
+            named = "%s (%s won it%s)" % (
+                cause, field.who(k["from"]),
+                ", passed on" if k.get("passed") else "")
+        return "%s %s - %s (%s)%s%s%s%s" % (
             "you were" if k["slot"] == field.local_slot
             else "%s was" % field.who(k["slot"]),
+            "caught in the blast" if k.get("caught") else "hit",
             named or cause, kind.lower(),
             "" if k["damage"] in BY_ITEM else ", not an item",
-            "?" if k.get("guess") else "")
+            "?" if k.get("guess") else "",
+            "" if k.get("for") is None else ", out %.1fs" % k["for"],
+            " [already finished]" if k.get("after") else "")
     if t == "lap":
         return "%s completed lap %d in %s" % (field.who(k["slot"]), k["lap"],
                                               fmt(k["split"]))
@@ -199,6 +253,9 @@ class Race:
         self.events = []
         self.uses = []              # (clock, slot, item id)
         self.pending = []           # hits waiting for their object to despawn
+        self.hurt = {}              # slot -> when the hit running on them began
+        self.ended = {}             # (slot, start) -> when it ended
+        self.logged = {}            # (slot, start) -> the event, to fill in
         self.despawns = []          # (clock, object type, owner, thrown as)
         self.world = None           # {object address: (type, owner)}
         self.born = {}              # object address -> the item id thrown
@@ -231,8 +288,18 @@ class Race:
         return self.field.who(slot)
 
     def name_racers(self, racers):
+        """Learn who is driving, and which of them is the human at this Wii.
+
+        Slot 0 in all seven recordings, but that is a fact about how James
+        plays rather than a rule, and RaceConfig says it outright: type 0 is
+        the local player. Two people on one couch are both type 0, and the
+        first of them is "you"; the rest are named like anybody else.
+        """
         if racers is None or racers == self.field.racers:
             return
+        mine = [r["slot"] for r in racers if r["type"] == A.TYPE_LOCAL]
+        if mine:
+            self.local_slot = mine[0]
         self.field = Field(racers, self.local_slot)
 
     def log_field(self):
@@ -285,6 +352,11 @@ class Race:
             for a, v in world.items():
                 if a not in self.world:
                     self.born[a] = self.spawned_by(now, v[1])
+                    # A Thunder Cloud is never held - it goes to work the
+                    # moment it is won, which is why it never shows up in the
+                    # item field and only the object says who has it.
+                    if v[0] == THUNDER_CLOUD:
+                        self.log(now, "cloud", slot=v[1])
             for a, v in self.world.items():
                 if a not in world:
                     self.despawns.append((now, v[0], v[1],
@@ -332,26 +404,137 @@ class Race:
             return 9, [bomb[-1][1]]
         return None
 
-    def log_hit(self, t, slot, damage):
+    def frame_context(self, r):
+        """What a hit on this frame needs to know about the rest of the race.
+
+        Attributing a ram needs where everybody was at that instant, and a
+        Thunder Cloud needs the object that is about to go off, so both are
+        taken from the frame the hit landed on rather than from wherever the
+        race has got to by the time the hit is reported.
+        """
+        cloud = None
+        for _, (kind, owner) in (r.get("world_items") or {}).items():
+            if kind == THUNDER_CLOUD:
+                cloud = owner
+        return {"prog": {p["slot"]: p["completion"] for p in r["players"]},
+                "place": {p["slot"]: p["position"] for p in r["players"]},
+                "cloud": cloud}
+
+    def end_hit(self, slot, t):
+        """Record how long a hit lasted, on the event if it is already out."""
+        start = self.hurt.pop(slot, None)
+        if start is None:
+            return
+        key = (slot, round(start, 3))
+        self.ended[key] = t
+        ev = self.logged.get(key)
+        if ev is not None:
+            ev["for"] = round(t - start, 3)
+        # A hit is reported at most LAG seconds after it starts and the longest
+        # measured spin is under 5s, so nothing older than that is still owed a
+        # length.
+        self.ended = {k: v for k, v in self.ended.items() if t - v <= 10.0}
+        self.logged = {k: v for k, v in self.logged.items() if t - k[1] <= 10.0}
+
+    def name_rammer(self, t, slot, damage, prog):
+        """The racer who drove into you on a Star, a Mega or a Bullet.
+
+        Nothing is read here that says so - there is no object to point at - so
+        this is inference and is marked as one. It is only claimed when exactly
+        one racer both used the right item recently and was within `RAM_NEAR`
+        laps of the victim when it landed.
+        """
+        item = RAMMED.get(damage)
+        if item is None or prog is None or slot not in prog:
+            return None
+        near = {s for s, x in prog.items()
+                if s != slot and abs(x - prog[slot]) <= RAM_NEAR}
+        who = {u[1] for u in self.uses
+               if u[2] == item and 0.0 <= t - u[0] <= RAM_WINDOW
+               and u[1] in near}
+        return sorted(who) if len(who) == 1 else None
+
+    def name_field_wide(self, t, slot, damage):
+        """Whoever set off the Lightning or the POW that caught this racer."""
+        got = FIELD_WIDE.get(damage)
+        if got is None:
+            return None
+        item, window = got
+        # The lower bound is negative because the item field can clear a sample
+        # after the damage lands, so the use is sometimes seen just after the
+        # hit it caused.
+        who = {u[1] for u in self.uses
+               if u[2] == item and -0.5 <= t - u[0] <= window and u[1] != slot}
+        return sorted(who) if len(who) == 1 else None
+
+    def mark_blast(self, ev, obj, by):
+        """Split one explosion's victims into the one it hit and the rest.
+
+        A Blue Shell aims at whoever is leading; everything else it catches was
+        standing nearby, which is a different thing and worth telling apart. A
+        Bob-omb aims at nobody, so once it has caught more than one racer they
+        were all caught in it.
+        """
+        group = [e for e in self.events
+                 if e["type"] == "hit" and e["damage"] == LAUNCHED
+                 and abs(e["t"] - ev["t"]) <= BLAST
+                 and e.get("object") == obj and e.get("by") == by
+                 and e is not ev]
+        if not group:
+            return
+        for e in group + [ev]:
+            aimed = obj == BLUE_SHELL_OBJECT and e.get("place") == 1
+            if aimed:
+                e.pop("caught", None)
+            else:
+                e["caught"] = True
+
+    def log_hit(self, t, slot, damage, frame=None):
+        frame = frame or {}
         named = self.name_hit(t, slot, damage)
         guess = False
         if named is None and damage == LAUNCHED:
             named = self.name_launched(t)
             guess = named is not None
         obj, by = named if named else (None, None)
+        if by is None:
+            by = self.name_rammer(t, slot, damage, frame.get("prog"))
+            guess = guess or by is not None
+        if by is None:
+            by = self.name_field_wide(t, slot, damage)
+            guess = guess or by is not None
         ev = dict(slot=slot, damage=damage, object=obj, by=by)
+        place = (frame.get("place") or {}).get(slot)
+        if place is not None:
+            ev["place"] = place
         if guess:
             ev["guess"] = True
-        self.log(t, "hit", **ev)
+        if frame.get("after"):
+            ev["after"] = True
+        # A Thunder Cloud is not thrown at anybody: it is won, passed on by
+        # bumping into someone, and goes off on whoever is holding it. Who won
+        # it is read off the object; who passed it on is not readable at all.
+        if damage == 17 and frame.get("cloud") is not None:
+            ev["from"] = frame["cloud"]
+            if frame["cloud"] != slot:
+                ev["passed"] = True
+        ev = self.log(t, "hit", **ev)
+        self.logged[(slot, round(t, 3))] = ev
+        over = self.ended.get((slot, round(t, 3)))
+        if over is not None:
+            ev["for"] = round(over - t, 3)
+        if damage == LAUNCHED and obj is not None:
+            self.mark_blast(ev, obj, by)
+        return ev
 
     def settle(self, now, force=False):
         """Report any hit whose object has had time to despawn."""
         keep = []
-        for t, slot, damage in self.pending:
-            if not force and now < t + LAG.get(damage, (0.0, 0.0))[1]:
-                keep.append((t, slot, damage))
+        for t, slot, damage, frame in self.pending:
+            if not force and now < t + HOLD.get(damage, 0.0):
+                keep.append((t, slot, damage, frame))
             else:
-                self.log_hit(t, slot, damage)
+                self.log_hit(t, slot, damage, frame)
         self.pending = keep
 
     def flush(self):
@@ -488,6 +671,7 @@ class Race:
             self.log_field()
         self.sample(r)
 
+        frame = self.frame_context(r)
         for p in r["players"]:
             s = p["slot"]
             old = self.prev.get(s)
@@ -495,6 +679,10 @@ class Race:
             if old is None:
                 continue
             t = self.clock
+            # Their race is already over. Whatever lands now lands on somebody
+            # parked past the line and counts for nothing, so it is marked and
+            # left out of the totals rather than dropped - it did happen.
+            done_racing = {"after": True} if old.get("finished") else {}
 
             if p["lap"] > old["lap"]:
                 sp = splits(p["cumulative"])
@@ -504,31 +692,63 @@ class Race:
                              "finish", slot=s, position=p["position"],
                              time=p["finish"])
                 elif 0 < done <= len(sp):
-                    self.log(t, "lap", slot=s, lap=done, split=sp[done - 1],
+                    # Stamped with the game's own lap timer, the way `finish`
+                    # is, rather than with the clock on the frame the crossing
+                    # was noticed - which is up to a sample late.
+                    self.log(p["cumulative"][done - 1], "lap", slot=s,
+                             lap=done, split=sp[done - 1],
                              total=p["cumulative"][done - 1])
 
             if p["position"] != old["position"] and self.started:
                 self.log(t, "pos", slot=s, **{"from": old["position"],
-                                              "to": p["position"]})
+                                              "to": p["position"]},
+                         **done_racing)
 
             a, b = old.get("roulette"), p.get("roulette")
             if a == EMPTY and b not in (None, EMPTY):
-                self.log(t, "box", slot=s, item=b)
+                self.log(t, "box", slot=s, item=b, **done_racing)
 
             a, b = old.get("damage"), p.get("damage")
-            if a is not None and b is not None and a != b and b >= 0:
-                self.pending.append((t, s, b))
+            if a is not None and b is not None and a != b:
+                # The hit that was running has just ended, whether it cleared
+                # or a stronger one took over. The field is read every frame
+                # and this transition used to be thrown away, so a hit had a
+                # start and no length.
+                if a >= 0 and s in self.hurt:
+                    self.end_hit(s, t)
+                if b >= 0:
+                    self.hurt[s] = t
+                    self.pending.append((t, s, b, dict(frame, **done_racing)))
 
             a, b = old.get("item"), p.get("item")
             if a is not None and b is not None and a != b:
                 if a == EMPTY:
-                    self.log(t, "hold", slot=s, item=b)
+                    self.log(t, "hold", slot=s, item=b, **done_racing)
                 elif b == EMPTY:
-                    self.uses.append((t, s, a))
-                    self.uses = [u for u in self.uses if t - u[0] <= 20.0]
-                    self.log(t, "use", slot=s, item=a)
+                    # An item leaving somebody's hands is a throw unless it
+                    # was knocked out of them: being flipped, flattened or
+                    # shocked costs you what you were holding, a spin-out or a
+                    # knockback does not. Which of the two it was is a state,
+                    # not a coincidence in time - the damage field is still
+                    # reading the hit at the moment the item goes - so no
+                    # window is needed and none is used. A window was tried
+                    # first and is worse: it depends on catching the exact
+                    # frame the hit began, and a partly unreadable snapshot
+                    # moves that by half a second. Being taken off you is not
+                    # a throw either, so it stays out of `uses` and cannot be
+                    # credited with an object that appears near it.
+                    # `analysis/validate_item_loss.py`.
+                    hurt = p.get("damage")
+                    if hurt in DROPS_ITEM:
+                        self.log(t, "lost", slot=s, item=a, damage=hurt,
+                                 **done_racing)
+                    else:
+                        self.uses.append((t, s, a))
+                        self.uses = [u for u in self.uses if t - u[0] <= 20.0]
+                        self.log(t, "use", slot=s, item=a, **done_racing)
                 else:
-                    self.log(t, "swap", slot=s, **{"from": a, "to": b})
+                    self.log(t, "swap", slot=s, **{"from": a, "to": b},
+                             **done_racing)
 
         # After the item uses above, so an object that appears in the same
         # frame as the throw can still be tied to it.

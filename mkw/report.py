@@ -69,6 +69,26 @@ def positions(log):
             for s, c in out.items()}
 
 
+def hit_by(e):
+    """A short name for whatever caused a hit.
+
+    Most hits name the object that did it. A Star, Mega or Bullet ram leaves no
+    object, so all there is to say is what the damage was - and those are 109
+    of the hits in a session, so leaving them out of the column made a race
+    where somebody starred through the field look uneventful.
+    """
+    if e.get("object") is not None:
+        return OBJECT_TYPES.get(e["object"], "item %d" % e["object"])
+    return DAMAGE_TYPES.get(e["damage"], ("?", "something"))[1]
+
+
+def counts(log):
+    """The events the totals are built from: everything that happened while
+    the racer it happened to was still racing. A shell that catches somebody
+    parked past the finish line is in the log, and is not a statistic."""
+    return [e for e in log.events if not e.get("after")]
+
+
 def summary(log):
     """One dict per racer, keyed by slot."""
     final = {s["slot"]: s for s in log.standings}
@@ -104,14 +124,22 @@ def summary(log):
             "boxes": 0,
             "held": Counter(),
             "used": Counter(),
+            # Knocked out of their hands rather than thrown. Kept apart from
+            # `used` because a Lightning would otherwise read as eleven racers
+            # all choosing to use what they were holding in the same frame.
+            "lost": Counter(),
             "hits_taken": 0,
             "hits_by_damage": Counter(),
             "hits_by_item": Counter(),
             "hit_by_racer": Counter(),
             "hits_dealt": Counter(),
             "hazards": 0,
+            "caught": 0,
+            # Seconds spun out, flipped or flattened, from the damage field's
+            # own start and end. Only counts hits whose end was seen.
+            "out": 0.0,
         }
-    for e in log.events:
+    for e in counts(log):
         s = e.get("slot")
         row = out.get(s)
         t = e["type"]
@@ -122,11 +150,16 @@ def summary(log):
                 row["held"][e["item"]] += 1
             elif t == "use":
                 row["used"][e["item"]] += 1
+            elif t == "lost":
+                row["lost"][e["item"]] += 1
             elif t == "hit":
                 row["hits_taken"] += 1
                 row["hits_by_damage"][e["damage"]] += 1
-                if e.get("object") is not None:
-                    row["hits_by_item"][e["object"]] += 1
+                row["hits_by_item"][hit_by(e)] += 1
+                if e.get("for") is not None:
+                    row["out"] += e["for"]
+                if e.get("caught"):
+                    row["caught"] += 1
                 if e["damage"] not in BY_ITEM:
                     row["hazards"] += 1
         # Who threw it is only credited when the despawn window named exactly
@@ -134,8 +167,8 @@ def summary(log):
         if t == "hit" and len(e.get("by") or []) == 1:
             by = e["by"][0]
             if by in out and by != s:
-                out[by]["hits_dealt"][e.get("object")] += 1
-            if by in out and s in out:
+                out[by]["hits_dealt"][hit_by(e)] += 1
+            if by in out and s in out and by != s:
                 out[s]["hit_by_racer"][by] += 1
     return out
 
@@ -164,8 +197,11 @@ def render(log, events=True, quiet=True):
         for e in shown:
             lines.append("  %9s  %s" % (fmt(e["t"]), describe(e, log.field)))
         if quiet and len(shown) != len(log.events):
-            lines.append("  (%d position swaps hidden)"
-                         % (len(log.events) - len(shown)))
+            after = sum(1 for e in log.events if e.get("after"))
+            lines.append("  (%d position swaps hidden%s)"
+                         % (len(log.events) - len(shown) - after,
+                            ", and %d events after that racer finished" % after
+                            if after else ""))
         lines.append("")
 
     stats = summary(log)
@@ -186,20 +222,16 @@ def render(log, events=True, quiet=True):
             "<- you" if r["slot"] == log.local_slot else ""))
 
     lines.append("")
-    row = "%-4s %-19s %-6s %-6s %-6s %-7s %s"
+    row = "%-4s %-19s %-6s %-6s %-6s %-7s %-7s %s"
     lines.append(row % ("pos", "racer", "boxes", "used", "hit", "hazard",
-                        "what hit them"))
+                        "out", "what hit them"))
     for r in rows:
-        what = ", ".join(
-            "%dx %s" % (n, OBJECT_TYPES.get(o, "item %d" % o))
-            for o, n in r["hits_by_item"].most_common())
-        unnamed = r["hits_taken"] - sum(r["hits_by_item"].values()) - r["hazards"]
-        if unnamed > 0:
-            what += "%s%d unnamed" % (", " if what else "", unnamed)
+        what = ", ".join("%dx %s" % (n, o)
+                         for o, n in r["hits_by_item"].most_common())
         lines.append(row % (
             "P%s" % r["position"], r["name"], r["boxes"],
             sum(r["used"].values()), r["hits_taken"] - r["hazards"],
-            r["hazards"], what or "-"))
+            r["hazards"], "%.1fs" % r["out"], what or "-"))
 
     me = stats.get(log.local_slot)
     if me:
@@ -208,6 +240,9 @@ def render(log, events=True, quiet=True):
         lines.append("  items used:  %s" % (", ".join(
             "%dx %s" % (n, ITEMS.get(i, i)) for i, n in me["used"].most_common())
             or "none"))
+        if me["lost"]:
+            lines.append("  knocked out of your hands: %s" % ", ".join(
+                "%dx %s" % (n, ITEMS.get(i, i)) for i, n in me["lost"].most_common()))
         lines.append("  hits taken:  %s" % (", ".join(
             "%dx %s (%s)" % (n, DAMAGE_TYPES.get(d, ("?", "?"))[0],
                              DAMAGE_TYPES.get(d, ("?", "?"))[1])
@@ -216,8 +251,11 @@ def render(log, events=True, quiet=True):
             "%dx %s" % (n, log.field.name(s))
             for s, n in me["hit_by_racer"].most_common()) or "nobody"))
         lines.append("  you hit:     %s" % (", ".join(
-            "%dx %s" % (n, OBJECT_TYPES.get(o, "?"))
-            for o, n in me["hits_dealt"].most_common()) or "nobody"))
+            "%dx %s" % (n, o) for o, n in me["hits_dealt"].most_common())
+            or "nobody"))
+        lines.append("  time out of the race: %.1fs%s"
+                     % (me["out"], ", %d of them caught in somebody else's "
+                        "explosion" % me["caught"] if me["caught"] else ""))
         # Two counts of the same thing from different places: the game's own
         # frames-in-first, and the position events replayed. They should agree.
         lines.append("  time in P1:  %.1fs of %.1fs (from the position events: %.1fs)"
@@ -274,7 +312,7 @@ def render_session(s):
                         "boxes", "what hit you"))
     for race, meta in zip(s.races, m.get("races", [])):
         me = summary(race).get(race.local_slot, {})
-        what = ", ".join("%dx %s" % (n, OBJECT_TYPES.get(o, "item %d" % o))
+        what = ", ".join("%dx %s" % (n, o)
                          for o, n in me.get("hits_by_item", {}).most_common())
         lines.append(row % (
             meta["n"], race.course_name,

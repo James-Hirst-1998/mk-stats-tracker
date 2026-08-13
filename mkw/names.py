@@ -116,6 +116,20 @@ DAMAGE_TYPES = {
 # rest are track hazards or contact with a boosted kart.
 BY_ITEM = {0, 2, 7, 10, 11, 13, 17}
 
+# The damage types that knock whatever you are holding out of your hands.
+# Measured, not taken from the game's rules: across all seven recordings, every
+# hit where the victim was holding something was checked for the held item
+# vanishing within 0.35s. Being flipped, flattened or shocked takes it, 23 of
+# 25; a spin-out or a knockback does not, 2 of 20 - and both of those two
+# cleared 0.35s BEFORE the hit, so they are throws that happened to be followed
+# by one. `analysis/validate_item_loss.py`.
+#
+# The two misses are Mega Mushroom crushes where the racer kept what they were
+# holding, so this is the set of hits that CAN take it, not hits that always
+# do. That is the right shape for the caller: it only asks once an item has
+# actually gone.
+DROPS_ITEM = {3, 6, 7, 8, 10, 13, 17}
+
 # Item objects in the world use their own enum, separate from ITEMS above.
 # Learned by watching which object pool gains an entry when a known item is
 # used: 66/66 for green, 65/65 red, 163/163 banana, 15/15 blue, 29/29 fake box,
