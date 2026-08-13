@@ -104,6 +104,10 @@ def summary(log):
             "boxes": 0,
             "held": Counter(),
             "used": Counter(),
+            # Knocked out of their hands rather than thrown. Kept apart from
+            # `used` because a Lightning would otherwise read as eleven racers
+            # all choosing to use what they were holding in the same frame.
+            "lost": Counter(),
             "hits_taken": 0,
             "hits_by_damage": Counter(),
             "hits_by_item": Counter(),
@@ -122,6 +126,8 @@ def summary(log):
                 row["held"][e["item"]] += 1
             elif t == "use":
                 row["used"][e["item"]] += 1
+            elif t == "lost":
+                row["lost"][e["item"]] += 1
             elif t == "hit":
                 row["hits_taken"] += 1
                 row["hits_by_damage"][e["damage"]] += 1
@@ -208,6 +214,9 @@ def render(log, events=True, quiet=True):
         lines.append("  items used:  %s" % (", ".join(
             "%dx %s" % (n, ITEMS.get(i, i)) for i, n in me["used"].most_common())
             or "none"))
+        if me["lost"]:
+            lines.append("  knocked out of your hands: %s" % ", ".join(
+                "%dx %s" % (n, ITEMS.get(i, i)) for i, n in me["lost"].most_common()))
         lines.append("  hits taken:  %s" % (", ".join(
             "%dx %s (%s)" % (n, DAMAGE_TYPES.get(d, ("?", "?"))[0],
                              DAMAGE_TYPES.get(d, ("?", "?"))[1])

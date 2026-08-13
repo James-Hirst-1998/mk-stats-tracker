@@ -9,6 +9,21 @@ Started as an item-tracking log, which is why the early entries are all items.
 
 ## Open
 
+- **Who caused a hit that has no world object.** Every damage 3, 6, 10, 11, 13
+  and 17 in the stored races carries `by: null` — 109 hits with a person behind
+  them and nobody's name on them, against 152 that are named. Nothing new needs
+  reading: a boost window off the existing `use` events plus adjacency in the
+  stored progress track already resolves 64 of the 73 ram and crush hits, and
+  Lightning and POW are exact from the rules validated on 2026-08-12.
+- **Hits after that racer has finished.** Their race is over and a red shell
+  then means nothing, but it is logged and counted like any other. Same for
+  anything else that lands after they cross the line.
+- **Direct hit vs caught in the blast.** A Blue Shell or Bob-omb writes damage 7
+  to everyone it catches, so the log cannot say who it was aimed at. 8 of the 10
+  blue shell detonations in the stored races caught one racer and 2 caught two.
+- **A hit's end is read every frame and thrown away.** `read_damage` returns to
+  −1 when the racer recovers and `update` only acts on the onset, so nothing
+  says how long anyone spent spinning.
 - **The last 9% of hit naming.** 17 of 182 item-caused hits have no candidate
   despawn in the window. Most are bananas, where the sampling rate can miss a
   short-lived object. Not obviously worth chasing.
@@ -29,7 +44,7 @@ Started as an item-tracking log, which is why the early entries are all items.
 - **The game's own VS points total** has not been located. A session adds up
   the published table from the finishing positions instead.
 - **Quantity remaining in a triple.** The held id stays put while all three
-  are thrown.
+  are thrown. Closed by decision, 2026-08-13 — see the log.
 - MEM2 above `0x91800000` has never been captured. Nothing has needed it yet.
 
 ## Log
@@ -191,3 +206,8 @@ Started as an item-tracking log, which is why the early entries are all items.
 - `2026-08-12`: **second bug, found by the test written for the first.** The clock-went-backwards check compared against the previous frame's clock, which had already dropped to zero, so the run of backwards frames only ever reached 1 and `RESTART = 3` was never met. Two races on the same course would have been written as one file - the exact thing that check exists to prevent. Now compared against the highest clock the race has reached. `analysis/validate_transitions.py` covers both: every snapshot field blanked in turn, and a race, an unreadable gap, then a second race on the same course -> 2 races stored.
 - `2026-08-12`: **first live session end to end.** Three VS races recorded from Dolphin through `tools/track.py`, read back with `tools/report.py` alone: Luigi Circuit, DS Yoshi Falls, SNES Ghost Valley 2, P1 in all three, 1,728 events, **249 kB for the three - 78, 79 and 86 kB**, against roughly a gigabyte per race for a recording. 17 of the 18 hits involving slot 0 were credited to a thrower; the one that was not had two candidates in the despawn window and is logged unknown rather than guessed.
 - `2026-08-12`: OPEN, and the next thing worth doing -> a triple counts as one `use`. Across those three races items held and items used were equal item for item, 21 and 21, which cannot be right when four of them were Triple Bananas. A throw needs to be an event per object spawned, not per held-item field going empty, or the items UI will undercount every triple.
+- `2026-08-13`: audit of the event stream against the five stored races, before writing any code. Findings, each with how it was counted: **`swap` has never fired** (0 in 5 races); **a triple's `use` is the deploy, not a throw** (hold->use median 0.05s, n=10 green and n=41 banana, i.e. one sample); **Golden Mushroom is one `use` for every boost it gave** (median 9.07s after pickup, n=28); **109 hits carry `by: null`** (all of damage 3, 6, 10, 11, 13, 17) against 152 named; **4 hits are a racer driving into their own item**; 376 `box` against 355 `use`, so about 20 items a session are picked up and never fired.
+- `2026-08-13`: CLOSED BY DECISION, James -> do not chase throws inside a triple, or per-boost Golden Mushrooms. What the log is for is when you got them and when they deployed, and it already says that. This is a decision, not a failure: the method is known (watch each object's state change in the pools) and is deliberately not being spent on. Supersedes the 2026-08-12 "OPEN, and the next thing worth doing" line above, which also proposed the wrong fix - the pool goes 0 -> 3 at deploy, so an event per object spawned would give three throws at the moment nothing was thrown.
+- `2026-08-13`: **an item leaving the held field is not always a throw.** A Lightning read as eleven racers all choosing to use what they were holding in the same frame. `analysis/validate_item_loss.py` walks all 442 clearings across the seven recordings: 415 have no hit within 0.6s and are plain throws, 25 happen while that racer's damage field is reading a type that flips, flattens or shocks them, and 2 have a hit near but not on them. Spin-out and knockback never take it; damage 3, 6, 7, 8, 10, 13 and 17 do. Items taken: 9 Golden Mushrooms, 4 Red Shells, 4 Stars, 3 Fake Item Boxes, 2 Triple Mushrooms, a Banana, a Mega Mushroom, a Bullet Bill.
+- `2026-08-13`: a time window was tried first and is worse, worth writing down. Pairing a clearing with a hit 0.20s before it gives 23 of the 25, because it depends on the reader catching the frame the hit began and a partly unreadable snapshot moves that by up to 0.65s. Asking what the damage field says **at the moment the item goes** needs no window and no constant, and reader and offline check then agree exactly: 417 `use` and 25 `lost` from both.
+- `2026-08-13`: `lost` is its own event with the damage type that took it, rather than a flag on `use`, and stays out of `Race.uses` so a dropped item is never credited as the throw that spawned a nearby object. `analysis/validate_race_log.py` and `validate_session.py` still pass 7 of 7.

@@ -19,7 +19,9 @@ All twelve racers, every frame, straight from the game's own memory:
 - **The race clock** — the game's own, which starts at GO and not at the intro
   camera, so a time in the log is the time on screen
 - **Items** — what each racer picked up and when they used it, by name, and
-  what the roulette has already secretly decided about 3.5 seconds early
+  what the roulette has already secretly decided about 3.5 seconds early.
+  Being flipped or shocked takes what you were holding, and that is logged as
+  losing it rather than throwing it
 - **Being hit, and what hit you** — spin-out, knockback, launched, crushed,
   POW'd, and which of those came from an item versus a track hazard
 - **Which item, by name, and who threw it** — green shell, red shell, fake

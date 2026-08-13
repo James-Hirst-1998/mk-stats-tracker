@@ -20,7 +20,7 @@ from collections import Counter
 
 from mkw import addresses as A
 from mkw.names import (course_name, ITEMS, DAMAGE_TYPES, BY_ITEM, OBJECT_TYPES,
-                       DAMAGE_FROM_OBJECT, CHARACTERS, VEHICLES)
+                       DAMAGE_FROM_OBJECT, DROPS_ITEM, CHARACTERS, VEHICLES)
 
 EMPTY = A.EMPTY_ITEM
 BLUE_SHELL, BOB_OMB = 7, 6
@@ -157,6 +157,10 @@ def describe(ev, field):
     if t == "use":
         return "%s used %s" % (field.who(k["slot"]),
                                ITEMS.get(k["item"], k["item"]))
+    if t == "lost":
+        return "%s lost %s - %s" % (
+            field.who(k["slot"]), ITEMS.get(k["item"], k["item"]),
+            DAMAGE_TYPES.get(k["damage"], ("hit", "something"))[1])
     if t == "swap":
         return "%s %s -> %s" % (field.who(k["slot"]),
                                 ITEMS.get(k["from"], k["from"]),
@@ -524,9 +528,26 @@ class Race:
                 if a == EMPTY:
                     self.log(t, "hold", slot=s, item=b)
                 elif b == EMPTY:
-                    self.uses.append((t, s, a))
-                    self.uses = [u for u in self.uses if t - u[0] <= 20.0]
-                    self.log(t, "use", slot=s, item=a)
+                    # An item leaving somebody's hands is a throw unless it
+                    # was knocked out of them: being flipped, flattened or
+                    # shocked costs you what you were holding, a spin-out or a
+                    # knockback does not. Which of the two it was is a state,
+                    # not a coincidence in time - the damage field is still
+                    # reading the hit at the moment the item goes - so no
+                    # window is needed and none is used. A window was tried
+                    # first and is worse: it depends on catching the exact
+                    # frame the hit began, and a partly unreadable snapshot
+                    # moves that by half a second. Being taken off you is not
+                    # a throw either, so it stays out of `uses` and cannot be
+                    # credited with an object that appears near it.
+                    # `analysis/validate_item_loss.py`.
+                    hurt = p.get("damage")
+                    if hurt in DROPS_ITEM:
+                        self.log(t, "lost", slot=s, item=a, damage=hurt)
+                    else:
+                        self.uses.append((t, s, a))
+                        self.uses = [u for u in self.uses if t - u[0] <= 20.0]
+                        self.log(t, "use", slot=s, item=a)
                 else:
                     self.log(t, "swap", slot=s, **{"from": a, "to": b})
 
