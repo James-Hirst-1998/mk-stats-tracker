@@ -107,7 +107,12 @@ QUIET = ("pos",)
 
 
 def readable(events):
-    return [e for e in events if e["type"] not in QUIET]
+    """What is worth reading in the stream, as opposed to what is worth
+    keeping. Position swaps are too many to read past, and anything landing on
+    a racer who has already finished did not affect their race - it stays in
+    the file and out of the way."""
+    return [e for e in events
+            if e["type"] not in QUIET and not e.get("after")]
 
 
 def fmt(sec):

@@ -197,8 +197,11 @@ def render(log, events=True, quiet=True):
         for e in shown:
             lines.append("  %9s  %s" % (fmt(e["t"]), describe(e, log.field)))
         if quiet and len(shown) != len(log.events):
-            lines.append("  (%d position swaps hidden)"
-                         % (len(log.events) - len(shown)))
+            after = sum(1 for e in log.events if e.get("after"))
+            lines.append("  (%d position swaps hidden%s)"
+                         % (len(log.events) - len(shown) - after,
+                            ", and %d events after that racer finished" % after
+                            if after else ""))
         lines.append("")
 
     stats = summary(log)

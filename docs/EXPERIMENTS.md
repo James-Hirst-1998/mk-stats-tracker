@@ -22,12 +22,15 @@ Started as an item-tracking log, which is why the early entries are all items.
   bullet. Positions gained needs the ride's end, so it needs a real field —
   the same `KartMove` trip as mini-turbos. What does work is the other half:
   everyone the rider flattens is now credited to them.
-- **A paused race cannot be told from a slow emulator.** The race clock
-  standing still across snapshots was the obvious check and it is dead: over
-  the seven recordings, with nobody ever pausing, the clock repeats in runs of
-  up to 30 snapshots. Dolphin under the recorder runs below full speed, so the
-  emulated 60 Hz clock legitimately holds still for several reads. This is also
-  why the older `0x144` delta method failed. Needs a real pause flag.
+- **A standing-still race clock does not mean the race is paused.** Over the
+  seven recordings, with nobody ever pausing, the clock repeats on 4–19% of
+  in-race snapshots in runs of up to 30. Not a slow emulator: those same
+  recordings run at 20.7–23.6 frames per game-second against a 20 Hz recorder,
+  which is real time. So it is stalls — the recorder's, or the game's — and
+  they are long enough to look exactly like a pause. Whether that also happens
+  when nothing is being recorded is untested, and a live session is the cheap
+  way to find out: if the clock never repeats live, the check becomes viable
+  after all. Until then, a pause needs a real flag.
 - **The last 9% of hit naming.** 17 of 182 item-caused hits have no candidate
   despawn in the window. Most are bananas, where the sampling rate can miss a
   short-lived object. Not obviously worth chasing.
@@ -225,3 +228,6 @@ Started as an item-tracking log, which is why the early entries are all items.
 - `2026-08-13`: **events after a racer's own finish are marked, not counted.** They were being counted like any other, so a shell catching somebody parked past the line was in their totals. 3 such hits in the five stored races and 4 across the recordings - small, but the whole point is that the numbers are arguable with nobody. Kept in the log with `after: true` because it did happen, and `mkw/report.py` builds every total from the rest.
 - `2026-08-13`: lap events are stamped with the game's own cumulative lap timer now, the way `finish` already was, rather than with the clock on the frame the crossing was noticed - which is up to one 20 Hz sample late.
 - `2026-08-13`: the local player is read from RaceConfig (`type == 0`) instead of assuming slot 0. No change on any recording - all seven have exactly one non-CPU and it is always slot 0 - which is the point: it is now a read rather than a fact about how James plays. Two humans on one couch are both type 0 and the first is "you".
+- `2026-08-13`: CORRECTION, same day -> the pause entry first said the race clock stands still because Dolphin runs below full speed under the recorder. It does not: the recordings run at 20.7-23.6 frames per game-second against a 20 Hz recorder, which is real time. The measurement that killed the check is unchanged, the reason given for it was wrong, and the cause is stalls rather than a uniform slowdown. Worth retesting live, where nothing is being written to disk.
+- `2026-08-13`: `analysis/validate_live_view.py` -> the live view is drawn for every frame of every recording, 21,926 of them, with 0 raising and the local player named on all of them. Added because the two sessions James has lost were both lost to the drawing rather than to the reading, and the wrapper that stops that taking a session down also hides a view that shows nothing.
+- `2026-08-13`: `tools/track.py` still had `A.LOCAL_SLOT` in three places after the reader started deriving it. Same value on this setup, so nothing was visibly wrong, which is what makes it worth writing down.
