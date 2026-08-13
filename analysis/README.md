@@ -14,6 +14,7 @@ mk/bin/python3 -m analysis.validate_damage
 | `cross_check_damage.py` | hits agree with item uses read from a different field: 254 of 274 (93%) |
 | `name_hit_items.py` | names the item behind 165 of 182 hits, and the thrower; 149 of those trace back to the throw with 0 disagreements |
 | `validate_item_loss.py` | which hits knock the item out of your hands: 25 of 442 held-item clearings are losses, not throws |
+| `validate_attribution.py` | 312 of 365 hits carry somebody's name, against 176 before rams, Lightning and POW were attributed; both new rules checked against something they do not use |
 | `name_blue_shell.py` | blue shell flight time is 3.9–6.8s, the fallback when an explosion's object is missed |
 | `find_item_objects.py` | superseded — kept as the record of reading `ItemDirector + 0x264` as a world item list, which it is not |
 | `validate_racers.py` | character and vehicle tables agree with each other on 84/84 racers, and with 17/17 labels from the recording notes |

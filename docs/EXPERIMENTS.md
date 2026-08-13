@@ -9,21 +9,25 @@ Started as an item-tracking log, which is why the early entries are all items.
 
 ## Open
 
-- **Who caused a hit that has no world object.** Every damage 3, 6, 10, 11, 13
-  and 17 in the stored races carries `by: null` — 109 hits with a person behind
-  them and nobody's name on them, against 152 that are named. Nothing new needs
-  reading: a boost window off the existing `use` events plus adjacency in the
-  stored progress track already resolves 64 of the 73 ram and crush hits, and
-  Lightning and POW are exact from the rules validated on 2026-08-12.
-- **Hits after that racer has finished.** Their race is over and a red shell
-  then means nothing, but it is logged and counted like any other. Same for
-  anything else that lands after they cross the line.
-- **Direct hit vs caught in the blast.** A Blue Shell or Bob-omb writes damage 7
-  to everyone it catches, so the log cannot say who it was aimed at. 8 of the 10
-  blue shell detonations in the stored races caught one racer and 2 caught two.
-- **A hit's end is read every frame and thrown away.** `read_damage` returns to
-  −1 when the racer recovers and `update` only acts on the onset, so nothing
-  says how long anyone spent spinning.
+- **Who is carrying a Thunder Cloud right now.** The cloud is a world object of
+  type 14 and its `+0x6C` owner is whoever *won* it, which does not move when
+  the cloud is passed on — daisy's cloud stays owner 8 while slot 10 is the one
+  struck. Every byte in the object's first `0x400` was scored against the two
+  labelled moments each cloud gives (the winner when it appears, the victim
+  when it goes off, different in 4 of 9 clouds) and none reads both. The
+  carrier is probably a pointer to a kart rather than a slot index.
+- **The end of a Bullet Bill ride** is not visible in progress. Rate per second
+  over 17 rides: some fall off a cliff (2.6 → 0.8, 9.4 → 1.6) and some never do
+  (2.4 → 2.4 over the whole 14s), because a fast section looks the same as a
+  bullet. Positions gained needs the ride's end, so it needs a real field —
+  the same `KartMove` trip as mini-turbos. What does work is the other half:
+  everyone the rider flattens is now credited to them.
+- **A paused race cannot be told from a slow emulator.** The race clock
+  standing still across snapshots was the obvious check and it is dead: over
+  the seven recordings, with nobody ever pausing, the clock repeats in runs of
+  up to 30 snapshots. Dolphin under the recorder runs below full speed, so the
+  emulated 60 Hz clock legitimately holds still for several reads. This is also
+  why the older `0x144` delta method failed. Needs a real pause flag.
 - **The last 9% of hit naming.** 17 of 182 item-caused hits have no candidate
   despawn in the window. Most are bananas, where the sampling rate can miss a
   short-lived object. Not obviously worth chasing.
@@ -211,3 +215,13 @@ Started as an item-tracking log, which is why the early entries are all items.
 - `2026-08-13`: **an item leaving the held field is not always a throw.** A Lightning read as eleven racers all choosing to use what they were holding in the same frame. `analysis/validate_item_loss.py` walks all 442 clearings across the seven recordings: 415 have no hit within 0.6s and are plain throws, 25 happen while that racer's damage field is reading a type that flips, flattens or shocks them, and 2 have a hit near but not on them. Spin-out and knockback never take it; damage 3, 6, 7, 8, 10, 13 and 17 do. Items taken: 9 Golden Mushrooms, 4 Red Shells, 4 Stars, 3 Fake Item Boxes, 2 Triple Mushrooms, a Banana, a Mega Mushroom, a Bullet Bill.
 - `2026-08-13`: a time window was tried first and is worse, worth writing down. Pairing a clearing with a hit 0.20s before it gives 23 of the 25, because it depends on the reader catching the frame the hit began and a partly unreadable snapshot moves that by up to 0.65s. Asking what the damage field says **at the moment the item goes** needs no window and no constant, and reader and offline check then agree exactly: 417 `use` and 25 `lost` from both.
 - `2026-08-13`: `lost` is its own event with the damage type that took it, rather than a flag on `use`, and stays out of `Race.uses` so a dropped item is never credited as the throw that spawned a nearby object. `analysis/validate_race_log.py` and `validate_session.py` still pass 7 of 7.
+- `2026-08-13`: **hits with no object behind them now get a name.** A Star, Mega or Bullet does its damage with the kart itself and Lightning and the POW have nothing in the world at all, so `by` was null for every damage 3, 6, 10, 11 and 13. `lab/events/measure.py` measured what is left to go on: a ram's victim and the racer who did it are 0.0001-0.0030 laps apart and the item was used 0.6-9.1s earlier, and requiring both gives exactly one candidate for 32 of 37 Star rams, 17 of 17 Bullet rams and 22 of 22 Mega crushes. Lightning lands in the same frame it is used (lag 0.000s over 27 hits) and a POW 1.95s later, and the user is never among the victims.
+- `2026-08-13`: `analysis/validate_attribution.py` -> **312 of 365 hits across the seven recordings now carry somebody's name, against 176 before.** The 53 without are 37 track hazards (fire, Pokeys, Cataquacks), 8 Thunder Cloud strikes which carry `from` instead, and 8 whose object was missed. Checked against things the rules do not look at: the racer credited with a ram was not taking damage themselves, which is what riding a Star, Mega or Bullet means, 74 of 74; and the racer credited with a Lightning or POW is not among its victims, 62 of 62.
+- `2026-08-13`: first version of that check asked whether the racer credited with a ram was close to the victim, which is the rule agreeing with itself. Worth writing down: a check built out of the rule's own condition passes 74 of 74 and means nothing.
+- `2026-08-13`: **Lightning needed the hit held back, not a wider window.** The item field clears one sample AFTER the damage lands, so at the moment the strike is seen the use that caused it has not been read yet - ten of eleven victims went out unattributed. Hits of a field-wide type now wait 1.0s before being reported, the same mechanism the object-named hits already used. `HOLD` split out from `LAG` because the two are the same number for different reasons.
+- `2026-08-13`: **a hit now has a length.** `read_damage` returns to -1 when the racer recovers and that transition was read every frame and thrown away. Measured spans: banana 0.66s median, shell 1.70s, Mega crush 0.35s, Bullet 2.35s, longest 4.90s. Reported as `for` on the hit, which makes time-out-of-the-race a number rather than a feeling.
+- `2026-08-13`: **direct hit vs caught in the blast.** A Blue Shell aims at whoever is leading; a Bob-omb aims at nobody. Across the seven recordings 14 explosions caught one racer, 3 caught two and 1 caught three, and of the four multi-victim ones two contained the leader and two did not - so "the first racer hit was the target" is wrong half the time and is not the rule. The rule is the game's: in a multi-victim blast the leader is the hit if the object was a Blue Shell, everyone else was caught in it. Hits carry `place` now, so this is decidable offline too.
+- `2026-08-13`: **Thunder Cloud events.** The cloud never appears in the held item field - it goes to work the instant it is won - which is why it looked invisible. It is a world object of type 14, live for 11.1-11.2s, and its owner is who won it. A `cloud` event on the object appearing plus the existing damage-17 hit gives who won it and who it went off on: 9 clouds, 4 kept, 4 passed on before it struck. Who passed it to whom is not recorded because it is not readable - see Open.
+- `2026-08-13`: **events after a racer's own finish are marked, not counted.** They were being counted like any other, so a shell catching somebody parked past the line was in their totals. 3 such hits in the five stored races and 4 across the recordings - small, but the whole point is that the numbers are arguable with nobody. Kept in the log with `after: true` because it did happen, and `mkw/report.py` builds every total from the rest.
+- `2026-08-13`: lap events are stamped with the game's own cumulative lap timer now, the way `finish` already was, rather than with the clock on the frame the crossing was noticed - which is up to one 20 Hz sample late.
+- `2026-08-13`: the local player is read from RaceConfig (`type == 0`) instead of assuming slot 0. No change on any recording - all seven have exactly one non-CPU and it is always slot 0 - which is the point: it is now a read rather than a fact about how James plays. Two humans on one couch are both type 0 and the first is "you".
