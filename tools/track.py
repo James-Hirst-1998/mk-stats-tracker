@@ -16,6 +16,9 @@ which needs neither Dolphin nor sudo.
 is what you want if you are going to scroll back through it.
 """
 
+import datetime
+import json
+import os
 import sys
 import time
 
@@ -27,6 +30,47 @@ from mkw.names import course_name, ITEMS, DAMAGE_TYPES, VEHICLES
 
 REFRESH = 0.05
 EVENTS_SHOWN = 14
+
+
+class LiveStatus:
+    """Keep <session>/live.json saying what race is being recorded right now.
+
+    The dashboard polls for this file. It exists only while a race is in
+    progress; a failure to write it must never touch the recording, so every
+    filesystem call is allowed to fail quietly.
+    """
+
+    def __init__(self, rec):
+        self.rec = rec
+        self.wrote = None               # (race number, course) last written
+
+    def path(self):
+        return os.path.join(self.rec.dir, "live.json")
+
+    def update(self, race):
+        try:
+            if not race.started:
+                return self.clear()
+            now = (len(self.rec) + 1, race.course)
+            if now == self.wrote:
+                return
+            os.makedirs(self.rec.dir, exist_ok=True)
+            with open(self.path(), "w") as f:
+                json.dump({"race": now[0], "course": now[1],
+                           "started": datetime.datetime.now()
+                           .isoformat(timespec="seconds")}, f)
+            self.wrote = now
+        except OSError:
+            pass
+
+    def clear(self):
+        if self.wrote is None:
+            return
+        try:
+            os.remove(self.path())
+        except OSError:
+            pass
+        self.wrote = None
 
 
 def racer(r, slot):
@@ -120,6 +164,7 @@ def main():
             print("\n>> FAILED to store race %d: %s\n" % (len(rec) + 1, exc))
 
     race = Race(on_end=store)
+    live = LiveStatus(rec)
     shown = 0
     problems = 0
     last = None
@@ -132,6 +177,7 @@ def main():
             except Exception:
                 r = None
             race.update(r)
+            live.update(race)
             if r is not None:
                 last = r
             elif race.missed >= DROPOUT:
@@ -167,6 +213,7 @@ def main():
         if not quiet:
             print("\033[?25h")
         race.end()
+        live.clear()
         rec.write_index()
 
     if not len(rec):

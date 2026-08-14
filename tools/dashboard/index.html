@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MK stats</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1 id="title">MK stats</h1>
+    <span class="sub" id="subtitle"></span>
+    <span class="spacer"></span>
+    <span id="livepill" style="display:none" class="live"><span class="dot"></span><span id="livetext"></span></span>
+    <select id="sessionpick" title="Session"></select>
+    <span class="seg">
+      <button class="btn on" id="mode-char">Characters</button>
+      <button class="btn" id="mode-name">Names</button>
+    </span>
+  </div>
+
+  <div class="grid players" id="cards"></div>
+  <div style="height:12px"></div>
+  <div class="grid teams" id="teams"></div>
+  <div style="height:14px"></div>
+
+  <div class="card">
+    <h2>Points</h2>
+    <div class="legend" id="legend"></div>
+    <div class="chartbox"><canvas id="points"></canvas></div>
+    <div class="slider">
+      <span class="muted">After race</span>
+      <input type="range" id="thru" min="1" max="1" step="1" value="1">
+      <span class="val" id="thruval"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="totalstitle">Totals</h2>
+    <div id="totals"></div>
+    <div style="height:14px"></div>
+    <div class="muted" style="margin-bottom:6px">Blue shells taken, whole session</div>
+    <div class="shellrow" id="shells"></div>
+  </div>
+
+  <div class="grid awards" id="awards"></div>
+  <div style="height:14px"></div>
+
+  <div class="card racelist">
+    <h2>Races</h2>
+    <div id="races"></div>
+  </div>
+
+  <footer>Every number is computed by fixed rules from the race logs in this
+  session's directory. Boosts count boost items used; trick and drift boosts
+  are not tracked.</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
