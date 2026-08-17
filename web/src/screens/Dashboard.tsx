@@ -19,6 +19,7 @@ import {
 import { CHARACTERS, courseName } from "../data/names";
 import { Awards } from "../ui/Awards";
 import { FaceBars } from "../ui/FaceBars";
+import { Players } from "../ui/Players";
 import {
   Card,
   Face,
@@ -48,6 +49,7 @@ export function Dashboard({ dir }: { dir: string | null }) {
   const [pinned, setPinned] = useState<number | null>(null);
   const count = stats?.races.length ?? 0;
   const thru = pinned == null ? count : Math.min(pinned, count);
+  const [naming, setNaming] = useState(false);
 
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-8">
@@ -58,7 +60,35 @@ export function Dashboard({ dir }: { dir: string | null }) {
         stats={stats}
         mode={mode}
         setMode={setMode}
+        naming={naming}
+        setNaming={setNaming}
       />
+
+      {naming && stats && chosen && (
+        <Players
+          dir={chosen}
+          players={stats.players}
+          characterOf={(p) =>
+            latestCharacter(stats, p.index) ?? p.characterName ?? null
+          }
+          onSaved={() => {
+            setNaming(false);
+            setMode("names");
+          }}
+          onClose={() => setNaming(false)}
+        />
+      )}
+
+      {stats && stats.races.length > 0 && (
+        // The one control over the whole screen, above everything it changes.
+        <NightBar
+          thru={thru}
+          races={stats.races.length}
+          planned={stats.plannedRaces}
+          pinned={pinned}
+          pin={setPinned}
+        />
+      )}
 
       {error && (
         <Card className="mt-6 p-5 text-sm text-ink-soft">
@@ -76,7 +106,7 @@ export function Dashboard({ dir }: { dir: string | null }) {
       )}
 
       {stats && stats.races.length > 0 && (
-        <Body stats={stats} mode={mode} thru={thru} pinned={pinned} pin={setPinned} />
+        <Body stats={stats} mode={mode} thru={thru} />
       )}
 
       <footer className="mt-10 pb-6 text-center text-xs text-muted">
@@ -98,6 +128,8 @@ function TopBar({
   stats,
   mode,
   setMode,
+  naming,
+  setNaming,
 }: {
   sessions: { dir: string; name: string; started: string; races: number }[];
   chosen: string | null;
@@ -105,6 +137,8 @@ function TopBar({
   stats: SessionStats | null;
   mode: NameMode;
   setMode: (m: NameMode) => void;
+  naming: boolean;
+  setNaming: (b: boolean) => void;
 }) {
   return (
     <header className="flex flex-wrap items-end gap-x-4 gap-y-3">
@@ -139,6 +173,17 @@ function TopBar({
         ]}
       />
 
+      <button
+        onClick={() => setNaming(!naming)}
+        className={`rounded-full border px-4 py-1.5 text-sm ${
+          naming
+            ? "border-brand bg-brand text-white"
+            : "border-line bg-white/80 hover:bg-line-soft"
+        }`}
+      >
+        Who is who
+      </button>
+
       <select
         value={chosen ?? ""}
         onChange={(e) => go(`/s/${e.target.value}`)}
@@ -155,20 +200,81 @@ function TopBar({
   );
 }
 
+/** How much of the night the screen is showing.
+ *
+ *  It sits above everything it changes and stays there when the page scrolls,
+ *  because the thing it does is change every number below it. 0 is before the
+ *  first race, so the night can be watched from nothing. */
+function NightBar({
+  thru,
+  races,
+  planned,
+  pinned,
+  pin,
+}: {
+  thru: number;
+  races: number;
+  planned: number | null;
+  pinned: number | null;
+  pin: (n: number | null) => void;
+}) {
+  return (
+    <div className="sticky top-0 z-20 mt-5">
+      <div className="card flex flex-wrap items-center gap-x-4 gap-y-2 bg-white/95 px-5 py-3">
+        <span className="text-sm font-semibold whitespace-nowrap">
+          {thru === 0 ? (
+            <span className="text-muted">Before the first race</span>
+          ) : (
+            <>
+              After race <span className="nums text-brand">{thru}</span>
+              <span className="text-muted"> of {Math.max(planned ?? 0, races)}</span>
+            </>
+          )}
+        </span>
+
+        <span className="flex min-w-56 flex-1 items-center gap-3">
+          <span className="text-xs whitespace-nowrap text-muted">start</span>
+          <input
+            type="range"
+            min={0}
+            max={races}
+            value={thru}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              pin(n === races ? null : n);
+            }}
+            className="w-full"
+            aria-label="races to include"
+          />
+          <span className="nums text-xs whitespace-nowrap text-muted">{races}</span>
+        </span>
+
+        <button
+          onClick={() => pin(null)}
+          disabled={pinned == null}
+          className="rounded-full border border-line px-3 py-1 text-xs whitespace-nowrap hover:bg-line-soft disabled:opacity-40"
+        >
+          {pinned == null ? "following the latest" : "follow latest"}
+        </button>
+
+        <span className="hidden text-[11px] whitespace-nowrap text-muted xl:inline">
+          everything below is the night as it stood then
+        </span>
+      </div>
+    </div>
+  );
+}
+
 type ChartTab = "points" | "blues";
 
 function Body({
   stats,
   mode,
   thru,
-  pinned,
-  pin,
 }: {
   stats: SessionStats;
   mode: NameMode;
   thru: number;
-  pinned: number | null;
-  pin: (n: number | null) => void;
 }) {
   const [tab, setTab] = useState<ChartTab>("points");
   const upto = useMemo(() => stats.races.slice(0, thru), [stats.races, thru]);
@@ -202,7 +308,7 @@ function Body({
 
   return (
     <>
-      <Card title="Leaderboard" className="mt-6" note={`after race ${thru}`}>
+      <Card title="Leaderboard" className="mt-5">
         <div className="grid gap-3 px-5 pb-1 sm:grid-cols-2 xl:grid-cols-4">
           {ranked.map(({ player, total }, rank) => (
             <PlayerCard
@@ -275,49 +381,17 @@ function Body({
         />
 
         {tab === "points" ? (
-          <>
-            <div className="flex items-center justify-between px-5 pt-3 text-xs text-muted">
-              <span>Totals across races 1–{thru}</span>
-              {pinned != null && (
-                <button
-                  onClick={() => pin(null)}
-                  className="rounded-full border border-line px-2 py-0.5 hover:bg-line-soft"
-                >
-                  follow latest
-                </button>
-              )}
-            </div>
-            {stats.races.length > 1 && (
-              <div className="flex items-center gap-3 px-5 pt-2">
-                <span className="text-xs whitespace-nowrap text-muted">1</span>
-                <input
-                  type="range"
-                  min={1}
-                  max={stats.races.length}
-                  value={thru}
-                  onChange={(e) => {
-                    const n = Number(e.target.value);
-                    pin(n === stats.races.length ? null : n);
-                  }}
-                  className="w-full"
-                />
-                <span className="text-xs whitespace-nowrap text-muted">
-                  {stats.races.length}
-                </span>
-              </div>
-            )}
-            <div className="px-3 pt-2 pb-3">
-              <PointsChart
-                series={stats.players.map((p) => ({
-                  player: p.index,
-                  label: label(p),
-                  points: pointsSeries(stats.races, p.index),
-                }))}
-                races={thru}
-                maxRaces={maxRaces}
-              />
-            </div>
-          </>
+          <div className="px-3 pt-2 pb-3">
+            <PointsChart
+              series={stats.players.map((p) => ({
+                player: p.index,
+                label: label(p),
+                points: pointsSeries(stats.races, p.index),
+              }))}
+              races={thru}
+              maxRaces={maxRaces}
+            />
+          </div>
         ) : (
           <>
             <p className="px-5 pt-3 text-xs text-muted">
@@ -342,7 +416,7 @@ function Body({
       </Card>
 
       <div className="mt-5 grid items-start gap-5 lg:grid-cols-[1.45fr_1fr]">
-        <Card title="Totals" note={`races 1–${thru}`}>
+        <Card title="Totals">
           <TotalsTable stats={stats} totals={totals} label={label} face={face} />
         </Card>
         <Awards awards={awards} players={stats.players} label={label} />

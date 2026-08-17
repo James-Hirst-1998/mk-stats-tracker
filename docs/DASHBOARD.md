@@ -43,7 +43,21 @@ Three screens, all under the one hash router:
 
 ## Naming the players
 
-A session directory may carry a `players.json`:
+**Who is who** on the dashboard is the easy way: it lists the racers the logs
+found at a controller, you type a name against each, and it writes the file
+below. The Characters/Names toggle has nothing to switch to until you do -
+without names, both sides of it say "Birdo".
+
+A session recorded under `sudo` before 2026-08-17 has a root-owned directory
+and cannot be written to; the dashboard says so and gives you the command.
+`tools/track.py` now hands its files back to whoever typed sudo.
+
+```
+sudo chown -R "$USER" races/<session>
+```
+
+The file it writes is a session directory's `players.json`, which is also the
+one `tools/report.py` reads:
 
 ```json
 {
@@ -81,9 +95,12 @@ count as attackers, victims and opponents but never get a row.
   tokens are in `web/src/styles.css`; nothing is imported from that repo.
 - **All players equal.** No "you". The tracker's `local_slot` is not used for
   display at all.
-- **The slider is the whole screen.** It means "after race N": every card,
-  total, award and nemesis line above the race list is computed over races 1
-  to N, so dragging it back is the screen the night had at that point.
+- **The slider is the whole screen, and sits above all of it.** It means
+  "after race N": every card, total, award and nemesis line below it is
+  computed over races 1 to N, so dragging it back is the screen the night had
+  at that point. It sticks to the top of the window, because a control that
+  changes everything under it should not be somewhere under it. 0 is before
+  the first race, so a night can be watched from nothing.
 - **Stats are computed in TypeScript, in one file.** `web/src/lib/stats.ts`
   is a port of what used to be `mkw/stats.py`, which is gone: keeping the same
   rules in two languages would have meant a correction landing in one of them.
@@ -159,9 +176,26 @@ Mushroom Gorge has the bouncy mushrooms - and their pieces are joined end to
 end.
 
 **What this is not**: the drawing is the real course and the trace follows it,
-but nothing in it knows where the start line is. The replay measures a lap
-from wherever the tracing began, so a kart's position round the loop is
-consistent between racers and offset from the truth, and it says so on screen.
+but nothing in it says where the start line is or which way round the course
+is driven. The trace begins wherever the thinning began and runs whichever way
+the search walked it, so left alone a replay puts everybody on the right road
+going a plausible-looking wrong way from the wrong place.
+
+### The start line and the direction
+
+Both are set by hand, once per course, at `#/tracks` under **Set start**:
+click where the finishing line is, check the arrow is pointing the way you
+drive it, hit *flip* if it is not. It saves as you go into
+`assets/tracks/starts.json`, which is checked in, and every replay uses it.
+
+The start is stored as a point on the drawing rather than as a distance along
+the path, so re-running `build_tracks.py` does not move it. Courses built from
+a KMP ignore the file: a course file already knows both.
+
+Automatic detection was tried and does not work. Some drawings mark the
+start with a grey band across the road - Mario Circuit and GCN Waluigi Stadium
+do - but most do not, and grey pixels inside the road are mostly the
+anti-aliased edge of the outline. Direction is not in the drawing at all.
 
 ### Making it exact
 
@@ -209,7 +243,17 @@ python3 -m tools.fetch_assets
 ```
 
 from the Super Mario Wiki (exact known filenames first, search as fallback;
-see the script). Anything missing renders as an initials avatar - as of the
-first run, five files could not be found (Dry Bones, Koopa Troopa, Bowser
-Jr., Dry Bowser, POW Block); drop a PNG with the slug name into the
-directory and it is used, and never re-downloaded.
+see the script). Anything missing renders as an initials avatar; drop a PNG
+with the slug name into the directory and it is used, and never
+re-downloaded.
+
+All 25 characters and all the items are present. Koopa Troopa, Dry Bones,
+Bowser Jr. and Dry Bowser have no `<Name>MKW.png` face icon on the wiki, only
+the character-select render, which is the game's model composited onto black -
+`drop_black()` in the script keys that background out. It floods in from the
+edges rather than keying every dark pixel, because Dry Bowser's shadows and
+Dry Bones' eye sockets are as dark as the backdrop.
+
+The set is not one visual style: five of the older files are 64px game icons
+and the rest are artwork on transparency. The wiki has no complete MKW
+artwork set to make them match, and it is not worth hand-picking 25 files.

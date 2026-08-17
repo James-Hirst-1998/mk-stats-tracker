@@ -30,8 +30,11 @@ function sendFile(res, root, rel) {
   res.writeHead(200, {
     "Content-Type": MIME[path.extname(full)] || "application/octet-stream",
     // Art never changes; the app files do, and a stale bundle is a confusing
-    // afternoon.
-    "Cache-Control": root === ASSETS ? "max-age=86400" : "no-cache",
+    // afternoon. starts.json is written by the app, so it is never cached.
+    "Cache-Control":
+      root === ASSETS && path.extname(full) !== ".json"
+        ? "max-age=86400"
+        : "no-cache",
   });
   res.end(fs.readFileSync(full));
   return true;

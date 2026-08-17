@@ -76,6 +76,77 @@ const JSON_HEAD = {
   "Cache-Control": "no-store",
 };
 
+/** The whole body, or null if it is not JSON or is longer than 64 kB. */
+function body(req) {
+  return new Promise((resolve) => {
+    let text = "";
+    req.on("data", (chunk) => {
+      text += chunk;
+      if (text.length > 65536) {
+        text = "";
+        req.destroy();
+        resolve(null);
+      }
+    });
+    req.on("end", () => {
+      try {
+        resolve(JSON.parse(text));
+      } catch {
+        resolve(null);
+      }
+    });
+    req.on("error", () => resolve(null));
+  });
+}
+
+function writeJson(file, value) {
+  // Written beside and renamed, so a poll landing mid-write reads the old
+  // file rather than half of the new one.
+  const tmp = file + ".tmp";
+  fs.writeFileSync(tmp, JSON.stringify(value, null, 1) + "\n");
+  fs.renameSync(tmp, file);
+}
+
+/** What the dashboard is allowed to put in players.json: names, and which
+ *  character each one is. Everything else in the file is left as it was. */
+function savePlayers(dir, sent) {
+  const file = path.join(dir, "players.json");
+  const had = readJson(file) || {};
+  const players = [];
+  for (const p of Array.isArray(sent?.players) ? sent.players : []) {
+    const name = String(p?.name ?? "").trim().slice(0, 40);
+    if (!name) continue;
+    const one = { name };
+    if (Number.isInteger(p?.character)) one.character = p.character;
+    if (p?.human === true) one.human = true;
+    players.push(one);
+  }
+  if (!players.length) return null;
+  const next = { ...had, players };
+  writeJson(file, next);
+  return next;
+}
+
+/** Where a lap starts on each course, and which way round it goes. Set by
+ *  hand at #/tracks, because a drawing does not say. */
+function saveStarts(sent) {
+  const out = {};
+  for (const [code, value] of Object.entries(sent || {})) {
+    if (!/^\d+$/.test(code)) continue;
+    const x = Number(value?.x);
+    const y = Number(value?.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    out[code] = {
+      x: Math.round(x * 10) / 10,
+      y: Math.round(y * 10) / 10,
+      reverse: value?.reverse === true,
+    };
+  }
+  fs.mkdirSync(path.join(ASSETS, "tracks"), { recursive: true });
+  writeJson(path.join(ASSETS, "tracks", "starts.json"), out);
+  return out;
+}
+
 /** Handle one request. Returns true if it was ours. */
 export function handle(req, res) {
   const url = new URL(req.url, "http://localhost");
@@ -89,6 +160,33 @@ export function handle(req, res) {
   };
 
   if (parts.length === 2 && parts[1] === "sessions") return send(200, sessions());
+
+  // The only two things the dashboard writes, both of them things a person
+  // knows and a race log does not: who the players are, and where a lap
+  // starts on each course.
+  // A write can fail for a reason the person can act on - a session recorded
+  // under sudo leaves a directory this process cannot write to - so it comes
+  // back as a message rather than as a stack trace. Left unhandled it would
+  // be a rejected promise, which takes the whole server down with it.
+  const put = (work) => {
+    body(req)
+      .then(work)
+      .catch((err) => send(500, { error: String(err.message || err) }));
+    return true;
+  };
+
+  if (req.method === "PUT" && parts.length === 4 && parts[1] === "session"
+      && parts[3] === "players") {
+    const dir = sessionDir(parts[2]);
+    if (!dir) return send(404, { error: "no such session" });
+    return put((sent) => {
+      const saved = savePlayers(dir, sent);
+      send(saved ? 200 : 400, saved || { error: "no players in that" });
+    });
+  }
+
+  if (req.method === "PUT" && parts.length === 2 && parts[1] === "starts")
+    return put((sent) => send(200, saveStarts(sent)));
 
   if (parts.length === 3 && parts[1] === "session") {
     const got = session(parts[2]);
@@ -127,7 +225,9 @@ function sendAsset(req, res) {
     return false;
   res.writeHead(200, {
     "Content-Type": MIME[path.extname(full)] || "application/octet-stream",
-    "Cache-Control": "max-age=86400",
+    // Art never changes. starts.json is edited from the app itself, so it
+    // must not be cached or a save reads back as no change.
+    "Cache-Control": path.extname(full) === ".json" ? "no-store" : "max-age=86400",
   });
   res.end(fs.readFileSync(full));
   return true;

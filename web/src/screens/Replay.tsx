@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRace } from "../lib/data";
 import { replayData, slotsOf } from "../lib/stats";
 import { trackFor } from "../data/tracks";
+import { oriented, useStarts } from "../lib/route";
 import { CHARACTERS } from "../data/names";
 import {
   Card,
@@ -29,6 +30,7 @@ const SPEEDS = ["1", "2", "4", "8"] as const;
 
 export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
+  const [starts] = useStarts();
   const players = stats?.players ?? [];
   const data = useMemo(
     () => (log ? replayData(log, players) : null),
@@ -43,7 +45,11 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   const path = useRef<SVGPathElement>(null);
   const [length, setLength] = useState(0);
 
-  const track = data?.course != null ? trackFor(data.course) : null;
+  const raw = data?.course != null ? trackFor(data.course) : null;
+  const track = useMemo(
+    () => (raw ? oriented(raw, starts[raw.course]) : null),
+    [raw, starts],
+  );
 
   useEffect(() => {
     if (path.current) setLength(path.current.getTotalLength());
@@ -133,7 +139,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
             <TrackShape
               track={track}
               lineRef={path}
-              start={track?.source === "drawing"}
+              start
               className="h-[min(62vh,600px)] w-auto max-w-full"
             >
               {order
@@ -205,11 +211,22 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
           )}
 
           <p className="border-t border-line-soft px-5 py-3 text-xs text-muted">
-            {!track
-              ? "No outline for this course yet — a generic loop, so only the order and the gaps mean anything."
-              : track.source === "drawing"
-                ? "The real course, traced from its layout drawing. A lap is measured from the red dot, which is where the tracing started and not the real start line."
-                : "The course's own checkpoints: real road, real start line, real direction."}{" "}
+            {!track ? (
+              "No outline for this course yet — a generic loop, so only the order and the gaps mean anything."
+            ) : track.source === "course" ? (
+              "The course's own checkpoints: real road, real start line, real direction."
+            ) : starts[track.course] ? (
+              "The real course, traced from its layout drawing, with the start line and direction set by hand at #/tracks."
+            ) : (
+              <>
+                The real course, but nobody has said where its start line is, so
+                a lap is measured from wherever the tracing began.{" "}
+                <a href="#/tracks" className="text-brand underline">
+                  Set it
+                </a>
+                .
+              </>
+            )}{" "}
             How far round the lap each kart is comes from the log; which lane it
             sits in does not, and is only there to keep the pack apart.
           </p>
