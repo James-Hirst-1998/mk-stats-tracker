@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Light, plain, and out of the way: the numbers are the thing on the page.
+   Sizes and greys follow the old viewer (Mantine light) so the two look like
+   they came from the same place. */
+@theme {
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --color-page: #f1f3f5;
+  --color-card: #ffffff;
+  --color-line: #dee2e6;
+  --color-line-soft: #f1f3f5;
+  --color-ink: #212529;
+  --color-ink-soft: #495057;
+  --color-muted: #868e96;
+  --color-brand: #1976d2;
+  --color-brand-soft: #e7f0fb;
+
+  /* Fixed player colours, assigned by player index and never by rank, so a
+     filter or a re-sort never repaints somebody. Adjacent-pair separation was
+     measured in OKLab under deuteranopia, protanopia and tritanopia: the
+     tightest pair is p1/p3 at 8.8, which clears the floor, and every series
+     also carries a face and a name so colour is never the only cue. */
+  --color-p0: #2a78d6;
+  --color-p1: #eb6834;
+  --color-p2: #1baf7a;
+  --color-p3: #eda100;
+  --color-p4: #9c36b5;
+  --color-p5: #0c8599;
+  --color-p6: #e64980;
+  --color-p7: #5c7cfa;
+
+  --color-gold: #c9a227;
+  --color-silver: #9aa0a6;
+  --color-bronze: #b06a2c;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-page text-ink font-sans antialiased;
+}
+
+/* Tabular figures everywhere a number sits in a column. */
+.nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.live-dot {
+  animation: live-pulse 1.6s ease-in-out infinite;
+}

@@ -6,7 +6,7 @@
 Images come from the Super Mario Wiki via its public MediaWiki API: search the
 File: namespace for "<name> MKW artwork", take the top hit, download it. Files
 land in assets/characters/ and assets/items/ named by slug ("funky-kong.png"),
-which is how tools/dashboard.py serves them. Existing files are never
+which is how the dashboard serves them. Existing files are never
 re-downloaded, so hand-picked art survives a re-run - delete a file to refresh
 it.
 
