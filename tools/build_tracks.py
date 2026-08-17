@@ -422,6 +422,95 @@ def length_of(points, closed):
     return sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
 
 
+def outline_of(pixels, w, h):
+    """The edge of a set of pixels, as closed loops in the drawing's own
+    coordinates.
+
+    The road is a filled region, so its boundary is the two edges of the road.
+    Every side of a pixel facing something outside the set is one unit-long
+    edge; chained up, those edges are the outline. Drawn together with an
+    even-odd fill, the loops give the road with whatever it encircles left as a
+    hole, which is what a course drawn as a ring needs.
+
+    This is what makes the outline resolution-free. The drawings are 100-280px
+    and go to mush when a replay draws them at 600; the same shape as a path
+    is as sharp as the screen it lands on.
+    """
+    on = set(pixels)
+    out = {}
+    for k in on:
+        x, y = k % w, k // w
+        if y == 0 or (y - 1) * w + x not in on:
+            out.setdefault((x, y), []).append((x + 1, y))
+        if x + 1 == w or y * w + x + 1 not in on:
+            out.setdefault((x + 1, y), []).append((x + 1, y + 1))
+        if y + 1 == h or (y + 1) * w + x not in on:
+            out.setdefault((x + 1, y + 1), []).append((x, y + 1))
+        if x == 0 or y * w + x - 1 not in on:
+            out.setdefault((x, y + 1), []).append((x, y))
+
+    loops = []
+    while out:
+        start = next(iter(out))
+        loop, at = [start], start
+        while True:
+            nxt = out.get(at)
+            if not nxt:
+                break
+            step = nxt.pop()
+            if not nxt:
+                del out[at]
+            at = step
+            if at == start:
+                break
+            loop.append(at)
+        # A loop this short is a single stray pixel, not an edge of anything.
+        if len(loop) >= 12:
+            loops.append(loop)
+    return loops
+
+
+def simplify(points, tol=0.25):
+    """Douglas-Peucker. Rounding the staircase off puts a point every pixel or
+    so, and most of them sit on a straight: dropping those is most of the size
+    of tracks.ts and none of the shape."""
+    if len(points) < 3:
+        return points
+    keep = [False] * len(points)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(points) - 1)]
+    while stack:
+        i, j = stack.pop()
+        ax, ay = points[i]
+        bx, by = points[j]
+        dx, dy = bx - ax, by - ay
+        span = math.hypot(dx, dy) or 1.0
+        worst, at = 0.0, None
+        for k in range(i + 1, j):
+            x, y = points[k]
+            off = abs(dy * (x - ax) - dx * (y - ay)) / span
+            if off > worst:
+                worst, at = off, k
+        if at is not None and worst > tol:
+            keep[at] = True
+            stack += [(i, at), (at, j)]
+    return [p for p, k in zip(points, keep) if k]
+
+
+def outline_d(loops):
+    """The loops as one path, rounded off so it does not read as pixels."""
+    parts = []
+    for loop in loops:
+        pts = smooth(resample(loop, True, spacing=1.2), True, rounds=2)
+        # Douglas-Peucker on a loop, not through it: handing it a path whose
+        # two ends are the same point makes every point zero distance from the
+        # line between them, and it throws the whole loop away.
+        far = max(range(len(pts)), key=lambda i: math.dist(pts[0], pts[i]))
+        pts = simplify(pts[:far + 1]) + simplify(pts[far:])[1:]
+        parts.append(path_d(pts, True))
+    return " ".join(parts)
+
+
 MAX_ROAD_WIDTH = 30      # wider than this is what the course encircles
 MIN_PIECE = 0.15         # ignore road pieces this much shorter than the longest
 
@@ -462,7 +551,7 @@ def stitch(pieces, w, h):
 def trace(path):
     w, h, gray, alpha = decode_png(path)
     mask = road_mask(w, h, gray, alpha)
-    pieces, areas = [], []
+    found = []
     for comp in components(mask, w, h)[:8]:
         if len(comp) < 300:
             continue
@@ -473,39 +562,46 @@ def trace(path):
             prune(graph_of(skeleton, w, h), w), w, h)
         if len(pixels) < 40:
             continue
-        pieces.append(([(k % w, k // w) for k in pixels], closed))
-        areas.append((len(comp), len(skeleton)))
-    if not pieces:
+        found.append({"pts": [(k % w, k // w) for k in pixels],
+                      "closed": closed, "comp": comp, "skeleton": len(skeleton)})
+    if not found:
         return None
 
-    longest = max(len(p) for p, _ in pieces)
-    keep = [(p, c, a) for (p, c), a in zip(pieces, areas)
-            if len(p) >= longest * MIN_PIECE]
-    width = sum(a[0] for _, _, a in keep) / max(sum(a[1] for _, _, a in keep), 1)
+    longest = max(len(f["pts"]) for f in found)
+    keep = [f for f in found if len(f["pts"]) >= longest * MIN_PIECE]
+    width = (sum(len(f["comp"]) for f in keep)
+             / max(sum(f["skeleton"] for f in keep), 1))
 
-    main = max(keep, key=lambda x: len(x[0]))
-    if main[1]:                          # the longest piece is already a lap
-        pts, closed = main[0], True
+    main = max(keep, key=lambda f: len(f["pts"]))
+    if main["closed"]:                   # the longest piece is already a lap
+        pts, closed = main["pts"], True
     else:
-        pts = stitch([p for p, _, _ in keep], w, h)
+        pts = stitch([f["pts"] for f in keep], w, h)
         # Two ends that meet are a loop that was cut - by the bridge drawn
         # where a course crosses over itself, or by the start line.
         closed = math.dist(pts[0], pts[-1]) < max(4 * width, 0.08 * math.hypot(w, h))
 
     pts = smooth(resample(pts, closed), closed)
     length = length_of(pts, closed)
+    # The road itself, as a shape rather than a picture: the edge of every
+    # piece the lap runs through. Decoration the trace threw away - the
+    # mushrooms in Mushroom Gorge, the hedges in Peach Gardens - is not in it,
+    # because only the pieces kept above are asked for their edges.
+    loops = outline_of([k for f in keep for k in f["comp"]], w, h)
     # How much of the road the lap actually covers. The thinned skeleton is
     # every stretch of road in the drawing, so a lap should be about as long
     # as all of it: well under 1 means the trace missed some, and well over 1
     # means it went up something and back down again.
-    road = sum(a[1] for _, _, a in keep)
+    road = sum(f["skeleton"] for f in keep)
     return {
         "w": w, "h": h,
         "d": path_d(pts, closed),
+        "outline": outline_d(loops),
         "closed": closed,
         "width": round(width, 1),
         "length": round(length, 1),
         "pieces": len(keep),
+        "loops": len(loops),
         "covers": round(length / max(road, 1), 2),
     }
 
@@ -620,16 +716,21 @@ HEAD = '''// Generated by tools/build_tracks.py - do not edit.
 // 40% through a lap is drawn 40% of the way round it. Everything is in the
 // coordinates of `size`.
 //
+// `outline` is the road as a shape - its two edges, plus a loop round anything
+// the course encircles, filled even-odd. It is a path rather than a picture so
+// that it stays sharp at any size; `image` is the drawing it came out of, kept
+// for #/tracks to check the tracing against.
+//
 // `source` says where the shape came from:
 //
-//   "drawing"  traced from the course layout drawing in assets/tracks/source,
-//              which `image` names and the replay draws. Right about the shape
-//              of the course, and arbitrary about where the lap starts - the
-//              path begins wherever the tracing began, not at the start line.
+//   "drawing"  traced from the course layout drawing in assets/tracks/source.
+//              Right about the shape of the course, and arbitrary about where
+//              the lap starts - the path begins wherever the tracing began,
+//              not at the start line.
 //
 //   "course"   the game's own checkpoints, out of that course's KMP. Exact,
 //              starts at the finish line, runs in the direction of travel, and
-//              carries `outline`, the real edges of the road. docs/DASHBOARD.md
+//              its outline is the real edges of the road. docs/DASHBOARD.md
 //              says how to get these.
 
 export interface Track {
@@ -719,13 +820,13 @@ def main():
                              if off > 12 else "")))
         elif drawn:
             tracks[code] = dict(drawn, name=name, source="drawing",
-                                image="/assets/tracks/source/%s.png" % slug(name),
-                                outline="")
+                                image="/assets/tracks/source/%s.png" % slug(name))
             print("  %-24s drawing:  %3dx%-3d %s %4.0fpx lap, road %2.0fpx wide,"
-                  " covers %.2f%s%s"
+                  " %d outline loop%s, covers %.2f%s%s"
                   % (name, drawn["w"], drawn["h"],
                      "loop" if drawn["closed"] else "open", drawn["length"],
-                     drawn["width"], drawn["covers"],
+                     drawn["width"], drawn["loops"],
+                     "" if drawn["loops"] == 1 else "s", drawn["covers"],
                      ", %d pieces" % drawn["pieces"] if drawn["pieces"] > 1 else "",
                      "   <- CHECK" if not 0.75 <= drawn["covers"] <= 1.25 else ""))
         else:

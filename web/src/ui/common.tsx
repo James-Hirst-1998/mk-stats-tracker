@@ -1,4 +1,5 @@
-// The small shared pieces: player colours, faces, and number formatting.
+// The small shared pieces: player colours, faces, cards, and number
+// formatting.
 
 import { useState } from "react";
 import { CHARACTERS } from "../data/names";
@@ -28,6 +29,9 @@ export function slug(text: string): string {
   );
 }
 
+export const faceUrl = (character: string) =>
+  `/assets/characters/${slug(character)}.png`;
+
 export type NameMode = "characters" | "names";
 
 /** What to call a player: their name, or the character they are driving.
@@ -52,12 +56,14 @@ export function Face({
   character,
   color,
   label,
-  size = 44,
+  size = 56,
+  ring = true,
 }: {
   character: string | null;
   color: string;
   label: string;
   size?: number;
+  ring?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
   const initials = label
@@ -65,11 +71,16 @@ export function Face({
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
+  const frame = {
+    width: size,
+    height: size,
+    boxShadow: ring ? `0 0 0 2px ${color}` : undefined,
+  };
   if (!character || failed)
     return (
       <div
-        className="flex shrink-0 items-center justify-center rounded-lg font-semibold text-white"
-        style={{ width: size, height: size, background: color, fontSize: size * 0.36 }}
+        className="flex shrink-0 items-center justify-center rounded-xl font-semibold text-white"
+        style={{ ...frame, background: color, fontSize: size * 0.34 }}
         title={label}
       >
         {initials}
@@ -77,14 +88,14 @@ export function Face({
     );
   return (
     <img
-      src={`/assets/characters/${slug(character)}.png`}
+      src={faceUrl(character)}
       alt={label}
       title={label}
       width={size}
       height={size}
       onError={() => setFailed(true)}
-      className="shrink-0 rounded-lg bg-line-soft object-contain"
-      style={{ width: size, height: size, boxShadow: `inset 0 0 0 2px ${color}33` }}
+      className="shrink-0 rounded-xl bg-white object-contain"
+      style={frame}
     />
   );
 }
@@ -106,24 +117,27 @@ export const ordinal = (n: number | null | undefined) => (n == null ? "-" : `P${
 
 export function Card({
   title,
+  note,
   right,
   children,
   className = "",
 }: {
   title?: string;
+  note?: string;
   right?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <section
-      className={`rounded-xl border border-line bg-card shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className}`}
-    >
+    <section className={`card min-w-0 ${className}`}>
       {(title || right) && (
-        <header className="flex items-baseline justify-between gap-3 border-b border-line-soft px-4 py-3">
+        <header className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-5 pt-4 pb-3">
           {title && (
-            <h2 className="text-[13px] font-semibold tracking-wide text-ink-soft uppercase">
+            <h2 className="text-[15px] font-bold tracking-tight">
               {title}
+              {note && (
+                <span className="ml-2 text-xs font-normal text-muted">{note}</span>
+              )}
             </h2>
           )}
           {right}
@@ -131,6 +145,68 @@ export function Card({
       )}
       {children}
     </section>
+  );
+}
+
+/** A row of buttons where exactly one is on. */
+export function Tabs<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+}) {
+  return (
+    <div className="flex gap-1 border-b border-line px-5">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          onClick={() => onChange(o.value)}
+          className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium transition ${
+            value === o.value
+              ? "border-brand text-brand"
+              : "border-transparent text-muted hover:text-ink-soft"
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Small pill switch, for Characters/Names and playback speed. */
+export function Segmented<T extends string>({
+  value,
+  onChange,
+  options,
+  className = "",
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+  className?: string;
+}) {
+  return (
+    <div
+      className={`inline-flex overflow-hidden rounded-full border border-line bg-white/80 p-0.5 text-sm ${className}`}
+    >
+      {options.map((o) => (
+        <button
+          key={o.value}
+          onClick={() => onChange(o.value)}
+          className={`rounded-full px-3 py-1 transition ${
+            value === o.value
+              ? "bg-brand font-medium text-white"
+              : "text-ink-soft hover:bg-line-soft"
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -142,3 +218,33 @@ export const rankColor = (position: number | null | undefined) =>
       : position === 3
         ? "text-bronze"
         : "text-ink-soft";
+
+/** 1st, 2nd, 3rd get their metal; everybody else is just a number. */
+export function Rank({ n, size = 30 }: { n: number; size?: number }) {
+  const metal =
+    n === 1
+      ? { bg: "#fdf6dd", ink: "#8a6d1a", line: "#e6cf7a" }
+      : n === 2
+        ? { bg: "#f1f3f5", ink: "#5f6570", line: "#ced4da" }
+        : n === 3
+          ? { bg: "#fbeee2", ink: "#8a4f1c", line: "#e2bf9b" }
+          : { bg: "#eef4fb", ink: "#5c7a99", line: "#d3e2f2" };
+  return (
+    <span
+      className="nums inline-flex shrink-0 items-center justify-center rounded-full font-bold"
+      style={{
+        width: size,
+        height: size,
+        background: metal.bg,
+        color: metal.ink,
+        border: `1px solid ${metal.line}`,
+        fontSize: size * 0.45,
+      }}
+    >
+      {n}
+    </span>
+  );
+}
+
+export const suffix = (n: number) =>
+  n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th";

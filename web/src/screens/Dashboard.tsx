@@ -18,7 +18,19 @@ import {
 } from "../lib/stats";
 import { CHARACTERS, courseName } from "../data/names";
 import { Awards } from "../ui/Awards";
-import { Card, Face, colorOf, nameOf, secs, type NameMode } from "../ui/common";
+import { FaceBars } from "../ui/FaceBars";
+import {
+  Card,
+  Face,
+  Rank,
+  Segmented,
+  Tabs,
+  colorOf,
+  nameOf,
+  secs,
+  suffix,
+  type NameMode,
+} from "../ui/common";
 import { PointsChart } from "../ui/PointsChart";
 import { RaceList } from "../ui/RaceList";
 
@@ -38,7 +50,7 @@ export function Dashboard({ dir }: { dir: string | null }) {
   const thru = pinned == null ? count : Math.min(pinned, count);
 
   return (
-    <div className="mx-auto max-w-[1180px] px-5 py-6">
+    <div className="mx-auto max-w-[1200px] px-5 py-8">
       <TopBar
         sessions={sessions}
         chosen={chosen}
@@ -49,15 +61,15 @@ export function Dashboard({ dir }: { dir: string | null }) {
       />
 
       {error && (
-        <Card className="mt-5 p-4 text-sm text-ink-soft">
+        <Card className="mt-6 p-5 text-sm text-ink-soft">
           Could not read the races: {error}
         </Card>
       )}
       {loading && !stats && (
-        <Card className="mt-5 p-4 text-sm text-muted">Reading the race logs…</Card>
+        <Card className="mt-6 p-5 text-sm text-muted">Reading the race logs…</Card>
       )}
       {stats && stats.races.length === 0 && (
-        <Card className="mt-5 p-4 text-sm text-ink-soft">
+        <Card className="mt-6 p-5 text-sm text-ink-soft">
           No races stored in this session yet.
           {live && " The one being recorded lands here when it finishes."}
         </Card>
@@ -67,10 +79,13 @@ export function Dashboard({ dir }: { dir: string | null }) {
         <Body stats={stats} mode={mode} thru={thru} pinned={pinned} pin={setPinned} />
       )}
 
-      <footer className="mt-8 pb-4 text-center text-xs text-muted">
+      <footer className="mt-10 pb-6 text-center text-xs text-muted">
         Every number here is computed from the stored race logs by fixed rules
         (<code className="font-mono">web/src/lib/stats.ts</code>). Same files in,
-        same numbers out.
+        same numbers out. ·{" "}
+        <a href="#/tracks" className="text-brand hover:underline">
+          course outlines
+        </a>
       </footer>
     </div>
   );
@@ -92,14 +107,17 @@ function TopBar({
   setMode: (m: NameMode) => void;
 }) {
   return (
-    <header className="flex flex-wrap items-center gap-3">
+    <header className="flex flex-wrap items-end gap-x-4 gap-y-3">
       <div className="mr-auto">
-        <h1 className="text-xl font-semibold tracking-tight">
+        <h1 className="text-3xl font-bold tracking-tight text-brand-deep">
           {stats?.name ?? "Mario Kart"}
         </h1>
-        <p className="text-sm text-muted">
-          {stats?.started ? new Date(stats.started).toLocaleString() : " "}
-          {stats ? ` · ${stats.races.length} race${stats.races.length === 1 ? "" : "s"}` : ""}
+        <p className="mt-0.5 text-sm text-ink-soft">
+          {stats?.started ? new Date(stats.started).toLocaleString() : " "}
+          {stats
+            ? ` · ${stats.races.length} race${stats.races.length === 1 ? "" : "s"}`
+            : ""}
+          {stats?.plannedRaces ? ` of ${stats.plannedRaces}` : ""}
         </p>
       </div>
 
@@ -112,24 +130,19 @@ function TopBar({
         </span>
       )}
 
-      <div className="inline-flex overflow-hidden rounded-lg border border-line bg-card text-sm">
-        {(["characters", "names"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => setMode(m)}
-            className={`px-3 py-1.5 capitalize transition ${
-              mode === m ? "bg-brand text-white" : "text-ink-soft hover:bg-line-soft"
-            }`}
-          >
-            {m}
-          </button>
-        ))}
-      </div>
+      <Segmented
+        value={mode}
+        onChange={setMode}
+        options={[
+          { value: "characters", label: "Characters" },
+          { value: "names", label: "Names" },
+        ]}
+      />
 
       <select
         value={chosen ?? ""}
         onChange={(e) => go(`/s/${e.target.value}`)}
-        className="rounded-lg border border-line bg-card px-3 py-1.5 text-sm"
+        className="rounded-full border border-line bg-white/80 px-4 py-1.5 text-sm"
       >
         {sessions.map((s) => (
           <option key={s.dir} value={s.dir}>
@@ -141,6 +154,8 @@ function TopBar({
     </header>
   );
 }
+
+type ChartTab = "points" | "blues";
 
 function Body({
   stats,
@@ -155,10 +170,15 @@ function Body({
   pinned: number | null;
   pin: (n: number | null) => void;
 }) {
+  const [tab, setTab] = useState<ChartTab>("points");
   const upto = useMemo(() => stats.races.slice(0, thru), [stats.races, thru]);
   const totals = useMemo(
     () => stats.players.map((_, i) => totalsFor(upto, i)),
     [stats.players, upto],
+  );
+  const whole = useMemo(
+    () => stats.players.map((_, i) => totalsFor(stats.races, i)),
+    [stats.players, stats.races],
   );
   const awards = useMemo(
     () => computeAwards(upto, stats.players),
@@ -171,6 +191,8 @@ function Body({
 
   const label = (p: Player) =>
     nameOf(p, mode, mode === "characters" ? latestCharacter(stats, p.index) : null);
+  const face = (p: Player) =>
+    latestCharacter(stats, p.index) ?? p.characterName ?? null;
 
   const ranked = stats.players
     .map((p, i) => ({ player: p, total: totals[i] }))
@@ -180,107 +202,148 @@ function Body({
 
   return (
     <>
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {ranked.map(({ player, total }, rank) => (
-          <PlayerCard
-            key={player.index}
-            player={player}
-            label={label(player)}
-            character={
-              latestCharacter(stats, player.index) ?? player.characterName ?? null
-            }
-            total={total}
-            rank={rank + 1}
-            nemesis={nemesisOf(player.index, duels, stats, mode)}
-          />
-        ))}
-      </div>
-
-      {stats.teams.length > 0 && (
-        <Card title="Constructors" className="mt-4">
-          <div className="grid gap-px bg-line-soft sm:grid-cols-2">
-            {[...stats.teams]
-              .map((t) => ({
-                team: t,
-                points: t.members.reduce((n, i) => n + (totals[i]?.points ?? 0), 0),
-              }))
-              .sort((a, b) => b.points - a.points)
-              .map(({ team, points }) => (
-                <div
-                  key={team.name}
-                  className="flex items-center gap-3 bg-card px-4 py-3"
-                >
-                  <div className="flex -space-x-1">
-                    {team.members.map((i) => (
-                      <span
-                        key={i}
-                        className="h-3 w-3 rounded-full ring-2 ring-white"
-                        style={{ background: colorOf(i) }}
-                      />
-                    ))}
-                  </div>
-                  <span className="font-medium">
-                    {team.members.map((i) => label(stats.players[i])).join(" + ")}
-                  </span>
-                  <span className="nums ml-auto text-lg font-semibold">{points}</span>
-                </div>
-              ))}
-          </div>
-        </Card>
-      )}
-
-      <Card
-        title="Points"
-        className="mt-4"
-        right={
-          <span className="text-xs text-muted">
-            after race {thru} of {maxRaces}
-            {pinned != null && (
-              <button
-                onClick={() => pin(null)}
-                className="ml-2 rounded border border-line px-1.5 py-0.5 hover:bg-line-soft"
-              >
-                follow latest
-              </button>
-            )}
-          </span>
-        }
-      >
-        <div className="px-3 pt-3">
-          <PointsChart
-            series={stats.players.map((p) => ({
-              player: p.index,
-              label: label(p),
-              points: pointsSeries(stats.races, p.index),
-            }))}
-            races={thru}
-            maxRaces={maxRaces}
-          />
-        </div>
-        {stats.races.length > 1 && (
-          <div className="flex items-center gap-3 border-t border-line-soft px-4 py-3">
-            <span className="text-xs whitespace-nowrap text-muted">Race 1</span>
-            <input
-              type="range"
-              min={1}
-              max={stats.races.length}
-              value={thru}
-              onChange={(e) => {
-                const n = Number(e.target.value);
-                pin(n === stats.races.length ? null : n);
-              }}
-              className="w-full accent-brand"
+      <Card title="Leaderboard" className="mt-6" note={`after race ${thru}`}>
+        <div className="grid gap-3 px-5 pb-1 sm:grid-cols-2 xl:grid-cols-4">
+          {ranked.map(({ player, total }, rank) => (
+            <PlayerCard
+              key={player.index}
+              player={player}
+              label={label(player)}
+              character={face(player)}
+              total={total}
+              rank={rank + 1}
+              nemesis={nemesisOf(player.index, duels, stats, mode)}
             />
-            <span className="text-xs whitespace-nowrap text-muted">
-              {stats.races.length}
-            </span>
-          </div>
+          ))}
+        </div>
+
+        {stats.teams.length > 0 && (
+          <>
+            <h3 className="px-5 pt-4 text-xs font-semibold tracking-wide text-muted uppercase">
+              Constructors
+            </h3>
+            <div className="grid gap-3 px-5 pt-2 pb-5 sm:grid-cols-2">
+              {[...stats.teams]
+                .map((t) => ({
+                  team: t,
+                  points: t.members.reduce(
+                    (n, i) => n + (totals[i]?.points ?? 0),
+                    0,
+                  ),
+                }))
+                .sort((a, b) => b.points - a.points)
+                .map(({ team, points }) => (
+                  <div
+                    key={team.name}
+                    className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-3"
+                  >
+                    <div className="flex gap-1.5">
+                      {team.members.map((i) => (
+                        <Face
+                          key={i}
+                          character={face(stats.players[i])}
+                          color={colorOf(i)}
+                          label={label(stats.players[i])}
+                          size={34}
+                        />
+                      ))}
+                    </div>
+                    <span className="truncate text-sm font-semibold">
+                      {team.members.map((i) => label(stats.players[i])).join(" + ")}
+                    </span>
+                    <span className="nums ml-auto text-lg font-bold text-brand">
+                      {points}
+                      <span className="ml-1 text-xs font-normal text-muted">
+                        pts
+                      </span>
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </>
         )}
       </Card>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <Card title={`Totals · races 1–${thru}`}>
-          <TotalsTable stats={stats} totals={totals} label={label} />
+      <Card className="mt-5">
+        <Tabs
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: "points", label: "Points progress" },
+            { value: "blues", label: "Blue shells" },
+          ]}
+        />
+
+        {tab === "points" ? (
+          <>
+            <div className="flex items-center justify-between px-5 pt-3 text-xs text-muted">
+              <span>Totals across races 1–{thru}</span>
+              {pinned != null && (
+                <button
+                  onClick={() => pin(null)}
+                  className="rounded-full border border-line px-2 py-0.5 hover:bg-line-soft"
+                >
+                  follow latest
+                </button>
+              )}
+            </div>
+            {stats.races.length > 1 && (
+              <div className="flex items-center gap-3 px-5 pt-2">
+                <span className="text-xs whitespace-nowrap text-muted">1</span>
+                <input
+                  type="range"
+                  min={1}
+                  max={stats.races.length}
+                  value={thru}
+                  onChange={(e) => {
+                    const n = Number(e.target.value);
+                    pin(n === stats.races.length ? null : n);
+                  }}
+                  className="w-full"
+                />
+                <span className="text-xs whitespace-nowrap text-muted">
+                  {stats.races.length}
+                </span>
+              </div>
+            )}
+            <div className="px-3 pt-2 pb-3">
+              <PointsChart
+                series={stats.players.map((p) => ({
+                  player: p.index,
+                  label: label(p),
+                  points: pointsSeries(stats.races, p.index),
+                }))}
+                races={thru}
+                maxRaces={maxRaces}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="px-5 pt-3 text-xs text-muted">
+              Blue shells taken across the whole night — this one does not follow
+              the slider.
+            </p>
+            <FaceBars
+              rows={stats.players
+                .map((p, i) => ({
+                  player: p.index,
+                  label: label(p),
+                  character: face(p),
+                  value: whole[i].blues,
+                }))
+                .sort((a, b) => b.value - a.value)}
+              max={Math.max(...whole.map((t) => t.blues), 1)}
+              unit="taken"
+              empty="Nobody has been hit by a blue shell yet."
+            />
+          </>
+        )}
+      </Card>
+
+      <div className="mt-5 grid items-start gap-5 lg:grid-cols-[1.45fr_1fr]">
+        <Card title="Totals" note={`races 1–${thru}`}>
+          <TotalsTable stats={stats} totals={totals} label={label} face={face} />
         </Card>
         <Awards awards={awards} players={stats.players} label={label} />
       </div>
@@ -306,24 +369,30 @@ function PlayerCard({
   nemesis: string | null;
 }) {
   return (
-    <section className="rounded-xl border border-line bg-card p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+    <section className="rounded-xl border border-line bg-white p-4">
       <div className="flex items-center gap-3">
-        <Face character={character} color={colorOf(player.index)} label={label} />
-        <div className="min-w-0">
+        <Rank n={rank} />
+        <Face
+          character={character}
+          color={colorOf(player.index)}
+          label={label}
+          size={52}
+        />
+        <div className="min-w-0 flex-1">
           <div className="truncate font-semibold">{label}</div>
           <div className="text-xs text-muted">
             {rank === 1 ? "leading" : `${rank}${suffix(rank)} on points`}
           </div>
         </div>
-        <div className="nums ml-auto text-right">
-          <div
-            className="text-2xl leading-none font-semibold"
-            style={{ color: colorOf(player.index) }}
-          >
-            {total.points}
-          </div>
-          <div className="text-[11px] text-muted">points</div>
-        </div>
+      </div>
+      <div className="nums mt-3 flex items-baseline gap-1.5">
+        <span
+          className="text-3xl leading-none font-bold"
+          style={{ color: colorOf(player.index) }}
+        >
+          {total.points}
+        </span>
+        <span className="text-xs text-muted">points</span>
       </div>
       <dl className="nums mt-3 grid grid-cols-3 gap-2 border-t border-line-soft pt-3 text-center">
         <Stat label="wins" value={total.wins} />
@@ -350,10 +419,12 @@ function TotalsTable({
   stats,
   totals,
   label,
+  face,
 }: {
   stats: SessionStats;
   totals: ReturnType<typeof totalsFor>[];
   label: (p: Player) => string;
+  face: (p: Player) => string | null;
 }) {
   const cols = [
     ["pts", (t: (typeof totals)[0]) => t.points],
@@ -371,8 +442,8 @@ function TotalsTable({
     <div className="overflow-x-auto">
       <table className="nums w-full text-sm">
         <thead>
-          <tr className="text-xs text-muted">
-            <th className="px-4 py-2 text-left font-medium">player</th>
+          <tr className="border-y border-line-soft text-xs text-muted">
+            <th className="px-5 py-2 text-left font-medium">player</th>
             {cols.map(([name]) => (
               <th key={name} className="px-2 py-2 text-right font-medium">
                 {name}
@@ -385,13 +456,17 @@ function TotalsTable({
             .map((p, i) => ({ p, t: totals[i] }))
             .sort((a, b) => b.t.points - a.t.points)
             .map(({ p, t }) => (
-              <tr key={p.index} className="border-t border-line-soft">
-                <td className="px-4 py-2 font-medium whitespace-nowrap">
-                  <span
-                    className="mr-2 inline-block h-2 w-2 rounded-full align-middle"
-                    style={{ background: colorOf(p.index) }}
-                  />
-                  {label(p)}
+              <tr key={p.index} className="border-b border-line-soft last:border-0">
+                <td className="px-5 py-2 font-medium whitespace-nowrap">
+                  <span className="flex items-center gap-2">
+                    <Face
+                      character={face(p)}
+                      color={colorOf(p.index)}
+                      label={label(p)}
+                      size={24}
+                    />
+                    {label(p)}
+                  </span>
                 </td>
                 {cols.map(([name, pick]) => (
                   <td key={name} className="px-2 py-2 text-right">
@@ -402,7 +477,7 @@ function TotalsTable({
             ))}
         </tbody>
       </table>
-      <p className="border-t border-line-soft px-4 py-2 text-xs text-muted">
+      <p className="px-5 py-3 text-xs text-muted">
         Boosts are boost items used — mushrooms, golden, star, bullet. Trick and
         drift boosts are not in the logs.
       </p>
@@ -450,6 +525,3 @@ function nameOfKey(key: string, stats: SessionStats, mode: NameMode): string {
   const id = Number(key.slice(1));
   return CHARACTERS[id] ?? `character ${id}`;
 }
-
-const suffix = (n: number) =>
-  n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th";

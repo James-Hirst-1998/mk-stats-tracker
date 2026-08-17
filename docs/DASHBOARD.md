@@ -34,11 +34,12 @@ screen, no live pill.
 
 Three screens, all under the one hash router:
 
-- `#/` the night: cards, points, totals, awards, and every race, each of which
-  opens to per-player numbers and a chart of how it unfolded.
+- `#/` the night: the leaderboard, points, totals, awards, and every race, each
+  of which opens to per-player numbers and a chart of how it unfolded.
 - `#/replay/<session>/<race>` one race played back on its course.
-- `#/tracks` every course outline with its traced centreline on top - this is
-  how the tracing gets checked.
+- `#/tracks` every course outline. **Check** puts the layout drawing back
+  behind it, with the traced centreline and the point a lap is measured from -
+  this is how the tracing gets checked.
 
 ## Naming the players
 
@@ -73,6 +74,11 @@ count as attackers, victims and opponents but never get a row.
 
 ## Decisions
 
+- **The look is the older viewer's**, the Mantine app in `mario-kart-stats`:
+  the same gradient behind white cards, blue as the one accent, character faces
+  as identity, a leaderboard of four equal cards, tabbed charts, a slider over
+  the races. Two apps over the same night should not look like two apps. The
+  tokens are in `web/src/styles.css`; nothing is imported from that repo.
 - **All players equal.** No "you". The tracker's `local_slot` is not used for
   display at all.
 - **The slider is the whole screen.** It means "after race N": every card,
@@ -104,6 +110,13 @@ count as attackers, victims and opponents but never get a row.
   players apart.
 - **Gaps in the replay are estimates**: progress difference times the race's
   median lap time. Good enough to read, not a timing screen.
+- **Which lane a kart is in on the replay means nothing.** The log says how far
+  round the lap somebody is and nothing about which side of the road they were
+  on, so the karts are fanned into three lanes by running order purely so that
+  twelve of them at the start line are twelve things rather than one. The
+  caption under the course says so.
+- **The blue shell chart is the whole night**, whatever the slider says, and is
+  labelled with that. Everything else on the screen follows the slider.
 
 ## Course outlines
 
@@ -124,14 +137,26 @@ listed in the tool rather than searched for, and each was opened and checked.
 python3 -m tools.build_tracks
 ```
 
-traces the centreline out of each drawing - the road is the region enclosed by
-the outline, thinned to one pixel wide - and writes `web/src/data/tracks.ts`,
-which is checked in. It prints what it found for each course, including
-`covers`: the traced lap divided by all the road in the drawing. About 1.0
-means the lap covers the course; the tool flags anything outside 0.75-1.25.
-Nine courses are not drawn as one continuous ribbon - Rainbow Road and Grumble
-Volcano have gaps you jump, Mushroom Gorge has the bouncy mushrooms - and
-their pieces are joined end to end.
+writes `web/src/data/tracks.ts`, which is checked in. Two things come out of
+each drawing:
+
+- **the centreline**, `d` - the road is the region the outline encloses,
+  thinned to one pixel wide, and the lap is the longest route through what is
+  left. This is the line a lap fraction is measured along.
+- **the road**, `outline` - every side of a road pixel that faces something
+  outside the road, chained into closed loops and filled even-odd, so a course
+  drawn as a ring keeps its hole. It is a path rather than a picture because
+  the drawings are 100-280px and the replay draws a course at 600: the PNG
+  goes to mush at that size and a path does not. Only the pieces the lap runs
+  through are asked for their edges, so decoration the trace already threw
+  away does not come back as road.
+
+The tool prints what it found for each course, including `covers`: the traced
+lap divided by all the road in the drawing. About 1.0 means the lap covers the
+course; the tool flags anything outside 0.75-1.25. Nine courses are not drawn
+as one continuous ribbon - Rainbow Road and Grumble Volcano have gaps you jump,
+Mushroom Gorge has the bouncy mushrooms - and their pieces are joined end to
+end.
 
 **What this is not**: the drawing is the real course and the trace follows it,
 but nothing in it knows where the start line is. The replay measures a lap

@@ -10,11 +10,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRace } from "../lib/data";
 import { replayData, slotsOf } from "../lib/stats";
-import { trackFor, FALLBACK } from "../data/tracks";
+import { trackFor } from "../data/tracks";
 import { CHARACTERS } from "../data/names";
-import { Card, Face, colorOf, nameOf, secs, type NameMode } from "../ui/common";
+import {
+  Card,
+  Face,
+  Segmented,
+  colorOf,
+  faceUrl,
+  nameOf,
+  secs,
+  slug,
+  type NameMode,
+} from "../ui/common";
+import { TrackShape } from "../ui/TrackShape";
 
-const SPEEDS = [1, 2, 4, 8];
+const SPEEDS = ["1", "2", "4", "8"] as const;
 
 export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
@@ -28,23 +39,22 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   const mode = (localStorage.getItem("mkw.mode") as NameMode) ?? "characters";
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState(2);
+  const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("2");
   const path = useRef<SVGPathElement>(null);
   const [length, setLength] = useState(0);
 
   const track = data?.course != null ? trackFor(data.course) : null;
-  const shape = track ?? FALLBACK;
 
   useEffect(() => {
     if (path.current) setLength(path.current.getTotalLength());
-  }, [shape.d]);
+  }, [track]);
 
   useEffect(() => {
     if (!playing || !data) return;
     let raf = 0;
     let last = performance.now();
     const step = (now: number) => {
-      const dt = ((now - last) / 1000) * speed;
+      const dt = ((now - last) / 1000) * Number(speed);
       last = now;
       setT((x) => {
         const next = x + dt;
@@ -61,111 +71,105 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   }, [playing, speed, data]);
 
   if (error)
-    return <Shell dir={dir}><p className="p-4 text-sm">{error}</p></Shell>;
+    return (
+      <Shell dir={dir}>
+        <Card className="p-5 text-sm">{error}</Card>
+      </Shell>
+    );
   if (!data || !log || !stats)
-    return <Shell dir={dir}><p className="p-4 text-sm text-muted">Loading…</p></Shell>;
+    return (
+      <Shell dir={dir}>
+        <Card className="p-5 text-sm text-muted">Loading…</Card>
+      </Shell>
+    );
 
   const progress = log.progressAt(t);
   const order = [...progress].sort((a, b) => b[1] - a[1]);
   const leader = order[0]?.[1] ?? 0;
   const slots = slotsOf(players, log);
   const bySlot = new Map([...slots].map(([i, s]) => [s, i]));
+  const unit = track ? Math.max(track.size[0], track.size[1]) / 200 : 4;
 
-  const at = (p: number) => {
+  // Where a lap fraction puts a kart, and which way is sideways there. The
+  // sideways part is only used to keep karts off each other: the logs record
+  // how far round the lap somebody is and nothing about which side of the road
+  // they were on, so lanes here mean nothing but "not on top of each other".
+  const at = (p: number, lane: number) => {
     if (!path.current || !length) return { x: 0, y: 0 };
     const frac = ((p % 1) + 1) % 1;
     const point = path.current.getPointAtLength(frac * length);
-    return { x: point.x, y: point.y };
+    const ahead = path.current.getPointAtLength((frac * length + 2) % length);
+    const dx = ahead.x - point.x;
+    const dy = ahead.y - point.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const off = lane * unit * 3.2;
+    return { x: point.x - (dy / len) * off, y: point.y + (dx / len) * off };
   };
 
   const jumps = jumpPoints(data);
 
   return (
     <Shell dir={dir}>
-      <div className="mb-4 flex flex-wrap items-baseline gap-3">
-        <h1 className="text-xl font-semibold tracking-tight">{data.courseName}</h1>
-        <span className="text-sm text-muted">
-          {data.laps ?? "?"} laps · {secs(data.duration)} ·{" "}
-          {stats.races.find((r) => r.file === file)?.n
-            ? `race ${stats.races.find((r) => r.file === file)!.n}`
-            : ""}
+      <div className="mb-5 flex flex-wrap items-end gap-x-4 gap-y-2">
+        <div className="mr-auto">
+          <h1 className="text-3xl font-bold tracking-tight text-brand-deep">
+            {data.courseName}
+          </h1>
+          <p className="mt-0.5 text-sm text-ink-soft">
+            {data.laps ?? "?"} laps · {secs(data.duration)}
+            {stats.races.find((r) => r.file === file)?.n
+              ? ` · race ${stats.races.find((r) => r.file === file)!.n}`
+              : ""}
+          </p>
+        </div>
+        <span className="nums rounded-full border border-line bg-white/80 px-4 py-1.5 text-lg font-semibold">
+          {t.toFixed(1)}s
         </span>
       </div>
 
-      <div className="grid items-start gap-4 lg:grid-cols-[1.5fr_1fr]">
+      <div className="grid items-start gap-5 lg:grid-cols-[1.25fr_minmax(320px,1fr)]">
         <Card>
-          <div className="relative">
-            <svg
-              viewBox={`0 0 ${shape.size[0]} ${shape.size[1]}`}
-              className="mx-auto max-h-[460px] w-full"
+          <div className="flex justify-center px-3 pt-3">
+            <TrackShape
+              track={track}
+              lineRef={path}
+              start={track?.source === "drawing"}
+              className="h-[min(62vh,600px)] w-auto max-w-full"
             >
-              {shape.outline ? (
-                // The road's own edges, out of the course file.
-                <path d={shape.outline} fill="#f8f9fa" stroke="#ced4da" strokeWidth={2} />
-              ) : shape.image ? (
-                // The drawing itself, not a redrawing of it: whatever the
-                // trace made of the course, the picture is the real one.
-                <image
-                  href={shape.image}
-                  width={shape.size[0]}
-                  height={shape.size[1]}
-                />
-              ) : (
-                <path
-                  d={shape.d}
-                  fill="none"
-                  stroke="#dee2e6"
-                  strokeWidth={shape.width}
-                  strokeLinecap="round"
-                />
-              )}
-              <path ref={path} d={shape.d} fill="none" stroke="none" />
-              <StartLine path={path.current} length={length} width={shape.width} />
               {order
                 .slice()
                 .reverse()
                 .map(([slot, p]) => {
                   const player = bySlot.get(slot);
-                  const point = at(p);
-                  const color = player != null ? colorOf(player) : "#adb5bd";
-                  const r = Math.max(shape.width * 0.6, 5);
+                  const racer = log.racer(slot);
+                  const character = racer
+                    ? (CHARACTERS[racer.character] ?? null)
+                    : null;
+                  const place = order.findIndex(([s]) => s === slot) + 1;
+                  // Three lanes, by running order, so a pack reads as a pack
+                  // rather than as one kart.
+                  const point = at(p, ((place - 1) % 3) - 1);
                   return (
-                    <g key={slot} transform={`translate(${point.x} ${point.y})`}>
-                      <circle
-                        r={player != null ? r : r * 0.6}
-                        fill={color}
-                        stroke="#fff"
-                        strokeWidth={r * 0.2}
-                        opacity={player != null ? 1 : 0.45}
-                      />
-                      {player != null && (
-                        <text
-                          y={r * 0.36}
-                          textAnchor="middle"
-                          fill="#fff"
-                          fontSize={r}
-                          fontWeight="700"
-                        >
-                          {order.findIndex(([s]) => s === slot) + 1}
-                        </text>
-                      )}
-                    </g>
+                    <Kart
+                      key={slot}
+                      x={point.x}
+                      y={point.y}
+                      unit={unit}
+                      color={player != null ? colorOf(player) : "#adb5bd"}
+                      character={character}
+                      tracked={player != null}
+                      place={place}
+                      slot={slot}
+                    />
                   );
                 })}
-            </svg>
+            </TrackShape>
           </div>
-          <p className="border-t border-line-soft px-4 py-2 text-center text-xs text-muted">
-            {!track
-              ? "No outline for this course yet — a generic loop, so only the order and the gaps mean anything."
-              : track.source === "drawing"
-                ? "The real course, traced from its layout drawing. Laps are measured from the bar, which is where the tracing starts and not the real start line."
-                : "The course's own checkpoints: real road, real start line, real direction."}
-          </p>
 
-          <div className="flex flex-wrap items-center gap-3 border-t border-line-soft px-4 py-3">
+          <div className="flex flex-wrap items-center gap-3 px-5 py-3">
             <button
               onClick={() => setPlaying((p) => !p)}
-              className="w-20 rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white"
+              className="w-24 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-deep"
             >
               {playing ? "Pause" : t >= data.duration ? "Replay" : "Play"}
             </button>
@@ -176,45 +180,44 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
               step={0.1}
               value={t}
               onChange={(e) => setT(Number(e.target.value))}
-              className="min-w-40 flex-1 accent-brand"
+              className="min-w-40 flex-1"
             />
-            <span className="nums w-16 text-right text-sm text-muted">
-              {t.toFixed(1)}s
-            </span>
-            <div className="inline-flex overflow-hidden rounded-lg border border-line text-xs">
-              {SPEEDS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSpeed(s)}
-                  className={`px-2 py-1 ${
-                    speed === s ? "bg-brand text-white" : "text-ink-soft hover:bg-line-soft"
-                  }`}
-                >
-                  {s}×
-                </button>
-              ))}
-            </div>
+            <Segmented
+              value={speed}
+              onChange={setSpeed}
+              options={SPEEDS.map((s) => ({ value: s, label: `${s}×` }))}
+            />
           </div>
 
           {jumps.length > 0 && (
-            <div className="flex flex-wrap gap-2 border-t border-line-soft px-4 py-3">
+            <div className="flex flex-wrap items-center gap-2 border-t border-line-soft px-5 py-3">
               <span className="text-xs text-muted">jump to</span>
               {jumps.map((j) => (
                 <button
                   key={j.t}
                   onClick={() => setT(Math.max(0, j.t - 2))}
-                  className="rounded-full border border-line px-2.5 py-1 text-xs hover:bg-line-soft"
+                  className="rounded-full border border-line bg-white px-3 py-1 text-xs hover:bg-brand-soft"
                 >
                   {j.text}
                 </button>
               ))}
             </div>
           )}
+
+          <p className="border-t border-line-soft px-5 py-3 text-xs text-muted">
+            {!track
+              ? "No outline for this course yet — a generic loop, so only the order and the gaps mean anything."
+              : track.source === "drawing"
+                ? "The real course, traced from its layout drawing. A lap is measured from the red dot, which is where the tracing started and not the real start line."
+                : "The course's own checkpoints: real road, real start line, real direction."}{" "}
+            How far round the lap each kart is comes from the log; which lane it
+            sits in does not, and is only there to keep the pack apart.
+          </p>
         </Card>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Card title="Running order">
-            <ol className="divide-y divide-line-soft">
+            <ol className="divide-y divide-line-soft border-t border-line-soft">
               {order.map(([slot, p], i) => {
                 const player = bySlot.get(slot);
                 const racer = log.racer(slot);
@@ -223,26 +226,27 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
                     ? nameOf(players[player], mode, log.field.name(slot))
                     : log.field.name(slot);
                 const gap =
-                  i === 0 || !data.avgLap
-                    ? null
-                    : (leader - p) * data.avgLap;
+                  i === 0 || !data.avgLap ? null : (leader - p) * data.avgLap;
                 return (
                   <li
                     key={slot}
-                    className={`flex items-center gap-2 px-3 py-1.5 text-sm ${
-                      player == null ? "text-muted" : ""
+                    className={`flex items-center gap-2 px-4 py-1.5 text-sm ${
+                      player == null ? "text-muted" : "bg-brand-soft/30"
                     }`}
                   >
-                    <span className="nums w-5 text-right font-semibold">{i + 1}</span>
+                    <span className="nums w-5 text-right font-semibold">
+                      {i + 1}
+                    </span>
                     <Face
-                      character={
-                        racer ? (CHARACTERS[racer.character] ?? null) : null
-                      }
+                      character={racer ? (CHARACTERS[racer.character] ?? null) : null}
                       color={player != null ? colorOf(player) : "#ced4da"}
                       label={name}
-                      size={20}
+                      size={26}
+                      ring={player != null}
                     />
-                    <span className={player != null ? "font-medium" : ""}>{name}</span>
+                    <span className={player != null ? "font-semibold" : ""}>
+                      {name}
+                    </span>
                     <span className="nums ml-auto text-xs text-muted">
                       {gap == null ? "" : `+${gap.toFixed(1)}s`}
                     </span>
@@ -250,7 +254,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
                 );
               })}
             </ol>
-            <p className="border-t border-line-soft px-3 py-2 text-xs text-muted">
+            <p className="px-4 py-2 text-xs text-muted">
               Gaps are estimates: progress difference × median lap
               {data.avgLap ? ` (${data.avgLap}s)` : ""}.
             </p>
@@ -265,9 +269,69 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   );
 }
 
+/** A racer on the course: a face for the players, a plain dot for the CPUs. */
+function Kart({
+  x,
+  y,
+  unit,
+  color,
+  character,
+  tracked,
+  place,
+  slot,
+}: {
+  x: number;
+  y: number;
+  unit: number;
+  color: string;
+  character: string | null;
+  tracked: boolean;
+  place: number;
+  slot: number;
+}) {
+  const r = tracked ? 5.6 * unit : 2.8 * unit;
+  if (!tracked)
+    return (
+      <circle cx={x} cy={y} r={r} fill={color} stroke="#fff" strokeWidth={unit} />
+    );
+  const id = `face-${slot}-${slug(character ?? "x")}`;
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <clipPath id={id}>
+        <circle r={r} />
+      </clipPath>
+      <circle r={r} fill="#fff" />
+      {character && (
+        <image
+          href={faceUrl(character)}
+          x={-r}
+          y={-r}
+          width={2 * r}
+          height={2 * r}
+          clipPath={`url(#${id})`}
+          preserveAspectRatio="xMidYMid slice"
+        />
+      )}
+      <circle r={r} fill="none" stroke={color} strokeWidth={1.5 * unit} />
+      <g transform={`translate(${r * 0.8} ${-r * 0.8})`}>
+        <circle r={3.4 * unit} fill={color} stroke="#fff" strokeWidth={0.9 * unit} />
+        <text
+          y={1.3 * unit}
+          textAnchor="middle"
+          fill="#fff"
+          fontSize={4 * unit}
+          fontWeight="700"
+        >
+          {place}
+        </text>
+      </g>
+    </g>
+  );
+}
+
 function Shell({ dir, children }: { dir: string; children: React.ReactNode }) {
   return (
-    <div className="mx-auto max-w-[1180px] px-5 py-6">
+    <div className="mx-auto max-w-[1200px] px-5 py-8">
       <a
         href={`#/s/${dir}`}
         className="mb-4 inline-block text-sm text-brand hover:underline"
@@ -276,28 +340,6 @@ function Shell({ dir, children }: { dir: string; children: React.ReactNode }) {
       </a>
       {children}
     </div>
-  );
-}
-
-/** Where the traced path begins - which is where a lap is measured from. */
-function StartLine({
-  path,
-  length,
-  width,
-}: {
-  path: SVGPathElement | null;
-  length: number;
-  width: number;
-}) {
-  if (!path || !length) return null;
-  const a = path.getPointAtLength(0);
-  const b = path.getPointAtLength(Math.min(6, length));
-  const angle = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
-  const w = Math.max(width, 8);
-  return (
-    <g transform={`translate(${a.x} ${a.y}) rotate(${angle})`}>
-      <rect x={-w * 0.08} y={-w * 0.7} width={w * 0.16} height={w * 1.4} fill="#495057" />
-    </g>
   );
 }
 
@@ -310,12 +352,12 @@ function Ticker({
 }) {
   const shown = events.filter((e) => e.t <= t).slice(-9).reverse();
   return (
-    <ul className="max-h-72 divide-y divide-line-soft overflow-y-auto">
+    <ul className="max-h-80 divide-y divide-line-soft overflow-y-auto border-t border-line-soft">
       {shown.length === 0 && (
-        <li className="px-3 py-2 text-sm text-muted">Nothing yet.</li>
+        <li className="px-4 py-3 text-sm text-muted">Nothing yet.</li>
       )}
       {shown.map((e, i) => (
-        <li key={`${e.t}-${i}`} className="flex gap-3 px-3 py-1.5 text-sm">
+        <li key={`${e.t}-${i}`} className="flex gap-3 px-4 py-1.5 text-sm">
           <span className="nums w-12 shrink-0 text-right text-xs text-muted">
             {e.t.toFixed(1)}s
           </span>

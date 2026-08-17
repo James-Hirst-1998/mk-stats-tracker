@@ -3,7 +3,18 @@
 
 import { useMemo, useState } from "react";
 import { raceDetail, type Player, type SessionStats } from "../lib/stats";
-import { Card, Face, colorOf, mmss, nameOf, rankColor, secs, type NameMode } from "./common";
+import { trackFor } from "../data/tracks";
+import {
+  Card,
+  Face,
+  colorOf,
+  mmss,
+  nameOf,
+  rankColor,
+  secs,
+  type NameMode,
+} from "./common";
+import { TrackShape } from "./TrackShape";
 import { PositionWorm } from "./PositionWorm";
 
 export function RaceList({
@@ -17,8 +28,8 @@ export function RaceList({
 }) {
   const [open, setOpen] = useState<string | null>(null);
   return (
-    <Card title="Races" className="mt-4">
-      <ul className="divide-y divide-line-soft">
+    <Card title="Races" className="mt-5" note={`${stats.races.length} stored`}>
+      <ul className="divide-y divide-line-soft border-t border-line-soft">
         {stats.races.map((race) => {
           const dimmed = race.n > thru;
           const isOpen = open === race.file;
@@ -27,13 +38,17 @@ export function RaceList({
             <li key={race.file} className={dimmed ? "opacity-40" : ""}>
               <button
                 onClick={() => setOpen(isOpen ? null : race.file)}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-line-soft/60"
+                className="flex w-full items-center gap-4 px-5 py-3 text-left hover:bg-brand-soft/40"
               >
-                <span className="nums w-8 text-sm font-semibold text-muted">
+                <span className="nums w-6 text-sm font-semibold text-muted">
                   {race.n}
                 </span>
+                <TrackShape
+                  track={race.course != null ? trackFor(race.course) : null}
+                  className="h-14 w-14 shrink-0"
+                />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium">
+                  <span className="block truncate font-semibold">
                     {race.courseName}
                   </span>
                   <span className="block truncate text-xs text-muted">
@@ -47,16 +62,28 @@ export function RaceList({
                   </span>
                 </span>
                 {winner && (
-                  <span className="hidden text-right sm:block">
-                    <span className="block text-xs text-muted">won by</span>
-                    <span className="block text-sm font-medium">
-                      {winner.player != null && mode === "names"
-                        ? stats.players[winner.player].name
-                        : winner.characterName}
+                  <span className="hidden items-center gap-2 sm:flex">
+                    <span className="text-right">
+                      <span className="block text-[11px] text-muted">won by</span>
+                      <span className="block text-sm font-medium">
+                        {winner.player != null && mode === "names"
+                          ? stats.players[winner.player].name
+                          : winner.characterName}
+                      </span>
                     </span>
+                    <Face
+                      character={winner.characterName}
+                      color={
+                        winner.player != null ? colorOf(winner.player) : "#ced4da"
+                      }
+                      label={winner.characterName}
+                      size={34}
+                    />
                   </span>
                 )}
-                <span className="text-muted">{isOpen ? "−" : "+"}</span>
+                <span className="w-4 text-center text-lg leading-none text-muted">
+                  {isOpen ? "−" : "+"}
+                </span>
               </button>
               {isOpen && <RaceDetail stats={stats} race={race} mode={mode} />}
             </li>
@@ -88,11 +115,11 @@ function RaceDetail({
   );
 
   return (
-    <div className="border-t border-line-soft bg-line-soft/30 px-4 py-4">
-      <div className="overflow-x-auto rounded-lg border border-line bg-card">
+    <div className="border-t border-line-soft bg-line-soft/40 px-5 py-4">
+      <div className="overflow-x-auto rounded-xl border border-line bg-white">
         <table className="nums w-full text-sm">
           <thead>
-            <tr className="text-xs text-muted">
+            <tr className="border-b border-line-soft text-xs text-muted">
               <th className="px-3 py-2 text-left font-medium">player</th>
               <th className="px-2 py-2 text-right font-medium">finish</th>
               <th className="px-2 py-2 text-right font-medium">time</th>
@@ -108,19 +135,21 @@ function RaceDetail({
           </thead>
           <tbody>
             {rows.map(([i, row]) => (
-              <tr key={i} className="border-t border-line-soft">
+              <tr key={i} className="border-b border-line-soft last:border-0">
                 <td className="px-3 py-2 whitespace-nowrap">
                   <span className="flex items-center gap-2">
                     <Face
                       character={row.characterName}
                       color={colorOf(i)}
                       label={labels.get(i) ?? ""}
-                      size={22}
+                      size={28}
                     />
                     <span className="font-medium">{labels.get(i)}</span>
                   </span>
                 </td>
-                <td className={`px-2 py-2 text-right font-semibold ${rankColor(row.position)}`}>
+                <td
+                  className={`px-2 py-2 text-right font-semibold ${rankColor(row.position)}`}
+                >
                   P{row.position ?? "-"}
                 </td>
                 <td className="px-2 py-2 text-right">
@@ -145,28 +174,36 @@ function RaceDetail({
         </table>
       </div>
 
-      <div className="mt-4 rounded-lg border border-line bg-card p-3">
-        <div className="mb-1 flex items-center justify-between">
-          <h3 className="text-xs tracking-wide text-muted uppercase">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1fr_240px]">
+        <div className="rounded-xl border border-line bg-white p-3">
+          <h3 className="mb-1 text-xs font-semibold tracking-wide text-muted uppercase">
             How it unfolded
           </h3>
+          <PositionWorm
+            detail={detail}
+            labels={labels}
+            duration={race.duration}
+            field={race.log.racers.length || 12}
+          />
+          <p className="mt-1 text-xs text-muted">
+            Crosses are hits taken, triangles are blue shells. Hover one to see
+            what it was.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-line bg-white p-3 text-center">
+          <TrackShape
+            track={race.course != null ? trackFor(race.course) : null}
+            className="mx-auto h-40 w-full"
+          />
+          <div className="mt-2 text-sm font-medium">{race.courseName}</div>
           <a
             href={`#/replay/${stats.dir}/${encodeURIComponent(race.file)}`}
-            className="rounded-lg border border-line px-2.5 py-1 text-xs font-medium text-brand hover:bg-brand-soft"
+            className="mt-2 inline-block rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-white hover:bg-brand-deep"
           >
             Watch the replay →
           </a>
         </div>
-        <PositionWorm
-          detail={detail}
-          labels={labels}
-          duration={race.duration}
-          field={race.log.racers.length || 12}
-        />
-        <p className="mt-1 text-xs text-muted">
-          Crosses are hits taken, triangles are blue shells. Hover one to see
-          what it was.
-        </p>
       </div>
     </div>
   );
