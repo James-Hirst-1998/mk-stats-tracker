@@ -76,6 +76,9 @@ This is the part that matters. The value of this repo is the log, not the code.
 - Don't list options he won't take. Pick one and recommend it.
 - Answer the question asked before adding anything else.
 - A follow-up is a question, not a signal you got it wrong.
+- **Shorter bullet points on anything he needs to do.** Put them at the end,
+  one line each, the command and what it is for. The reasoning goes above
+  them or nowhere.
 
 ## Keeping this file current
 

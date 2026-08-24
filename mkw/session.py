@@ -29,6 +29,24 @@ from mkw.names import course_name, VS_POINTS
 VERSION = 1
 
 
+def own(path):
+    """Hand a file back to whoever typed sudo.
+
+    The tracker needs root to read Dolphin's memory, so everything it writes
+    lands owned by root, and afterwards nothing running as the person can
+    touch it - naming the players from the dashboard writes players.json into
+    this directory. Harmless when not under sudo, and a failure here must
+    never cost a race, so it is allowed to fail quietly.
+    """
+    uid, gid = os.environ.get("SUDO_UID"), os.environ.get("SUDO_GID")
+    if not uid:
+        return
+    try:
+        os.chown(path, int(uid), int(gid) if gid else -1)
+    except OSError:
+        pass
+
+
 class Recorder:
     """Writes races into a session directory as they finish.
 
@@ -56,17 +74,22 @@ class Recorder:
         if not self.meta["races"]:
             return
         os.makedirs(self.dir, exist_ok=True)
+        own(self.dir)
         self.meta["ended"] = datetime.datetime.now().isoformat(timespec="seconds")
-        with open(os.path.join(self.dir, "session.json"), "w") as f:
+        index = os.path.join(self.dir, "session.json")
+        with open(index, "w") as f:
             json.dump(self.meta, f, indent=1)
+        own(index)
 
     def add(self, race):
         """Store a finished `events.Race`. Returns the path, or None."""
         n = len(self.meta["races"]) + 1
         name = racelog.slug(course_name(race.course))
         os.makedirs(self.dir, exist_ok=True)
+        own(self.dir)
         path = os.path.join(self.dir, "%02d-%s.jsonl" % (n, name))
         racelog.save(race, path=path, source="live")
+        own(path)
         me = next((s for s in race.standings()
                    if s["slot"] == race.local_slot), {})
         self.meta["races"].append({

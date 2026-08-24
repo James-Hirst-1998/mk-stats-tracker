@@ -19,3 +19,8 @@ races/
 
 # scratch
 .DS_Store
+
+# the dashboard's dependencies and its build output
+web/node_modules/
+web/dist/
+web/tsconfig.tsbuildinfo

@@ -55,10 +55,12 @@ class LiveStatus:
             if now == self.wrote:
                 return
             os.makedirs(self.rec.dir, exist_ok=True)
+            sess.own(self.rec.dir)
             with open(self.path(), "w") as f:
                 json.dump({"race": now[0], "course": now[1],
                            "started": datetime.datetime.now()
                            .isoformat(timespec="seconds")}, f)
+            sess.own(self.path())
             self.wrote = now
         except OSError:
             pass

@@ -110,6 +110,20 @@ The format, and how to add a new kind of event to it, is in
 [docs/RACE_LOG.md](docs/RACE_LOG.md). It is deliberately dull: JSON Lines, one
 event per line, ids rather than names so fixing a name fixes every stored race.
 
+## Look at it
+
+The same stored races, on a screen, in a browser:
+
+```bash
+npm --prefix web run dev
+```
+
+http://localhost:8125 — the night on one page (points, totals, awards, every
+race), and any race played back on its course. It updates while you play, so
+you can leave it open on a second screen: `tools/track.py` says which race is
+in progress and each one folds into the totals as it finishes. No sudo, and it
+reads nothing but the race logs. [docs/DASHBOARD.md](docs/DASHBOARD.md).
+
 ## Record a race to work on offline
 
 Live debugging against a moving race is miserable. Record once, then test
@@ -140,6 +154,8 @@ mk/bin/python3 -m tools.replay_live mushroom-gorge --save   # and store it
 | `mkw/` | the library: addresses, names, live reads, event stream |
 | `mkw/capture/` | the recorder and the offline replay harness |
 | `tools/` | things you run: `track`, `report`, `record`, `verify`, `probe`, `replay_live` |
+| `web/` | the dashboard: a local web app over the stored races. [docs/DASHBOARD.md](docs/DASHBOARD.md) |
+| `assets/` | character, item and course art the dashboard draws |
 | `races/` | saved sessions, one small file per race. Git-ignored by default |
 | `analysis/` | offline checks that produce the evidence for what's claimed |
 | `lab/` | exploration, including everything that failed. Kept on purpose |
