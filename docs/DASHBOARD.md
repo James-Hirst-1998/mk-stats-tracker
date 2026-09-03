@@ -32,11 +32,15 @@ the course, and folds each race into the totals when its file lands. Stopping
 the tracker removes the file. Old sessions are picked from the dropdown - same
 screen, no live pill.
 
-Three screens, all under the one hash router:
+Four screens, all under the one hash router:
 
-- `#/` the night: the leaderboard, points, totals, awards, and every race, each
-  of which opens to per-player numbers and a chart of how it unfolded.
-- `#/replay/<session>/<race>` one race played back on its course.
+- `#/` the night: the leaderboard, then a grid of widgets - points, blue
+  shells, awards, items, what everybody was hit by, who hit whom, totals - and
+  the list of races.
+- `#/race/<session>/<race>` one race: the per-player table, and the same grid
+  for that race alone - how it unfolded, time in each position, items, every
+  hit and who threw it, every blue shell, who hit whom.
+- `#/replay/<session>/<race>` that race played back on its course.
 - `#/tracks` every course outline. **Check** puts the layout drawing back
   behind it, with the traced centreline and the point a lap is measured from -
   this is how the tracing gets checked.
@@ -95,6 +99,12 @@ count as attackers, victims and opponents but never get a row.
   tokens are in `web/src/styles.css`; nothing is imported from that repo.
 - **All players equal.** No "you". The tracker's `local_slot` is not used for
   display at all.
+- **Widgets, not a column.** The night and a race are each a grid of small
+  cards that sit beside each other, so the whole thing is on one screen, and
+  each opens large (⤢) for the detail - the full-size chart, the table with
+  every item or every CPU. James asked for this in place of the full-width
+  charts: "widgets on the screen rather than massive ones, and a way to drill
+  down". The small version is a summary; the large one leaves nothing out.
 - **The slider is the whole screen, and sits above all of it.** It means
   "after race N": every card, total, award and nemesis line below it is
   computed over races 1 to N, so dragging it back is the screen the night had
@@ -132,8 +142,19 @@ count as attackers, victims and opponents but never get a row.
   on, so the karts are fanned into three lanes by running order purely so that
   twelve of them at the start line are twelve things rather than one. The
   caption under the course says so.
-- **The blue shell chart is the whole night**, whatever the slider says, and is
-  labelled with that. Everything else on the screen follows the slider.
+- **Everything follows the slider**, the blue shell widget included. It used
+  to be the whole night regardless, and was the one thing on the screen that
+  did not move with the control above it, which read as a bug.
+- **A blue shell dodge is derived** (`stats.ts::blueShells`): a Blue Shell
+  `use` with no launched, un-caught, blue-object hit within 15s, credited to
+  whoever was leading among the unfinished racers when it was thrown - a
+  cannon, a Mushroom timed right, a Star, a Bill. The 15s comes from the
+  use-to-hit gaps in the stored races, 3.2-9.6s. The pairing is measured in
+  EXPERIMENTS.md under 2026-09-03.
+- **Landed can exceed thrown.** A triple is one `use` in the log and each
+  banana that lands is a hit, so a sniper can be "23 hits from 22 throws".
+  Counting the three shots would mean watching each object in the pool, and
+  RACE_LOG.md says why that was not done.
 
 ## Course outlines
 

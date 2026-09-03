@@ -2,9 +2,9 @@
 // the same every time the same night is loaded, and a tie stays a tie.
 
 import type { Awards as AwardSet, Player } from "../lib/stats";
-import { Card, colorOf } from "./common";
+import { colorOf } from "./common";
 
-export function Awards({
+export function AwardList({
   awards,
   players,
   label,
@@ -32,7 +32,9 @@ export function Awards({
       key: "sniper",
       title: "Sniper",
       who: <Who ids={awards.sniper.players} named={named} />,
-      note: `${awards.sniper.landed} of ${awards.sniper.thrown} landed`,
+      // Landed can exceed thrown: a triple is one throw in the log and can
+      // land three times (docs/RACE_LOG.md, "Throws inside a triple").
+      note: `${awards.sniper.landed} hit${awards.sniper.landed === 1 ? "" : "s"} from ${awards.sniper.thrown} throw${awards.sniper.thrown === 1 ? "" : "s"} · a triple is one throw`,
     });
 
   if (awards.firstBlood)
@@ -58,26 +60,18 @@ export function Awards({
       note: `led ${awards.collapse.led}s, finished P${awards.collapse.position} · ${awards.collapse.courseName}`,
     });
 
+  if (items.length === 0)
+    return <p className="px-4 py-6 text-sm text-muted">Nothing has been earned yet.</p>;
   return (
-    <Card title="Awards">
-      {items.length === 0 ? (
-        <p className="px-4 py-4 text-sm text-muted">
-          Nothing has been earned yet.
-        </p>
-      ) : (
-        <ul className="divide-y divide-line-soft">
-          {items.map((a) => (
-            <li key={a.key} className="px-4 py-3">
-              <div className="text-xs tracking-wide text-muted uppercase">
-                {a.title}
-              </div>
-              <div className="mt-0.5 text-sm">{a.who}</div>
-              <div className="text-xs text-muted">{a.note}</div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </Card>
+    <ul className="divide-y divide-line-soft">
+      {items.map((a) => (
+        <li key={a.key} className="px-4 py-2.5">
+          <div className="text-xs tracking-wide text-muted uppercase">{a.title}</div>
+          <div className="mt-0.5 text-sm">{a.who}</div>
+          <div className="text-xs text-muted">{a.note}</div>
+        </li>
+      ))}
+    </ul>
   );
 }
 

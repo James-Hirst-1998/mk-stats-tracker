@@ -14,21 +14,29 @@ export interface PointsSeries {
   points: number[];
 }
 
-const W = 1000;
-const H = 340;
-const PAD = { top: 16, right: 132, bottom: 34, left: 42 };
+// Two sizes of the same chart. The small one sits in a widget a third of the
+// screen wide, so its drawing space is smaller in viewBox units and the text,
+// which is sized in those units, comes out readable rather than a third the
+// size.
+const SIZES = {
+  full: { W: 1000, H: 340, PAD: { top: 16, right: 132, bottom: 34, left: 42 } },
+  compact: { W: 520, H: 300, PAD: { top: 14, right: 100, bottom: 30, left: 34 } },
+};
 
 export function PointsChart({
   series,
   races,
   maxRaces,
+  compact = false,
 }: {
   series: PointsSeries[];
   races: number;
   maxRaces: number;
+  compact?: boolean;
 }) {
   const svg = useRef<SVGSVGElement>(null);
   const [hover, setHover] = useState<number | null>(null);
+  const { W, H, PAD } = SIZES[compact ? "compact" : "full"];
 
   const top = Math.max(15, maxRaces * 15);
   const x = (n: number) =>

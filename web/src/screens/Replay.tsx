@@ -78,13 +78,13 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
 
   if (error)
     return (
-      <Shell dir={dir}>
+      <Shell dir={dir} file={file}>
         <Card className="p-5 text-sm">{error}</Card>
       </Shell>
     );
   if (!data || !log || !stats)
     return (
-      <Shell dir={dir}>
+      <Shell dir={dir} file={file}>
         <Card className="p-5 text-sm text-muted">Loading…</Card>
       </Shell>
     );
@@ -115,7 +115,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   const jumps = jumpPoints(data);
 
   return (
-    <Shell dir={dir}>
+    <Shell dir={dir} file={file}>
       <div className="mb-5 flex flex-wrap items-end gap-x-4 gap-y-2">
         <div className="mr-auto">
           <h1 className="text-3xl font-bold tracking-tight text-brand-deep">
@@ -346,15 +346,25 @@ function Kart({
   );
 }
 
-function Shell({ dir, children }: { dir: string; children: React.ReactNode }) {
+function Shell({
+  dir,
+  file,
+  children,
+}: {
+  dir: string;
+  file: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-8">
-      <a
-        href={`#/s/${dir}`}
-        className="mb-4 inline-block text-sm text-brand hover:underline"
-      >
-        ← back to the night
-      </a>
+      <nav className="mb-4 flex gap-4 text-sm">
+        <a href={`#/race/${dir}/${encodeURIComponent(file)}`} className="text-brand hover:underline">
+          ← back to the race
+        </a>
+        <a href={`#/s/${dir}`} className="text-brand hover:underline">
+          ← back to stats
+        </a>
+      </nav>
       {children}
     </div>
   );
@@ -367,9 +377,11 @@ function Ticker({
   events: { t: number; text: string }[];
   t: number;
 }) {
-  const shown = events.filter((e) => e.t <= t).slice(-9).reverse();
+  // Everything so far, newest first, in a box that scrolls rather than a list
+  // that grows down the page.
+  const shown = events.filter((e) => e.t <= t).reverse();
   return (
-    <ul className="max-h-80 divide-y divide-line-soft overflow-y-auto border-t border-line-soft">
+    <ul className="max-h-[420px] divide-y divide-line-soft overflow-y-auto border-t border-line-soft">
       {shown.length === 0 && (
         <li className="px-4 py-3 text-sm text-muted">Nothing yet.</li>
       )}

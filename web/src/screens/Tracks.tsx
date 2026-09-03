@@ -31,7 +31,7 @@ export function Tracks() {
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-8">
       <a href="#/" className="mb-4 inline-block text-sm text-brand hover:underline">
-        ← back to the night
+        ← back to stats
       </a>
 
       <div className="flex flex-wrap items-end gap-x-4 gap-y-3">

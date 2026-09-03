@@ -8,22 +8,28 @@ import { useState } from "react";
 import { SAMPLE_EVERY, type Marker, type RaceDetail } from "../lib/stats";
 import { colorOf } from "./common";
 
-const W = 1000;
-const H = 300;
-const PAD = { top: 14, right: 116, bottom: 28, left: 34 };
+// Two sizes: the full chart, and one for a widget a third of the screen wide,
+// where a smaller viewBox keeps the text readable.
+const SIZES = {
+  full: { W: 1000, H: 300, PAD: { top: 14, right: 116, bottom: 28, left: 34 } },
+  compact: { W: 560, H: 280, PAD: { top: 14, right: 84, bottom: 26, left: 30 } },
+};
 
 export function PositionWorm({
   detail,
   labels,
   duration,
   field,
+  compact = false,
 }: {
   detail: RaceDetail;
   labels: Map<number, string>;
   duration: number;
   field: number;
+  compact?: boolean;
 }) {
   const [hover, setHover] = useState<Marker | null>(null);
+  const { W, H, PAD } = SIZES[compact ? "compact" : "full"];
   const end = Math.max(duration, detail.steps * SAMPLE_EVERY);
 
   const x = (t: number) => PAD.left + ((W - PAD.left - PAD.right) * t) / (end || 1);
