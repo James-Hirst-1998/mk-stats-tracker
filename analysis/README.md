@@ -25,3 +25,4 @@ mk/bin/python3 -m analysis.validate_damage
 | `validate_live_view.py` | the live view draws for all 21,926 recorded frames without raising |
 | `validate_race_log.py` | a stored race log renders every event identically to the live view, and time in first rebuilt from it matches the game's own counter |
 | `validate_session.py` | several recordings played back to back come out as separate races in one session, with every event kept and progress reproducing the full-rate reads |
+| `floor_pickups.py` | every dropped item is a world object with the loser as owner (13 of 13); no pickup off the road exists in the three recordings, so whether one shows in the item fields is still open |
