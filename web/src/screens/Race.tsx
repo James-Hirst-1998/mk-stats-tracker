@@ -86,7 +86,16 @@ function Body({
   const items = useMemo(() => itemsSeen([race], players), [race, players]);
   const causes = useMemo(() => players.map((_, i) => hitsTakenBy([race], i)), [race, players]);
   const matrix = useMemo(() => hitMatrix([race], players), [race, players]);
-  const hitLog = useMemo(() => hitsIn(race, players), [race, players]);
+  const hitLog = useMemo(
+    () =>
+      hitsIn(race, (slot) => {
+        const p = playerOfSlot(slot, race.log, players);
+        return p != null ? label(players[p]) : race.log.field.name(slot);
+      }),
+    // `label` follows `mode`, which is read once per page load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [race, players, mode],
+  );
 
   const raw = race.course != null ? trackFor(race.course) : null;
   const track = raw ? oriented(raw, starts[raw.course]) : null;
@@ -306,21 +315,21 @@ interface HitLine {
   place: number | null;
 }
 
-/** Every hit a tracked player took in this race, in order. */
-function hitsIn(race: RaceStats, players: Player[]): HitLine[] {
+/** Every hit a tracked player took in this race, in order. `who` names a
+ *  slot the way the rest of the page does, so the thrower and the victim
+ *  follow the same Characters/Names choice. */
+function hitsIn(race: RaceStats, who: (slot: number) => string): HitLine[] {
   const out: HitLine[] = [];
+  const players = race.rows;
   for (const e of race.log.events) {
     if (e.type !== "hit" || e.after || e.slot == null) continue;
-    const player = playerOfSlot(e.slot, race.log, players);
+    const player = [...players].find(([, r]) => r.slot === e.slot)?.[0];
     if (player == null) continue;
     out.push({
       t: e.t,
       player,
       cause: causeOf(e),
-      by: (e.by ?? []).map((s) => {
-        const p = playerOfSlot(s, race.log, players);
-        return p != null ? players[p].name : race.log.field.name(s);
-      }),
+      by: (e.by ?? []).map(who),
       caught: Boolean(e.caught),
       guess: Boolean(e.guess),
       out: e.for ?? null,
@@ -344,7 +353,7 @@ function HitLog({ hits, labels }: { hits: HitLine[]; labels: Map<number, string>
             <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: colorOf(h.player) }} />
             <span className="w-20 shrink-0 truncate font-medium">{labels.get(h.player)}</span>
             {h.place != null && <span className="nums w-8 shrink-0 text-xs text-muted">P{h.place}</span>}
-            <ItemIcon name={h.cause} size={20} />
+            <ItemIcon name={h.cause} size={20} chip={false} />
             <span className="text-ink-soft">
               {h.caught ? "caught in the blast from " : ""}
               {h.cause}

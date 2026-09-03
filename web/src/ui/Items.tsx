@@ -16,12 +16,17 @@ export function ItemIcon({
   name,
   size = 24,
   className = "",
+  chip = true,
 }: {
   name: string;
   size?: number;
   className?: string;
+  /** Draw the name as a chip when there is no picture. Off where the name
+   *  is printed beside the icon anyway. */
+  chip?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
+  if (failed && !chip) return null;
   if (failed)
     return (
       <span
