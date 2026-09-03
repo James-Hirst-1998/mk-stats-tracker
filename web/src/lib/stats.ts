@@ -716,11 +716,14 @@ export function hitsTakenBy(races: RaceStats[], player: number): HitCause[] {
       row.count += 1;
       if (e.caught) row.caught += 1;
       if (e.guess) row.guessed += 1;
-      if (e.for != null) row.out = round(row.out + e.for, 1);
+      if (e.for != null) row.out += e.for;
       out.set(cause, row);
     }
   }
-  return [...out.values()].sort((a, b) => b.count - a.count);
+  // Rounded once, at the end, so a table's total is the sum of its rows.
+  return [...out.values()]
+    .map((r) => ({ ...r, out: round(r.out, 1) }))
+    .sort((a, b) => b.count - a.count);
 }
 
 /** Somebody who can hit or be hit: a tracked player, or a CPU character. The
