@@ -264,9 +264,11 @@ function Body({
           <BlueList races={[race]} players={players} mode={mode} />
         </Widget>
 
+        {/* One column narrower than the row, so the blue shell list beside it
+            fills the last row instead of leaving two columns empty. */}
         <Widget
           title="Who hit who"
-          className="md:col-span-2 xl:col-span-3"
+          className="xl:col-span-2"
           expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
         >
           <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />

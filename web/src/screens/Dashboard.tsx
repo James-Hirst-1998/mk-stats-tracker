@@ -321,7 +321,9 @@ function Body({
   return (
     <>
       <Card title="Leaderboard" className="mt-4">
-        <div className="grid gap-3 px-5 pb-4 sm:grid-cols-2 xl:grid-cols-4">
+        {/* As many columns as there are players, up to four. A fixed four
+            leaves half the row empty on a two-player night. */}
+        <div className={`grid gap-3 px-5 pb-4 sm:grid-cols-2 ${LEADER_COLS[Math.min(ranked.length, 4)]}`}>
           {ranked.map(({ player, total }, rank) => (
             <PlayerCard
               key={player.index}
@@ -459,6 +461,16 @@ function Body({
     </>
   );
 }
+
+/** Leaderboard columns by player count. Written out rather than built,
+ *  because Tailwind only ships the classes it can see. */
+const LEADER_COLS: Record<number, string> = {
+  0: "",
+  1: "xl:grid-cols-1",
+  2: "xl:grid-cols-2",
+  3: "xl:grid-cols-3",
+  4: "xl:grid-cols-4",
+};
 
 function PlayerCard({
   player,
