@@ -32,13 +32,13 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
   const [starts] = useStarts();
   const players = stats?.players ?? [];
-  const data = useMemo(
-    () => (log ? replayData(log, players) : null),
-    [log, players],
-  );
-
   // The same Characters/Names choice the dashboard is showing.
   const mode = (localStorage.getItem("mkw.mode") as NameMode) ?? "characters";
+  const data = useMemo(
+    () => (log ? replayData(log, players, (p, character) => nameOf(p, mode, character)) : null),
+    [log, players, mode],
+  );
+
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("2");

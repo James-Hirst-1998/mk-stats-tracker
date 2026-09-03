@@ -592,9 +592,21 @@ export interface ReplayData {
   avgLap: number | null;
 }
 
-export function replayData(log: RaceLog, players: Player[]): ReplayData {
+/** `nameFor` decides what a tracked player is called, so the ticker and the
+ *  running order say the same thing under the Characters/Names toggle. Left
+ *  out, everybody is their own name. */
+export function replayData(
+  log: RaceLog,
+  players: Player[],
+  nameFor?: (player: Player, character: string) => string,
+): ReplayData {
   const slots = slotsOf(players, log);
-  const named = new Map([...slots].map(([i, s]) => [s, players[i].name]));
+  const named = new Map(
+    [...slots].map(([i, s]) => [
+      s,
+      nameFor ? nameFor(players[i], log.field.name(s)) : players[i].name,
+    ]),
+  );
   const field: ReplayField[] = log.racers.map((r) => ({
     slot: r.slot,
     name: named.get(r.slot) ?? log.field.name(r.slot),
