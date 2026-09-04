@@ -26,16 +26,10 @@ import {
 } from "../ui/common";
 import { TrackShape } from "../ui/TrackShape";
 
-// 1x is the race's own clock, so the time under the course is the time that
-// was on screen. It is the default: a replay that runs faster than the race
-// did is a different race to watch.
+// A multiplier on the race clock. 4x by default, James's call: a race is
+// two to three minutes and watching one back at its own pace is a long way
+// to get to the bit you wanted.
 const SPEEDS = ["1", "2", "4", "8"] as const;
-const SPEED_LABEL: Record<(typeof SPEEDS)[number], string> = {
-  "1": "timed",
-  "2": "2×",
-  "4": "4×",
-  "8": "8×",
-};
 
 export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
@@ -51,7 +45,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
 
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("1");
+  const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("4");
   const path = useRef<SVGPathElement>(null);
   const [length, setLength] = useState(0);
 
@@ -201,7 +195,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
             <Segmented
               value={speed}
               onChange={setSpeed}
-              options={SPEEDS.map((s) => ({ value: s, label: SPEED_LABEL[s] }))}
+              options={SPEEDS.map((s) => ({ value: s, label: `${s}×` }))}
             />
           </div>
 

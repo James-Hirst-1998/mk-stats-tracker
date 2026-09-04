@@ -17,7 +17,6 @@ import {
   itemTally,
   itemsSeen,
   pointsSeries,
-  scavengedBy,
   totalsFor,
   type Player,
   type SessionStats,
@@ -32,8 +31,6 @@ import {
   CausesTable,
   ItemStrip,
   ItemsTable,
-  ScavengedList,
-  ScavengedStrip,
 } from "../ui/Items";
 import { Players } from "../ui/Players";
 import {
@@ -309,10 +306,6 @@ function Body({
   );
   const matrix = useMemo(() => hitMatrix(upto, stats.players), [upto, stats.players]);
   const cpus = useMemo(() => cpuTotals(upto, stats.players), [upto, stats.players]);
-  const scavenge = useMemo(
-    () => stats.players.map((_, i) => scavengedBy(upto, i)),
-    [upto, stats.players],
-  );
 
   // Off every time the page loads, deliberately: the players are the subject
   // and the ten CPUs are the detail you go looking for.
@@ -356,7 +349,6 @@ function Body({
     points: pointsSeries(stats.races, p.index),
   }));
   const hitsTaken = causes.reduce((n, c) => n + c.reduce((m, x) => m + x.count, 0), 0);
-  const offRoad = scavenge.reduce((n, list) => n + list.length, 0);
 
   return (
     <>
@@ -472,58 +464,8 @@ function Body({
         </Widget>
 
         <Widget
-          title="Hit by"
-          note={`${hitsTaken} hit${hitsTaken === 1 ? "" : "s"} taken`}
-          expanded={
-            <CausesTable players={stats.players} causes={causes} label={label} face={face} />
-          }
-        >
-          <PerPlayer players={stats.players} label={label} face={face}>
-            {(i) => <CauseStrip causes={causes[i]} />}
-          </PerPlayer>
-        </Widget>
-
-        <Widget
-          title="Who hit who"
-          expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
-        >
-          <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
-        </Widget>
-
-        {/* Two columns on a laptop, so the row of three above fills it. */}
-        <Widget
-          title="Scavenger"
-          note={offRoad ? `${offRoad} off the road` : "picked up off the road"}
-          className="md:col-span-2 xl:col-span-1"
-          expanded={
-            <ScavengedList
-              players={stats.players}
-              found={scavenge}
-              label={label}
-              face={face}
-            />
-          }
-        >
-          {offRoad === 0 ? (
-            <ScavengedList
-              players={stats.players}
-              found={scavenge}
-              label={label}
-              face={face}
-            />
-          ) : (
-            <PerPlayer players={stats.players} label={label} face={face}>
-              {(i) => <ScavengedStrip found={scavenge[i]} />}
-            </PerPlayer>
-          )}
-        </Widget>
-
-        {/* The full width of the grid: every item everybody got, in one line
-            per player, rather than the six that fit in a third of a row. */}
-        <Widget
           title="Items"
           note="picked up / thrown"
-          className="md:col-span-2 xl:col-span-3"
           expanded={
             <ItemsTable
               players={stats.players}
@@ -535,8 +477,30 @@ function Body({
           }
         >
           <PerPlayer players={stats.players} label={label} face={face}>
-            {(i) => <ItemStrip tally={tallies[i]} limit={19} />}
+            {(i) => <ItemStrip tally={tallies[i]} />}
           </PerPlayer>
+        </Widget>
+
+        <Widget
+          title="Hit by"
+          note={`${hitsTaken} hit${hitsTaken === 1 ? "" : "s"} taken`}
+          expanded={
+            <CausesTable players={stats.players} causes={causes} label={label} face={face} />
+          }
+        >
+          <PerPlayer players={stats.players} label={label} face={face}>
+            {(i) => <CauseStrip causes={causes[i]} />}
+          </PerPlayer>
+        </Widget>
+
+        {/* Items, hit by and who hit who are the row under the chart. The
+            matrix takes both columns on a laptop, where the row is two. */}
+        <Widget
+          title="Who hit who"
+          className="md:col-span-2 xl:col-span-1"
+          expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
+        >
+          <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
         </Widget>
 
         <Widget title="Totals" className="md:col-span-2 xl:col-span-3">
