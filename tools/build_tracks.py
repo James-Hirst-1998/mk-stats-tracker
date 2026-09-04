@@ -758,6 +758,7 @@ MAX_ROAD_WIDTH = 30      # wider than this is what the course encircles
 MIN_PIECE = 0.05         # ignore road pieces this much shorter than the longest
 MIN_HOLE = 0.30          # a hole this much of the piece's own area is the course interior
 MIN_REST = 50            # ink smaller than this is a speck, not a piece of drawing
+MIN_ROUTE = 30           # a route shorter than this through a piece is not road
 
 
 def stitch(pieces, w, h):
@@ -886,7 +887,12 @@ def trace(path):
         if width > MAX_ROAD_WIDTH and not hole:
             continue
         pixels, closed, others = lap_of(prune(graph_of(skeleton, w, h), w), hole, w)
-        if len(pixels) < 40:
+        # A route shorter than this through a piece is not a stretch of road.
+        # Was 40, which was one pixel too high: Grumble Volcano's left-hand
+        # straight traces 39px, is plainly road, and carries the start line.
+        # 30, 25 and 20 all give the same 32 traces, so the exact figure is
+        # not doing any work - it only has to be under 39.
+        if len(pixels) < MIN_ROUTE:
             continue
         xy = lambda pixels: [(k % w, k // w) for k in pixels]
         across, deep = medial_width(comp, pixels, w, h)

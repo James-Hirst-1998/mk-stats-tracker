@@ -274,7 +274,8 @@ Both are set by hand, once per course, at `#/tracks` under **Set start**:
 click where the finishing line is, check the arrow is pointing the way you
 drive it, hit *flip* if it is not. The click snaps to the nearest point on the
 traced lap, so a start that belongs on a stretch the lap does not run through
-- Grumble Volcano's is - lands somewhere else, and drawing the lap is the fix. It saves as you go into
+lands somewhere else, and drawing the lap is the fix. Across all 32 the worst
+a start line now sits from where it was clicked is 6px on a ~200px drawing. It saves as you go into
 `assets/tracks/starts.json`, which is checked in, and every replay uses it.
 
 The start is stored as a point on the drawing rather than as a distance along
