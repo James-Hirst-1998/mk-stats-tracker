@@ -6,6 +6,11 @@
 // direction are not. Draw is the honest fix when the trace itself is wrong:
 // click round the course and that is the lap, first click on the start line,
 // in the direction it is driven.
+//
+// The pale shape under the road is everything in the drawing the lap does not
+// run through, and it is drawn in every view: a lap that steps over blank
+// paper looks like a bug in the drawing rather than a fork the trace took
+// wrong, and a start line often belongs on one of those sections.
 
 import { useState } from "react";
 import { TRACKS } from "../data/tracks";
@@ -97,7 +102,9 @@ export function Tracks() {
         <p className="mt-4 rounded-xl border border-brand/30 bg-brand-soft/60 px-4 py-3 text-sm">
           <strong>Click the start line on each course</strong> — wherever the
           finishing line actually is — then check the arrow is pointing the way
-          you drive it, and hit <em>flip</em> if it is not. Saves as you go.
+          you drive it, and hit <em>flip</em> if it is not. Saves as you go. The
+          line snaps to the traced lap, so if it lands somewhere else the lap
+          does not run where the start is, and the fix is to draw it.
           <span className="ml-2 text-muted">
             {set.length} of {needed.length} done.
           </span>
@@ -120,7 +127,8 @@ export function Tracks() {
       {(view === "route" || view === "check") && (
         <p className="mt-3 text-xs text-muted">
           {set.length} of {needed.length} courses have a start line,{" "}
-          {drawn.length} have a lap drawn by hand.
+          {drawn.length} have a lap drawn by hand. The palest shape is drawing
+          the lap does not run through — road the trace missed, or scenery.
           {set.length < needed.length && (
             <>
               {" "}

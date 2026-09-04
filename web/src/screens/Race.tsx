@@ -33,7 +33,13 @@ import {
 } from "../ui/common";
 import { BlueList } from "../ui/BlueShells";
 import { HitMatrixTable } from "../ui/HitMatrix";
-import { CauseStrip, CausesTable, ItemIcon, ItemStrip, ItemsTable } from "../ui/Items";
+import {
+  CauseStrip,
+  CausesTable,
+  ItemIcon,
+  ItemStrip,
+  ItemsTable,
+} from "../ui/Items";
 import { PositionTime } from "../ui/PositionTime";
 import { PositionWorm } from "../ui/PositionWorm";
 import { TrackShape } from "../ui/TrackShape";
@@ -235,6 +241,15 @@ function Body({
           />
         </Widget>
 
+        {/* Two columns on a wide screen, so the row of three under it fills. */}
+        <Widget
+          title="Blue shells"
+          note={`${race.blueShells.length} thrown`}
+          className="md:col-span-2 xl:col-span-2"
+        >
+          <BlueList races={[race]} players={players} mode={mode} />
+        </Widget>
+
         <Widget
           title="Items"
           note="picked up / thrown"
@@ -260,18 +275,11 @@ function Body({
           </PerPlayer>
         </Widget>
 
-        <Widget
-          title="Blue shells"
-          note={`${race.blueShells.length} thrown`}
-        >
-          <BlueList races={[race]} players={players} mode={mode} />
-        </Widget>
-
-        {/* One column narrower than the row, so the blue shell list beside it
-            fills the last row instead of leaving two columns empty. */}
+        {/* Both columns on a laptop, where the row of three is a row of two
+            and the matrix would otherwise sit on a half-empty row. */}
         <Widget
           title="Who hit who"
-          className="xl:col-span-2"
+          className="md:col-span-2 xl:col-span-1"
           expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
         >
           <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />

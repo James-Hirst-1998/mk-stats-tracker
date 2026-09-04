@@ -1,7 +1,7 @@
 // Who hit whom. Attackers down the side, victims across the top.
 //
 // The small version keeps the tracked players and folds every CPU into one
-// row and one column, because on a four-player night that is the argument
+// row and one column, because with four players that is the argument
 // being settled. The large version has every CPU character as its own line.
 
 import type { HitMatrix as Matrix, Identity } from "../lib/stats";

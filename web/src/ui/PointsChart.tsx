@@ -1,7 +1,7 @@
-// Points across the night, one dotted line per player.
+// Points across the session, one dotted line per player.
 //
 // The axes are fixed to the whole sequence rather than to the races played so
-// far, so the shape of the night does not change every time a race lands - a
+// far, so the shape of the run does not change every time a race lands - a
 // line growing into the space is the point of the chart.
 
 import { useRef, useState } from "react";

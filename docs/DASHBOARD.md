@@ -34,9 +34,9 @@ screen, no live pill.
 
 Four screens, all under the one hash router:
 
-- `#/` the night: the leaderboard, then a grid of widgets - points, blue
-  shells, awards, items, what everybody was hit by, who hit whom, totals - and
-  the list of races.
+- `#/` the session: the leaderboard, then a grid of widgets - points, blue
+  shells, awards, items, what everybody was hit by, what was picked up off the
+  road, who hit whom, totals - and the list of races.
 - `#/race/<session>/<race>` one race: the per-player table, and the same grid
   for that race alone - how it unfolded, time in each position, items, every
   hit and who threw it, every blue shell, who hit whom.
@@ -80,37 +80,72 @@ one `tools/report.py` reads:
 ```
 
 - `character` matches the racer playing that character - the normal case,
-  since everybody keeps their character for a night.
+  since everybody keeps their character for a session.
 - `"human": true` matches whichever racer the game flags as human, which
   survives a character change between races - but is only usable when exactly
-  one player is human. On a real multi-human night, use characters.
+  one player is human. With more than one human, use characters.
 - Without the file, the tracked players are simply the humans found in the
   races, named by their characters, and there are no teams.
 
 The Characters/Names toggle switches every label between the two; CPUs always
-count as attackers, victims and opponents but never get a row.
+count as attackers, victims and opponents, and **Show CPUs** on the leaderboard
+puts them on the ladder as well - see the decision below.
 
 ## Decisions
 
+- **The players are the leaderboard; the CPUs are a toggle**, off on every page
+  load. On, they join the same ladder, ranked with everybody on points, so a
+  CPU card says where it actually came - greyed and tagged rather than given a
+  card of its own shape. A CPU is added up by the same code a player is
+  (`stats.ts::raceRows` builds a row for every slot, `totalsOf` adds up
+  whatever rows it is given), so the columns mean the same thing on both. Its
+  identity is its character, the key the hit matrix and the nemesis line
+  already use.
+- **Items are shown in one fixed order** (`stats.ts::ITEM_ORDER`), what lands
+  in your hands at the front of the field through to what lands in them at the
+  back: banana, triple bananas, fake item box, green shell, triple green, red
+  shell, triple red, bob-omb, mushroom, triple mushrooms, blooper, POW, thunder
+  cloud, mega, star, golden, bullet, blue shell, lightning. James gave the
+  sequence. What hit you keeps the same order, then the names that cover two
+  items because no object was read, then everything nobody threw - a Chain
+  Chomp is not somebody's doing. Ordering by count was the first version and
+  moved the columns about every time a race landed.
+- **An item knocked out of somebody's hands is a red ring**, not a "−2". Beside
+  a got/thrown pair a minus figure reads as arithmetic on them; the ring says
+  "this went missing" at a glance and the count is in the tooltip.
+- **There is no scavenger widget**, decided 2026-09-04 after building one.
+  Items picked up off the road cannot be counted from the logs well enough to
+  put a number on the screen: the game writes one exactly like an item box,
+  the only tell is that it happened away from a row of boxes, and the whole
+  corpus gives one candidate. A box that says "1" on a good day and nothing
+  on every other one is not a stat. The method and the evidence are in
+  EXPERIMENTS.md under 2026-09-04, and the code was in commit 7ae7050 if it is
+  ever worth reviving - a recording of somebody driving over a dropped Star on
+  purpose is what would justify it.
 - **The look is the older viewer's**, the Mantine app in `mario-kart-stats`:
   the same gradient behind white cards, blue as the one accent, character faces
   as identity, a leaderboard of four equal cards, tabbed charts, a slider over
-  the races. Two apps over the same night should not look like two apps. The
+  the races. Two apps over the same races should not look like two apps. The
   tokens are in `web/src/styles.css`; nothing is imported from that repo.
 - **All players equal.** No "you". The tracker's `local_slot` is not used for
   display at all.
-- **Widgets, not a column.** The night and a race are each a grid of small
+- **Widgets, not a column.** A session and a race are each a grid of small
   cards that sit beside each other, so the whole thing is on one screen, and
   each opens large (⤢) for the detail - the full-size chart, the table with
   every item or every CPU. James asked for this in place of the full-width
   charts: "widgets on the screen rather than massive ones, and a way to drill
   down". The small version is a summary; the large one leaves nothing out.
+  Points progress is two columns wide and two rows tall, because it is the one
+  card the rest of the screen is about; blue shells and awards stack beside it;
+  items, hit by and who hit who make the row under it; and totals runs the
+  full width along the bottom. James's layout, and the race screen keeps the
+  same shape.
 - **The slider is the whole screen, and sits above all of it.** It means
   "after race N": every card, total, award and nemesis line below it is
-  computed over races 1 to N, so dragging it back is the screen the night had
-  at that point. It sticks to the top of the window, because a control that
+  computed over races 1 to N, so dragging it back is the screen these races
+  gave at that point. It sticks to the top of the window, because a control that
   changes everything under it should not be somewhere under it. 0 is before
-  the first race, so a night can be watched from nothing.
+  the first race, so a session can be watched from nothing.
 - **Stats are computed in TypeScript, in one file.** `web/src/lib/stats.ts`
   is a port of what used to be `mkw/stats.py`, which is gone: keeping the same
   rules in two languages would have meant a correction landing in one of them.
@@ -135,6 +170,9 @@ count as attackers, victims and opponents but never get a row.
   and amber) at 8.8, which clears the floor of 8, and every series also
   carries a face and a name, so colour is never the only thing telling two
   players apart.
+- **The replay runs at 4×** unless you change it. James's call: a race is two
+  to three minutes and its own pace is a long way to get to the bit you came
+  for. 1× is there and is the race's real clock.
 - **Gaps in the replay are estimates**: progress difference times the race's
   median lap time. Good enough to read, not a timing screen.
 - **Which lane a kart is in on the replay means nothing.** The log says how far
@@ -143,7 +181,7 @@ count as attackers, victims and opponents but never get a row.
   twelve of them at the start line are twelve things rather than one. The
   caption under the course says so.
 - **Everything follows the slider**, the blue shell widget included. It used
-  to be the whole night regardless, and was the one thing on the screen that
+  to be every race regardless, and was the one thing on the screen that
   did not move with the control above it, which read as a bug.
 - **A blue shell dodge is derived** (`stats.ts::blueShells`): a Blue Shell
   `use` with no launched, un-caught, blue-object hit within 15s, credited to
@@ -187,6 +225,16 @@ each drawing:
   Peach Beach) is spliced in. A drawing with no such loop - a gap in the
   outline, or a bridge drawn as a break - gets the longest route that passes
   no junction twice. This is the line a lap fraction is measured along.
+- **the rest of the drawing**, `rest` - every other component of ink in it,
+  down to 50px. Some is road the trace missed: Grumble Volcano's widest
+  stretch is 12,083px and is thrown out for being 40px across, and Mushroom
+  Gorge's bouncy mushrooms are 120-180px each, under the size floor and
+  outside the eight biggest components. Some is not road at all - DS Peach
+  Gardens' hedges are in it. It is kept apart from `outline` rather than
+  added to it for exactly that reason, and drawn behind the road and paler in
+  every view. James asked for it: he sets start lines and draws laps through
+  those sections and could only see them under Check, where a lap stepping
+  over blank paper reads as a broken drawing rather than a fork taken wrong.
 - **the road**, `outline` - every side of a road pixel that faces something
   outside the road, chained into closed loops and filled even-odd, so a course
   drawn as a ring keeps its hole. It is a path rather than a picture because
@@ -224,7 +272,10 @@ going a plausible-looking wrong way from the wrong place.
 
 Both are set by hand, once per course, at `#/tracks` under **Set start**:
 click where the finishing line is, check the arrow is pointing the way you
-drive it, hit *flip* if it is not. It saves as you go into
+drive it, hit *flip* if it is not. The click snaps to the nearest point on the
+traced lap, so a start that belongs on a stretch the lap does not run through
+lands somewhere else, and drawing the lap is the fix. Across all 32 the worst
+a start line now sits from where it was clicked is 6px on a ~200px drawing. It saves as you go into
 `assets/tracks/starts.json`, which is checked in, and every replay uses it.
 
 The start is stored as a point on the drawing rather than as a distance along

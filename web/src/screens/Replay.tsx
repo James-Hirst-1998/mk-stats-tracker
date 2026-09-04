@@ -26,6 +26,9 @@ import {
 } from "../ui/common";
 import { TrackShape } from "../ui/TrackShape";
 
+// A multiplier on the race clock. 4x by default, James's call: a race is
+// two to three minutes and watching one back at its own pace is a long way
+// to get to the bit you wanted.
 const SPEEDS = ["1", "2", "4", "8"] as const;
 
 export function Replay({ dir, file }: { dir: string; file: string }) {
@@ -42,7 +45,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
 
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("2");
+  const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("4");
   const path = useRef<SVGPathElement>(null);
   const [length, setLength] = useState(0);
 
