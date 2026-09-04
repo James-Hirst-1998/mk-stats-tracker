@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { ITEMS } from "../data/names";
 import { causeRank, itemRank } from "../lib/stats";
-import type { HitCause, ItemTally, Player } from "../lib/stats";
+import type { HitCause, ItemTally, Player, Scavenge } from "../lib/stats";
 import { Face, colorOf, secs, slug } from "./common";
 
 export const itemUrl = (name: string) => `/assets/items/${slug(name)}.png`;
@@ -278,30 +278,75 @@ export function CausesTable({
 }
 
 /** One player's items picked up off the road, as icons with counts. */
-export function ScavengedStrip({ found }: { found: Map<number, number> }) {
-  const ids = [...found.keys()].sort((a, b) => itemRank(a) - itemRank(b));
-  if (!ids.length) return <span className="text-xs text-muted">none</span>;
+export function ScavengedStrip({ found }: { found: Scavenge[] }) {
+  if (!found.length) return <span className="text-xs text-muted">none</span>;
+  const byItem = new Map<number, number>();
+  for (const s of found) byItem.set(s.item, (byItem.get(s.item) ?? 0) + 1);
   return (
     <span className="flex flex-wrap gap-x-3 gap-y-1">
-      {ids.map((id) => (
-        <span key={id} className="inline-flex items-center gap-1" title={itemName(id)}>
-          <ItemIcon name={itemName(id)} size={22} />
-          <span className="nums text-sm font-semibold">{found.get(id)}</span>
-        </span>
-      ))}
+      {[...byItem.keys()]
+        .sort((a, b) => itemRank(a) - itemRank(b))
+        .map((id) => (
+          <span key={id} className="inline-flex items-center gap-1" title={itemName(id)}>
+            <ItemIcon name={itemName(id)} size={22} />
+            <span className="nums text-sm font-semibold">{byItem.get(id)}</span>
+          </span>
+        ))}
     </span>
   );
 }
 
-/** What an empty scavenger widget means, which is not "nobody did it".
- *  James drove over a Star on Mario Circuit that the log has nothing for. */
-export function ScavengedNote() {
+/** Every pickup off the road, with what made it one. */
+export function ScavengedList({
+  players,
+  found,
+  label,
+  face,
+}: {
+  players: Player[];
+  found: Scavenge[][];
+  label: (p: Player) => string;
+  face: (p: Player) => string | null;
+}) {
+  const rows = players.flatMap((p, i) => found[i].map((s) => ({ p, i, s })));
+  if (!rows.length) return <ScavengedNote />;
   return (
-    <p className="px-4 pt-1 pb-4 text-sm text-muted">
-      Nothing picked up off the road. An item counts as one when it lands in
-      somebody's hands with no item box before it — all 715 pickups in the
-      stored races follow a box, and whether the game writes anything at all
-      for one off the road is still open
+    <>
+      <ul className="divide-y divide-line-soft">
+        {rows.map(({ p, i, s }) => (
+          <li key={`${i}-${s.race}-${s.t}`} className="flex items-center gap-3 px-4 py-2 text-sm">
+            <Face character={face(p)} color={colorOf(p.index)} label={label(p)} size={24} />
+            <span className="w-20 shrink-0 truncate font-medium">{label(p)}</span>
+            <span className="nums w-14 shrink-0 text-xs text-muted">race {s.race}</span>
+            <span className="w-36 shrink-0 truncate text-xs text-muted">{s.courseName}</span>
+            <span className="nums w-14 shrink-0 text-right text-xs text-muted">
+              {s.t.toFixed(1)}s
+            </span>
+            <ItemIcon name={itemName(s.item)} size={20} chip={false} />
+            <span className="truncate">{itemName(s.item)}</span>
+            <span className="ml-auto shrink-0 text-xs text-muted">
+              {s.how === "off-row"
+                ? `${Math.round(s.lap * 100)}% round the lap, ${Math.round((s.gap ?? 0) * 100)}% from the nearest item box`
+                : "no item box before it"}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <ScavengedNote short />
+    </>
+  );
+}
+
+/** What the widget is claiming, and what it cannot see. */
+export function ScavengedNote({ short = false }: { short?: boolean }) {
+  return (
+    <p className="px-4 pt-1 pb-4 text-xs text-muted">
+      {!short && "Nothing found. "}
+      An item counts as picked up off the road when its item box is nowhere
+      near where anybody else got one that race — boxes sit in rows, so every
+      ordinary pickup has another beside it — or when it lands in somebody's
+      hands with no box at all. Both are inference from where and when. A
+      pickup the game writes nothing for is invisible to either
       (<code className="font-mono">docs/EXPERIMENTS.md</code>, 2026-09-03).
     </p>
   );

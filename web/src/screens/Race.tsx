@@ -15,7 +15,7 @@ import {
   itemsSeen,
   playerOfSlot,
   raceDetail,
-  scavenged,
+  scavengedBy,
   type Player,
   type RaceStats,
   type SessionStats,
@@ -40,7 +40,7 @@ import {
   ItemIcon,
   ItemStrip,
   ItemsTable,
-  ScavengedNote,
+  ScavengedList,
   ScavengedStrip,
 } from "../ui/Items";
 import { PositionTime } from "../ui/PositionTime";
@@ -97,7 +97,8 @@ function Body({
   const tallies = useMemo(() => players.map((_, i) => itemTally([race], i)), [race, players]);
   const items = useMemo(() => itemsSeen([race], players), [race, players]);
   const causes = useMemo(() => players.map((_, i) => hitsTakenBy([race], i)), [race, players]);
-  const scavenge = useMemo(() => players.map((_, i) => scavenged([race], i)), [race, players]);
+  const scavenge = useMemo(() => players.map((_, i) => scavengedBy([race], i)), [race, players]);
+  const offRoad = scavenge.reduce((n, list) => n + list.length, 0);
   const matrix = useMemo(() => hitMatrix([race], players), [race, players]);
   const hitLog = useMemo(
     () =>
@@ -245,14 +246,13 @@ function Body({
           />
         </Widget>
 
+        {/* Two columns on a wide screen, so the row of three under it fills. */}
         <Widget
-          title="Items"
-          note="picked up / thrown"
-          expanded={<ItemsTable players={players} tallies={tallies} items={items} label={label} face={face} />}
+          title="Blue shells"
+          note={`${race.blueShells.length} thrown`}
+          className="xl:col-span-2"
         >
-          <PerPlayer players={players} label={label} face={face}>
-            {(i) => <ItemStrip tally={tallies[i]} />}
-          </PerPlayer>
+          <BlueList races={[race]} players={players} mode={mode} />
         </Widget>
 
         <Widget
@@ -270,18 +270,20 @@ function Body({
           </PerPlayer>
         </Widget>
 
-        {/* Two columns, with the scavenger beside it, so the row fills. */}
         <Widget
-          title="Blue shells"
-          note={`${race.blueShells.length} thrown`}
-          className="md:col-span-2 xl:col-span-2"
+          title="Who hit who"
+          expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
         >
-          <BlueList races={[race]} players={players} mode={mode} />
+          <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
         </Widget>
 
-        <Widget title="Scavenger" note="picked up off the road">
-          {scavenge.every((m) => m.size === 0) ? (
-            <ScavengedNote />
+        <Widget
+          title="Scavenger"
+          note={offRoad ? `${offRoad} off the road` : "picked up off the road"}
+          expanded={<ScavengedList players={players} found={scavenge} label={label} face={face} />}
+        >
+          {offRoad === 0 ? (
+            <ScavengedList players={players} found={scavenge} label={label} face={face} />
           ) : (
             <PerPlayer players={players} label={label} face={face}>
               {(i) => <ScavengedStrip found={scavenge[i]} />}
@@ -289,12 +291,16 @@ function Body({
           )}
         </Widget>
 
+        {/* The full width of the grid, the way the session screen has it. */}
         <Widget
-          title="Who hit who"
-          className="xl:col-span-3"
-          expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
+          title="Items"
+          note="picked up / thrown"
+          className="md:col-span-2 xl:col-span-3"
+          expanded={<ItemsTable players={players} tallies={tallies} items={items} label={label} face={face} />}
         >
-          <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
+          <PerPlayer players={players} label={label} face={face}>
+            {(i) => <ItemStrip tally={tallies[i]} limit={19} />}
+          </PerPlayer>
         </Widget>
       </WidgetGrid>
     </>

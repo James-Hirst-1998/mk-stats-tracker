@@ -820,36 +820,117 @@ export function itemsSeen(races: RaceStats[], players: Player[]): number[] {
 }
 
 /** How long after an item box the item lands in your hands. Measured over the
- *  715 holds in the stored races: 0.98-3.80s, 1.15 median (CPUs are quick,
- *  a human waits out the roulette). 6s is well clear of the longest. */
+ *  715 holds in the stored races: 0.98-3.80s, 1.15 median (CPUs are quick, a
+ *  human waits out the roulette). 6s is well clear of the longest. */
 export const BOX_TO_HOLD = 6;
 
-/** Items picked up off the road rather than out of a box, by item id.
+/** How far round a lap two `box` events can be and still be the same row of
+ *  item boxes.
  *
- *  The rule: a `hold` with no `box` for that racer in the BOX_TO_HOLD seconds
- *  before it, each box counting for one hold. Nothing else in the log
- *  distinguishes the two.
+ *  Item boxes sit in rows at fixed points on a course, so every ordinary
+ *  pickup has another one close to it round the lap. Measured over the 771
+ *  boxes in the stored races that have progress under them: every one has
+ *  another within 0.012 of a lap, except two - at 0.054 and 0.177. 0.08 keeps
+ *  the second and not the first, because 0.054 is near enough to a wide row
+ *  to be arguable and this is a claim about what somebody did. */
+export const BOX_ROW = 0.08;
+
+/** Boxes a race needs before its rows can be told apart from a stray one. */
+const ROWS_NEED = 12;
+
+/** An item that came off the road rather than out of a row of item boxes. */
+export interface Scavenge {
+  race: number;
+  courseName: string;
+  t: number;
+  item: number;
+  /** How far round the lap it happened. */
+  lap: number;
+  /** How far the nearest other box in that race was, round the lap. Null
+   *  when the pickup has no box at all. */
+  gap: number | null;
+  /** `off-row`: a box nowhere near where anybody else got one in that race.
+   *  `no-box`: an item in the hands with no box before it at all. */
+  how: "off-row" | "no-box";
+}
+
+/** Items a player picked up off the road.
  *
- *  This is 0 in every stored race - all 715 holds follow a box - and James
- *  drove over a Star on Mario Circuit that the log has nothing for at all, so
- *  a count of zero here means "the recorder saw none", not "there were none".
- *  docs/EXPERIMENTS.md, 2026-09-03. */
-export function scavenged(races: RaceStats[], player: number): Map<number, number> {
-  const out = new Map<number, number>();
+ *  Two rules, because there are two ways the game could write one and only one
+ *  of them has ever been seen:
+ *
+ *  - **off-row**: a `box` more than BOX_ROW round the lap from every other box
+ *    in that race. A pickup off the road runs an ordinary roulette - the one
+ *    in the stored races has a 3.57s box-to-hold, the normal human length - so
+ *    where it happened is the only thing that separates it from a box.
+ *  - **no-box**: a `hold` with no `box` for that racer in the BOX_TO_HOLD
+ *    seconds before it. Never seen: all 715 holds in the stored races follow a
+ *    box, and all 695 uses follow a hold.
+ *
+ *  Both are inference from where and when, not a read. A pickup the game
+ *  writes nothing for at all is invisible to both, and James has driven over
+ *  a Star that left no trace - docs/EXPERIMENTS.md, 2026-09-03. */
+export function scavengedBy(races: RaceStats[], player: number): Scavenge[] {
+  const out: Scavenge[] = [];
   for (const race of races) {
     const slot = race.rows.get(player)?.slot;
     if (slot == null) continue;
+
+    // Where round the lap every box in this race was picked up. The rows are
+    // the course's own, so they are read off the race rather than stored.
+    const boxes: { e: RaceEvent; lap: number }[] = [];
+    for (const e of race.log.events) {
+      if (e.after || e.type !== "box" || e.slot == null) continue;
+      const p = race.log.progressAt(e.t).get(e.slot);
+      if (p != null) boxes.push({ e, lap: p - Math.floor(p) });
+    }
+    if (boxes.length >= ROWS_NEED) {
+      for (const b of boxes) {
+        if (b.e.slot !== slot || b.e.item == null) continue;
+        const gap = Math.min(
+          ...boxes.filter((o) => o !== b).map((o) => roundGap(b.lap, o.lap)),
+        );
+        if (gap > BOX_ROW)
+          out.push({
+            race: race.n,
+            courseName: race.courseName,
+            t: b.e.t,
+            item: b.e.item,
+            lap: round(b.lap, 4),
+            gap: round(gap, 4),
+            how: "off-row",
+          });
+      }
+    }
+
     let box: RaceEvent | null = null;
     for (const e of race.log.events) {
       if (e.after || e.slot !== slot) continue;
       if (e.type === "box") box = e;
       else if (e.type === "hold" && e.item != null) {
         if (box && e.t - box.t <= BOX_TO_HOLD) box = null;
-        else out.set(e.item, (out.get(e.item) ?? 0) + 1);
+        else {
+          const p = race.log.progressAt(e.t).get(slot);
+          out.push({
+            race: race.n,
+            courseName: race.courseName,
+            t: e.t,
+            item: e.item,
+            lap: p == null ? 0 : round(p - Math.floor(p), 4),
+            gap: null,
+            how: "no-box",
+          });
+        }
       }
     }
   }
-  return out;
+  return out.sort((a, b) => a.race - b.race || a.t - b.t);
+}
+
+/** Distance between two points round a lap, the short way. */
+function roundGap(a: number, b: number): number {
+  const d = Math.abs(a - b);
+  return Math.min(d, 1 - d);
 }
 
 export interface HitCause {

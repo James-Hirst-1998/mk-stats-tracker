@@ -113,12 +113,18 @@ puts them on the ladder as well - see the decision below.
 - **An item knocked out of somebody's hands is a red ring**, not a "−2". Beside
   a got/thrown pair a minus figure reads as arithmetic on them; the ring says
   "this went missing" at a glance and the count is in the tooltip.
-- **Scavenger counts what nothing in the log distinguishes yet.** An item is
-  picked up off the road when a `hold` has no `box` for that racer in the 6s
-  before it - box to hold is 0.98-3.80s over the 715 pickups in the stored
-  races. That gives 0 in every one of them, and James has picked a Star up off
-  the floor, so the widget says on its face that zero means "the recorder saw
-  none". The open question is in EXPERIMENTS.md under 2026-09-03.
+- **Scavenger is where round the lap it happened.** A pickup off the road runs
+  an ordinary roulette and is written to the same fields as an item box, so
+  nothing about the event itself separates the two. What does is the place:
+  item boxes sit in rows, so an ordinary pickup always has another one near it
+  round the lap, and one with nothing within 0.08 of a lap was not from a row.
+  Measured over the 771 boxes in the stored races, 769 have another within
+  0.012; the one the widget shows is 0.177 out. The second rule, a `hold` with
+  no `box` at all, has never fired. Both are inference from where and when,
+  and a pickup the game writes nothing for is invisible to either - James has
+  driven over a Star that left no trace - so the widget says what it is
+  claiming rather than showing a bare zero. EXPERIMENTS.md, 2026-09-03 and
+  2026-09-04.
 - **The look is the older viewer's**, the Mantine app in `mario-kart-stats`:
   the same gradient behind white cards, blue as the one accent, character faces
   as identity, a leaderboard of four equal cards, tabbed charts, a slider over
@@ -133,9 +139,11 @@ puts them on the ladder as well - see the decision below.
   charts: "widgets on the screen rather than massive ones, and a way to drill
   down". The small version is a summary; the large one leaves nothing out.
   Points progress is two columns wide and two rows tall, because it is the one
-  card the rest of the screen is about; blue shells and awards stack beside it,
-  items / hit by / scavenger make the row under it, and who-hit-who and totals
-  run the full width. James's layout.
+  card the rest of the screen is about; blue shells and awards stack beside it;
+  hit by, who hit who and the scavenger make the row under it; and items and
+  totals run the full width along the bottom. Items is full width because a
+  third of a row fits six of them and a player picks up a dozen. James's
+  layout, and the race screen keeps the same shape.
 - **The slider is the whole screen, and sits above all of it.** It means
   "after race N": every card, total, award and nemesis line below it is
   computed over races 1 to N, so dragging it back is the screen these races
@@ -166,6 +174,9 @@ puts them on the ladder as well - see the decision below.
   and amber) at 8.8, which clears the floor of 8, and every series also
   carries a face and a name, so colour is never the only thing telling two
   players apart.
+- **The replay runs at the race's own clock** unless you speed it up - the
+  control says "timed" rather than "1×", because what it means is that the
+  time under the course is the time that was on the screen.
 - **Gaps in the replay are estimates**: progress difference times the race's
   median lap time. Good enough to read, not a timing screen.
 - **Which lane a kart is in on the replay means nothing.** The log says how far
