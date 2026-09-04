@@ -5,6 +5,12 @@
 // draws at 60px in a race list and at 600px in a replay without going soft.
 // The drawing it was traced from is still available behind it, which is what
 // #/tracks uses to check the tracing.
+//
+// `rest` - the ink in the drawing the lap does not run through - is drawn
+// under the road and paler. Some of it is road the trace missed and some of it
+// is not road at all, so it is never the same colour as the road; it is there
+// because a lap that jumps over blank paper looks broken, and because a start
+// line or a drawn lap often belongs on it.
 
 import type { RefObject } from "react";
 import { FALLBACK, type Track } from "../data/tracks";
@@ -79,6 +85,18 @@ export function TrackShape({
     >
       {drawing && t.image && (
         <image href={t.image} width={w} height={h} opacity={0.35} />
+      )}
+
+      {t.rest && (
+        <path
+          d={t.rest}
+          fillRule="evenodd"
+          fill="var(--color-asphalt)"
+          stroke="var(--color-asphalt)"
+          strokeWidth={0.6 * unit}
+          strokeLinejoin="round"
+          opacity={0.5}
+        />
       )}
 
       {t.outline ? (

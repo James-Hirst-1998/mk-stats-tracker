@@ -225,6 +225,16 @@ each drawing:
   Peach Beach) is spliced in. A drawing with no such loop - a gap in the
   outline, or a bridge drawn as a break - gets the longest route that passes
   no junction twice. This is the line a lap fraction is measured along.
+- **the rest of the drawing**, `rest` - every other component of ink in it,
+  down to 50px. Some is road the trace missed: Grumble Volcano's widest
+  stretch is 12,083px and is thrown out for being 40px across, and Mushroom
+  Gorge's bouncy mushrooms are 120-180px each, under the size floor and
+  outside the eight biggest components. Some is not road at all - DS Peach
+  Gardens' hedges are in it. It is kept apart from `outline` rather than
+  added to it for exactly that reason, and drawn behind the road and paler in
+  every view. James asked for it: he sets start lines and draws laps through
+  those sections and could only see them under Check, where a lap stepping
+  over blank paper reads as a broken drawing rather than a fork taken wrong.
 - **the road**, `outline` - every side of a road pixel that faces something
   outside the road, chained into closed loops and filled even-odd, so a course
   drawn as a ring keeps its hole. It is a path rather than a picture because
@@ -262,7 +272,9 @@ going a plausible-looking wrong way from the wrong place.
 
 Both are set by hand, once per course, at `#/tracks` under **Set start**:
 click where the finishing line is, check the arrow is pointing the way you
-drive it, hit *flip* if it is not. It saves as you go into
+drive it, hit *flip* if it is not. The click snaps to the nearest point on the
+traced lap, so a start that belongs on a stretch the lap does not run through
+- Grumble Volcano's is - lands somewhere else, and drawing the lap is the fix. It saves as you go into
 `assets/tracks/starts.json`, which is checked in, and every replay uses it.
 
 The start is stored as a point on the drawing rather than as a distance along
