@@ -79,8 +79,16 @@ export interface Row {
   taken: number;
   caught: number;
   blues: number;
+  /** Blue shells thrown at them while leading that never landed. */
+  bluesDodged: number;
   boosts: number;
   out: number;
+  /** Items that landed in their hands (`hold` events). */
+  got: number;
+  /** Items knocked out of their hands before they could use them. */
+  lost: number;
+  /** {position: seconds spent there}, from the position events. */
+  positionTime: Map<number, number>;
 }
 
 export interface Winner {
@@ -109,6 +117,8 @@ export interface RaceStats {
   winner: Winner | null;
   firstBlood: FirstBlood | null;
   rows: Map<number, Row>;
+  /** Every blue shell thrown, who it was aimed at, and whether it landed. */
+  blueShells: BlueShell[];
   log: RaceLog;
 }
 
@@ -186,12 +196,12 @@ export function rowsFor(log: RaceLog, players: Player[]): Map<number, Row> {
   const slots = slotsOf(players, log);
   const rows = new Map<number, Row>();
   const landedHits = hits(log);
+  const blues = blueShells(log);
   for (const [i, slot] of slots) {
     const r = stats.get(slot);
     if (!r) continue;
-    const uses = log.events.filter(
-      (e) => e.type === "use" && !e.after && e.slot === slot,
-    );
+    const mine = log.events.filter((e) => !e.after && e.slot === slot);
+    const uses = mine.filter((e) => e.type === "use");
     rows.set(i, {
       slot,
       character: r.character,
@@ -209,8 +219,12 @@ export function rowsFor(log: RaceLog, players: Player[]): Map<number, Row> {
       caught: r.caught,
       blues: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT)
         .length,
+      bluesDodged: blues.filter((b) => b.target === slot && !b.landed).length,
       boosts: uses.filter((e) => BOOST_ITEMS.has(e.item as number)).length,
       out: round(r.out, 1),
+      got: mine.filter((e) => e.type === "hold").length,
+      lost: mine.filter((e) => e.type === "lost").length,
+      positionTime: r.positionTime,
     });
   }
   return rows;
@@ -386,6 +400,7 @@ export function sessionStats(
       winner: winnerOf(log, players),
       firstBlood: firstBlood(log, players),
       rows: rowsFor(log, players),
+      blueShells: blueShells(log),
       log,
     };
   });
@@ -414,8 +429,11 @@ export interface Totals {
   landed: number;
   taken: number;
   blues: number;
+  bluesDodged: number;
   boosts: number;
   out: number;
+  got: number;
+  lost: number;
 }
 
 /** One player's night so far. The slider on the dashboard is just a shorter
@@ -438,8 +456,11 @@ export function totalsFor(races: RaceStats[], player: number): Totals {
     landed: sum((r) => r.landed),
     taken: sum((r) => r.taken),
     blues: sum((r) => r.blues),
+    bluesDodged: sum((r) => r.bluesDodged),
     boosts: sum((r) => r.boosts),
     out: round(sum((r) => r.out), 1),
+    got: sum((r) => r.got),
+    lost: sum((r) => r.lost),
   };
 }
 
@@ -571,9 +592,21 @@ export interface ReplayData {
   avgLap: number | null;
 }
 
-export function replayData(log: RaceLog, players: Player[]): ReplayData {
+/** `nameFor` decides what a tracked player is called, so the ticker and the
+ *  running order say the same thing under the Characters/Names toggle. Left
+ *  out, everybody is their own name. */
+export function replayData(
+  log: RaceLog,
+  players: Player[],
+  nameFor?: (player: Player, character: string) => string,
+): ReplayData {
   const slots = slotsOf(players, log);
-  const named = new Map([...slots].map(([i, s]) => [s, players[i].name]));
+  const named = new Map(
+    [...slots].map(([i, s]) => [
+      s,
+      nameFor ? nameFor(players[i], log.field.name(s)) : players[i].name,
+    ]),
+  );
   const field: ReplayField[] = log.racers.map((r) => ({
     slot: r.slot,
     name: named.get(r.slot) ?? log.field.name(r.slot),
@@ -628,6 +661,237 @@ function tickerLine(
     if (named.has(e.slot)) return `${who(e.slot)} finishes P${e.position ?? 0}`;
   }
   return null;
+}
+
+
+// --- drilling down: items, hits, who hit whom ------------------------------
+
+/** How many of each item a player picked up, threw, and had knocked out of
+ *  their hands, keyed by item id. A triple is one pickup and one throw: the
+ *  log records the deploy, not the three shots (docs/RACE_LOG.md). */
+export interface ItemTally {
+  got: Map<number, number>;
+  used: Map<number, number>;
+  lost: Map<number, number>;
+}
+
+export function itemTally(races: RaceStats[], player: number): ItemTally {
+  const out: ItemTally = { got: new Map(), used: new Map(), lost: new Map() };
+  const bump = (m: Map<number, number>, k: number) => m.set(k, (m.get(k) ?? 0) + 1);
+  for (const race of races) {
+    const slot = race.rows.get(player)?.slot;
+    if (slot == null) continue;
+    for (const e of race.log.events) {
+      if (e.after || e.slot !== slot || e.item == null) continue;
+      if (e.type === "hold") bump(out.got, e.item);
+      else if (e.type === "use") bump(out.used, e.item);
+      else if (e.type === "lost") bump(out.lost, e.item);
+    }
+  }
+  return out;
+}
+
+/** Every item anybody in these races picked up, most picked up first, so a
+ *  table has the same columns for every player. */
+export function itemsSeen(races: RaceStats[], players: Player[]): number[] {
+  const total = new Map<number, number>();
+  players.forEach((_, i) => {
+    for (const [item, n] of itemTally(races, i).got)
+      total.set(item, (total.get(item) ?? 0) + n);
+  });
+  return [...total].sort((a, b) => b[1] - a[1] || a[0] - b[0]).map(([item]) => item);
+}
+
+export interface HitCause {
+  /** What hit them: the object's name where one was read, else the damage
+   *  type's description. The same names `causeOf` gives a marker. */
+  cause: string;
+  count: number;
+  /** How many of those were standing in somebody else's blast. */
+  caught: number;
+  /** How many carry `guess: true` on the attribution. */
+  guessed: number;
+  /** Seconds it cost, over the hits whose end was seen. */
+  out: number;
+}
+
+/** What a player was hit by, most often first. */
+export function hitsTakenBy(races: RaceStats[], player: number): HitCause[] {
+  const out = new Map<string, HitCause>();
+  for (const race of races) {
+    const slot = race.rows.get(player)?.slot;
+    if (slot == null) continue;
+    for (const e of hits(race.log)) {
+      if (e.slot !== slot) continue;
+      const cause = causeOf(e);
+      const row = out.get(cause) ?? { cause, count: 0, caught: 0, guessed: 0, out: 0 };
+      row.count += 1;
+      if (e.caught) row.caught += 1;
+      if (e.guess) row.guessed += 1;
+      if (e.for != null) row.out += e.for;
+      out.set(cause, row);
+    }
+  }
+  // Rounded once, at the end, so a table's total is the sum of its rows.
+  return [...out.values()]
+    .map((r) => ({ ...r, out: round(r.out, 1) }))
+    .sort((a, b) => b.count - a.count);
+}
+
+/** Somebody who can hit or be hit: a tracked player, or a CPU character. The
+ *  key is the one `duelTotals` uses, so the two agree about who is who. */
+export interface Identity {
+  key: string;
+  name: string;
+  character: number | null;
+  player: number | null;
+  cpu: boolean;
+}
+
+export interface HitMatrix {
+  /** Players first, in index order, then every CPU character seen. */
+  identities: Identity[];
+  /** "from>to" -> hits. Self-hits (driving into your own banana) sit on the
+   *  diagonal and are counted. */
+  counts: Map<string, number>;
+  dealt: (key: string) => number;
+  taken: (key: string) => number;
+}
+
+export function hitMatrix(races: RaceStats[], players: Player[]): HitMatrix {
+  const identities: Identity[] = players.map((p, i) => ({
+    key: String(i),
+    name: p.name,
+    character: p.character ?? null,
+    player: i,
+    cpu: false,
+  }));
+  const cpus = new Map<number, Identity>();
+  for (const race of races) {
+    const tracked = new Set(slotsOf(players, race.log).values());
+    for (const r of race.log.racers) {
+      if (tracked.has(r.slot) || cpus.has(r.character)) continue;
+      cpus.set(r.character, {
+        key: `c${r.character}`,
+        name: CHARACTERS[r.character] ?? `character ${r.character}`,
+        character: r.character,
+        player: null,
+        cpu: true,
+      });
+    }
+  }
+  identities.push(...[...cpus.values()].sort((a, b) => a.name.localeCompare(b.name)));
+
+  const counts = new Map<string, number>();
+  for (const d of duelTotals(races, players)) counts.set(`${d.from}>${d.to}`, d.count);
+  const sumWhere = (pick: (from: string, to: string) => boolean) => {
+    let n = 0;
+    for (const [k, v] of counts) {
+      const [from, to] = k.split(">");
+      if (pick(from, to)) n += v;
+    }
+    return n;
+  };
+  return {
+    identities,
+    counts,
+    dealt: (key) => sumWhere((from, to) => from === key && to !== key),
+    taken: (key) => sumWhere((_, to) => to === key),
+  };
+}
+
+// --- blue shells: thrown, landed, dodged -----------------------------------
+
+export interface BlueShell {
+  t: number;
+  /** Who threw it. */
+  thrower: number;
+  /** Who was leading when it was thrown - the racer it went for - or null if
+   *  nobody was still racing. */
+  target: number | null;
+  landed: boolean;
+  /** Who it landed on, if it did. Normally the target; at the end of a race
+   *  a shell can land on somebody who had just crossed the line. */
+  victim: number | null;
+  /** When it landed, if it did. */
+  hitT: number | null;
+}
+
+/** How long a Blue Shell is given to arrive. Over the 13 stored races the
+ *  use-to-hit gap is 3.2-9.6s (median 5.2); 15s leaves room for a long
+ *  course without pairing a shell with the one thrown after it. */
+export const BLUE_FLIGHT = 15;
+
+/** Every Blue Shell thrown, paired with the launched hit it produced. A shell
+ *  with no such hit within BLUE_FLIGHT was dodged, by whoever was leading when
+ *  it was thrown: a cannon, a Mushroom timed right, a Star, or a Bill.
+ *
+ *  The hit is looked for on the leader at the throw first, and failing that
+ *  on anybody - one of the 30 shells in the stored races landed on a racer
+ *  who had passed the leader and crossed the line while it was in the air.
+ *  A Bob-omb is the other thing that launches you, and is told apart by its
+ *  object type; a launched hit with no object read is accepted only when the
+ *  log marked it as a guess against a Blue Shell or Bob-omb use. Anybody
+ *  else in the crater is `caught` and is not the hit. */
+export function blueShells(log: RaceLog): BlueShell[] {
+  const leader = leaderAt(log);
+  const uses = log.events
+    .filter((e) => e.type === "use" && e.item === 7 && e.slot != null)
+    .sort((a, b) => a.t - b.t);
+  const launched = log.events.filter(
+    (e) =>
+      e.type === "hit" &&
+      e.damage === 7 &&
+      !e.caught &&
+      e.slot != null &&
+      (e.object === BLUE_OBJECT || (e.object == null && e.guess)),
+  );
+  const used = new Set<RaceEvent>();
+  return uses.map((u) => {
+    const target = leader(u.t);
+    const inFlight = (h: RaceEvent) =>
+      !used.has(h) && h.t >= u.t && h.t <= u.t + BLUE_FLIGHT;
+    const hit =
+      launched.find((h) => inFlight(h) && h.slot === target) ??
+      launched.find(inFlight);
+    if (hit) used.add(hit);
+    return {
+      t: round(u.t, 1),
+      thrower: u.slot!,
+      target,
+      landed: Boolean(hit),
+      victim: hit?.slot ?? null,
+      hitT: hit ? round(hit.t, 1) : null,
+    };
+  });
+}
+
+/** Who was in first among the racers still racing at `t`, from the position
+ *  events. A Blue Shell goes for the leader, and once the leader has crossed
+ *  the line that is the leader of whoever is left. */
+function leaderAt(log: RaceLog): (t: number) => number | null {
+  const swaps = log.ofType("pos").sort((a, b) => a.t - b.t);
+  const finishes = log.ofType("finish");
+  const start = new Map<number, number>();
+  for (const e of swaps) if (!start.has(e.slot!)) start.set(e.slot!, e.from as number);
+  for (const r of log.racers) if (!start.has(r.slot)) start.set(r.slot, r.grid);
+  return (t) => {
+    const at = new Map(start);
+    for (const e of swaps) {
+      if (e.t > t) break;
+      at.set(e.slot!, e.to as number);
+    }
+    const done = new Set(finishes.filter((f) => f.t <= t).map((f) => f.slot!));
+    let best: number | null = null;
+    for (const [slot, pos] of at)
+      if (!done.has(slot) && (best == null || pos < at.get(best)!)) best = slot;
+    return best;
+  };
+}
+
+/** The tracked player a slot belongs to in one race, or null for a CPU. */
+export function playerOfSlot(slot: number, log: RaceLog, players: Player[]): number | null {
+  return [...slotsOf(players, log)].find(([, s]) => s === slot)?.[0] ?? null;
 }
 
 export function round(x: number, places: number): number {

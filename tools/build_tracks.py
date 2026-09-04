@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Turn the course layout drawings into the centreline the replay drives on.
 
-    python3 -m tools.build_tracks            # all courses
-    python3 -m tools.build_tracks luigi      # just the ones that match
+    python3 -m tools.build_tracks                # all courses
+    python3 -m tools.build_tracks luigi          # just the ones that match;
+                                                 # the rest stay as they were
+    python3 -m tools.build_tracks --check DIR    # ... and one PNG per course
+                                                 # with the lap drawn on it
 
 The drawing itself is what the replay shows - it is real line art of the real
 course, and nothing here has to be right for the picture to be right. What is
@@ -13,11 +16,19 @@ drawing's own pixel coordinates, so that a racer 40% through a lap can be put
 How: the black outline is the road's two edges, so the road is the enclosed
 region between them. Thin that region to one pixel wide (Zhang-Suen), throw
 away the stubs thinning leaves at corners, and what is left is the middle of
-the road. Take the longest closed loop in it - or the longest open path, for
-the drawings whose outline has a gap - resample it evenly and smooth it.
+the road. The lap is then the shortest loop through it that goes once round
+what the road encircles - shortest, so that where the road forks round an
+island it takes one side and carries on - plus any stretch that goes out
+and back through one junction. A drawing whose outline has a gap has no
+such loop, and its lap is the longest route that passes no junction twice;
+where it is drawn in several pieces they are put end to end in the order
+that keeps the gaps shortest. Resample evenly and smooth.
 
 Output is web/src/data/tracks.ts, which is checked in: the dashboard never
-runs this, and re-running it on the same PNGs gives the same paths.
+runs this, and re-running it on the same PNGs gives the same paths. It is
+also read before it is written, so a re-traced course keeps running the way
+round it did before - the start line and direction set at #/tracks were set
+against that - and a filtered run leaves the other courses alone.
 
 Nothing here is the game's own geometry. `docs/DASHBOARD.md` says what it
 would take to have that instead, and tools/kmp.py is the reader for it.
@@ -307,62 +318,294 @@ def prune(g, w):
     return g
 
 
-def longest_loop(g, w, h):
-    """The best closed loop in the skeleton, or the longest open path.
+def holes_of(comp, w, h):
+    """What a road piece encircles: every pixel not reachable from the edge of
+    the drawing without crossing the piece, as one set.
 
-    Returns (pixels, closed). A drawing whose outline has a gap - or whose
-    road is cut where it crosses over itself - gives an open path, which is
-    still one lap long and still the right shape."""
-    if not g:
-        return [], False
+    The piece is grown a few pixels first so the flood cannot slip along its
+    own ink outline. GBA Shy Guy Beach joins the beach's inner and outer edges
+    with one drawn line, and without this that line lets the flood in and the
+    island reads as outside."""
+    grow = 3
+    blocked = bytearray(w * h)
+    for k in comp:
+        x, y = k % w, k // w
+        for dy in range(-grow, grow + 1):
+            ny = y + dy
+            if 0 <= ny < h:
+                for dx in range(-grow, grow + 1):
+                    nx = x + dx
+                    if 0 <= nx < w:
+                        blocked[ny * w + nx] = 1
+    seen = bytearray(w * h)
+    q = deque()
+    for k in [y * w + x for x in range(w) for y in (0, h - 1)] + \
+             [y * w + x for y in range(h) for x in (0, w - 1)]:
+        if not blocked[k] and not seen[k]:
+            seen[k] = 1
+            q.append(k)
+    while q:
+        k = q.popleft()
+        x, y = k % w, k // w
+        for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if 0 <= nx < w and 0 <= ny < h:
+                n = ny * w + nx
+                if not blocked[n] and not seen[n]:
+                    seen[n] = 1
+                    q.append(n)
+    inside = bytearray(1 if not blocked[k] and not seen[k] else 0
+                       for k in range(w * h))
+    return components(inside, w, h)
+
+
+def shortest(g, start, goal, banned, w):
+    """Dijkstra over the skeleton, in pixels of length, keeping off the edges
+    in `banned`. Returns the pixel list start..goal, or None."""
+    import heapq
+    dist = {start: 0.0}
+    prev = {}
+    heap = [(0.0, start)]
+    while heap:
+        d, k = heapq.heappop(heap)
+        if k == goal:
+            path = [k]
+            while path[-1] != start:
+                path.append(prev[path[-1]])
+            return path[::-1]
+        if d > dist[k]:
+            continue
+        for n in g[k]:
+            if (k, n) in banned:
+                continue
+            step = 1.0 if (k % w == n % w or k // w == n // w) else math.sqrt(2)
+            if d + step < dist.get(n, math.inf):
+                dist[n] = d + step
+                prev[n] = k
+                heapq.heappush(heap, (d + step, n))
+    return None
+
+
+def winding_cycle(g, hole, w):
+    """The shortest loop in the skeleton that goes once round `hole`, or None.
+
+    Cut the drawing along a ray from a point in the hole to its right-hand
+    edge. A loop going once round the hole crosses that ray exactly once, so
+    it is the shortest path between the two pixels of one crossing that stays
+    off every crossing, plus the crossing itself. Shortest rather than
+    longest on purpose: where the road forks round an island, or opens into a
+    hedge maze (DS Peach Gardens) or a field of mole holes (Moo Moo Meadows),
+    the longest loop goes round the island or zigzags through the obstacles,
+    and the shortest takes one side and carries on."""
+    cx = sum(k % w for k in hole) / len(hole)
+    cy = sum(k // w for k in hole) / len(hole)
+    origin = min(hole, key=lambda k: (k % w - cx) ** 2 + (k // w - cy) ** 2)
+    px, py = origin % w, origin // w
+    cut = set()
+    for a, near in g.items():
+        if a // w != py or a % w <= px:
+            continue
+        for b in near:
+            if b // w == py + 1 and b % w > px:
+                cut.add((a, b))
+                cut.add((b, a))
+    best = None
+    for a, b in cut:
+        if a // w != py:
+            continue
+        path = shortest(g, b, a, cut, w)
+        if path and (best is None or len(path) < len(best)):
+            best = path
+    return best
+
+
+def longest_simple(g, start=None, back=False, every=False):
+    """The longest route through the skeleton that passes no junction twice,
+    as pixels: from `start` back to `start` if `back`, otherwise between two
+    dead ends. With `every`, the longest route between each pair of dead
+    ends, longest first. None if the skeleton has no junctions and no ends.
+
+    Passing no junction twice is what stops the route going round an island
+    and carrying on, which is what the old longest route did on Daisy Circuit
+    (it reused no chain, but it did reuse junctions). Longest rather than
+    shortest for an open stretch because the road can be drawn with a
+    shortcut through it: Maple Treeway's cannon is drawn as road from the
+    bottom of the treetops to the top, and the shortest way is up that."""
     edges, _ = chains(g)
-    if not edges:                          # no junctions and no ends: a loop
-        return walk_loop(g), True
-
-    # Each chain is one step between two junctions, so the lap is the longest
-    # route through a graph with a handful of nodes in it. Whether that route
-    # comes back to where it started is decided by the caller, from how far
-    # apart its two ends are: a course crossing over itself is drawn with a
-    # bridge, and the bridge cuts the loop.
+    if not edges:
+        return None
     adj = {}
     for i, e in enumerate(edges):
         adj.setdefault(e[0], []).append((e[-1], i, e))
         adj.setdefault(e[-1], []).append((e[0], i, list(reversed(e))))
-
-    size = lambda path: sum(len(c) for c in path)
-    best, budget = [], 200000
-    for start in adj:
-        stack = [(start, [], frozenset())]
+    ends = [k for k in adj if len(adj[k]) == 1]
+    if start is not None:
+        if start not in adj:
+            return None
+        starts = [start]
+    elif back:
+        starts = list(adj)
+    else:
+        starts = ends or list(adj)
+    length = lambda route: sum(len(c) for c in route)
+    best, budget = {}, 200000
+    for s in starts:
+        stack = [(s, [], -1, frozenset([s]))]
         while stack and budget > 0:
             budget -= 1
-            node, path, used = stack.pop()
-            if size(path) > size(best):
-                best = path
-            if len(path) >= 14:
-                continue
+            node, route, last, seen = stack.pop()
+            if not back and route and (node in ends or not ends):
+                key = (min(s, node), max(s, node))
+                if length(route) > length(best.get(key, [])):
+                    best[key] = route
             for nxt, i, chain in adj[node]:
-                if i not in used:
-                    stack.append((nxt, path + [chain], used | {i}))
-    if not best:
-        return max(edges, key=len), False
+                if i == last:
+                    continue
+                if nxt == s and back:
+                    if length(route) + len(chain) > length(best.get(s, [])):
+                        best[s] = route + [chain]
+                elif nxt not in seen:
+                    stack.append((nxt, route + [chain], i, seen | {nxt}))
+    routes = sorted(best.values(), key=length, reverse=True)
+    if not routes:
+        return None
     out = []
-    for chain in best:
-        out += chain[1:] if out else chain
-    return out, False
+    for route in routes:
+        pixels = []
+        for chain in route:
+            pixels += chain[1:] if pixels else chain
+        out.append(pixels)
+    return out if every else out[0]
 
 
-def walk_loop(g):
-    start = next(iter(g))
+def with_hairpins(g, lap, w):
+    """Splice in the stretches the lap leaves out because they go out and
+    back through one junction.
+
+    GCN Peach Beach's road leaves the ring at one point, goes round two
+    islands and comes back to the same point. No route that passes a
+    junction once can take that, so: whatever the lap missed that hangs off
+    it at exactly one pixel and contains a loop is one of these, and the lap
+    goes round it - the longest way, so it takes the outside of the islands -
+    and comes back to where it left. A tree hanging off one pixel is a spur
+    and is left alone."""
+    on = set(lap)
+    rest = {k for k in g if k not in on}
+    seen = set()
+    for k0 in list(rest):
+        if k0 in seen:
+            continue
+        piece, q = {k0}, [k0]
+        seen.add(k0)
+        while q:
+            for n in g[q.pop()]:
+                if n in rest and n not in seen:
+                    seen.add(n)
+                    piece.add(n)
+                    q.append(n)
+        attach = {n for k in piece for n in g[k] if n in on}
+        if len(attach) != 1:
+            continue
+        a = next(iter(attach))
+        sub = {k: [n for n in g[k] if n in piece or n == a] for k in piece}
+        sub[a] = [n for n in g[a] if n in piece]
+        if sum(len(v) for v in sub.values()) // 2 < len(sub):
+            continue                       # a tree: a spur
+        # The loop in it, the longest way round, and the stem from the lap
+        # to the loop: out along the stem, round, and back along the stem.
+        ring = longest_simple(sub, back=True)
+        if ring is None:                   # a plain ring touching the lap at a
+            ring, prev = [a], None
+            while True:
+                near = [n for n in sub[ring[-1]] if n != prev]
+                if not near:
+                    break
+                prev = ring[-1]
+                ring.append(near[0])
+                if near[0] == a:
+                    break
+        if len(ring) < 3 or ring[0] != ring[-1]:
+            continue
+        ring = ring[:-1]
+        stem, prev, q = None, {a: None}, deque([a])
+        while q and stem is None:
+            k = q.popleft()
+            if k in ring:
+                stem = [k]
+                while prev[stem[-1]] is not None:
+                    stem.append(prev[stem[-1]])
+                stem.reverse()
+                break
+            for n in sub[k]:
+                if n not in prev:
+                    prev[n] = k
+                    q.append(n)
+        if stem is None:
+            continue
+        j = ring.index(stem[-1])
+        detour = stem + ring[j + 1:] + ring[:j + 1] + stem[-2::-1]
+        i = lap.index(a)
+        lap = lap[:i + 1] + detour[1:] + lap[i + 1:]
+        on = set(lap)
+    return lap
+
+
+def lap_of(g, hole, w):
+    """(pixels, closed) for one road piece: a loop once round what the piece
+    encircles if the skeleton has one, otherwise the longest open path.
+
+    A drawing whose outline has a gap - or whose road is cut where it crosses
+    over itself, since the bridge is drawn as a break - has no loop, and its
+    open path is still one lap long and still the right shape."""
+    if not g:
+        return [], False, []
+    loop = winding_cycle(g, hole, w) if hole else None
+    if loop:
+        return with_hairpins(g, loop, w), True, []
+    paths = longest_simple(g, every=True)
+    if paths:
+        # An open stretch with more than two dead ends can be crossed more
+        # than one way, and which is right depends on where the neighbouring
+        # pieces are: the stitching gets the ones nearly as long as the
+        # longest to choose from.
+        paths = [with_hairpins(g, p, w) for p in paths[:3]
+                 if len(p) >= 0.6 * len(paths[0])]
+        return paths[0], False, paths[1:]
+    start = next(iter(g))                  # no junctions and no ends: a ring
     loop, prev = [start], None
     while True:
         near = [n for n in g[loop[-1]] if n != prev]
-        if not near:
+        if not near or near[0] == start:
             break
-        prev, nxt = loop[-1], near[0]
-        if nxt == start:
-            break
-        loop.append(nxt)
-    return loop
+        prev = loop[-1]
+        loop.append(near[0])
+    return loop, True, []
+
+
+def medial_width(comp, pixels, w, h):
+    """How wide the road is along the lap: twice the typical distance from a
+    lap pixel to the edge of the piece. Area over skeleton length says the
+    same thing for a ribbon, but a blob thins to a branching skeleton long
+    enough to make it look narrow - Koopa Cape's river is a triangle 30px
+    across that came out as a 5px road."""
+    dist = {}
+    q = deque()
+    for k in comp:
+        x, y = k % w, k // w
+        for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if not (0 <= nx < w and 0 <= ny < h) or ny * w + nx not in comp:
+                dist[k] = 1
+                q.append(k)
+                break
+    while q:
+        k = q.popleft()
+        x, y = k % w, k // w
+        for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            n = ny * w + nx
+            if 0 <= nx < w and 0 <= ny < h and n in comp and n not in dist:
+                dist[n] = dist[k] + 1
+                q.append(n)
+    along = sorted(dist.get(k, 1) for k in pixels)
+    return (2 * along[len(along) // 2] if along else 0), 2 * max(dist.values(), default=0)
 
 
 # --- turning pixels into a path -------------------------------------------
@@ -512,7 +755,8 @@ def outline_d(loops):
 
 
 MAX_ROAD_WIDTH = 30      # wider than this is what the course encircles
-MIN_PIECE = 0.15         # ignore road pieces this much shorter than the longest
+MIN_PIECE = 0.05         # ignore road pieces this much shorter than the longest
+MIN_HOLE = 0.30          # a hole this much of the piece's own area is the course interior
 
 
 def stitch(pieces, w, h):
@@ -521,31 +765,103 @@ def stitch(pieces, w, h):
     Several courses are not drawn as one continuous ribbon: Rainbow Road and
     Grumble Volcano have gaps you jump, Mushroom Gorge has the bouncy
     mushrooms, Koopa Cape goes into a pipe. Each stretch of road comes back as
-    its own piece, and a lap is all of them end to end."""
-    # A gap bigger than this is not the same road. Rainbow Road has the
-    # widest real one, at a third of the drawing's diagonal.
-    limit = 0.40 * math.hypot(w, h)
-    start = max(range(len(pieces)), key=lambda i: len(pieces[i]))
-    chain = list(pieces[start])
-    rest = [p for i, p in enumerate(pieces) if i != start]
-    while rest:
-        best = None
-        for i, p in enumerate(rest):
-            options = (
-                (math.dist(chain[-1], p[0]), i, "tail", p),
-                (math.dist(chain[-1], p[-1]), i, "tail", p[::-1]),
-                (math.dist(chain[0], p[-1]), i, "head", p),
-                (math.dist(chain[0], p[0]), i, "head", p[::-1]),
-            )
-            for option in options:
-                if best is None or option[0] < best[0]:
-                    best = option
-        gap, i, end, piece = best
-        if gap > limit:
-            break                        # too far to be the same road
-        chain = chain + piece if end == "tail" else piece + chain
-        rest.pop(i)
+    its own piece, and a lap is all of them end to end, in the order and the
+    directions that make the distance off the road shortest in total: the
+    gaps between pieces, plus whatever road a piece skips when a shorter way
+    across it fits its neighbours better. Taking the nearest piece each time
+    instead sent Grumble Volcano and Rainbow Road straight across the
+    drawing: the nearest piece is not always the next one.
+
+    `pieces[i]` is the ways across piece i, longest first. The tour is a
+    round trip, because the course is, and is then cut at its widest gap;
+    whether that gap is small enough to call the lap closed is decided by
+    the caller. Eight pieces at most, so every order is affordable
+    (Held-Karp over piece, way across and direction)."""
+    n = len(pieces)
+    # A state is (piece, way across, direction); head and tail are where the
+    # lap enters and leaves the piece in that state.
+    states = [(i, c, o) for i in range(n) for c in range(len(pieces[i])) for o in (0, 1)]
+    head = lambda s: pieces[s[0]][s[1]][-s[2]]
+    tail = lambda s: pieces[s[0]][s[1]][s[2] - 1]
+    skipped = lambda s: len(pieces[s[0]][0]) - len(pieces[s[0]][s[1]])
+    step = lambda a, b: math.dist(tail(a), head(b)) + skipped(b)
+
+    tour, tour_cost = None, math.inf
+    for first in [s for s in states if s[0] == 0]:
+        best = {(1, first): (skipped(first), None)}
+        for mask in range(1, 1 << n):
+            for a in [s for s in states if mask >> s[0] & 1 and (mask, s) in best]:
+                cost = best[mask, a][0]
+                for b in [s for s in states if not mask >> s[0] & 1]:
+                    key = (mask | 1 << b[0], b)
+                    c = cost + step(a, b)
+                    if key not in best or c < best[key][0]:
+                        best[key] = (c, (mask, a))
+        full = (1 << n) - 1
+        for last in [s for s in states if (full, s) in best]:
+            c = best[full, last][0] + step(last, first)
+            if c < tour_cost:
+                order, at = [], (full, last)
+                while at is not None:
+                    order.append(at[1])
+                    at = best[at][1]
+                tour, tour_cost = order[::-1], c
+
+    gaps = [math.dist(tail(a), head(b)) for a, b in zip(tour, tour[1:] + tour[:1])]
+    cut = max(range(n), key=lambda i: gaps[i])
+    tour = tour[cut + 1:] + tour[:cut + 1]
+    chain = []
+    for i, c, o in tour:
+        chain += pieces[i][c][::-1] if o else pieces[i][c]
     return chain
+
+
+def open_ring(ring, others):
+    """A piece that is a loop on its own - the corkscrew before the finish of
+    N64 Bowser's Castle, the diamond the road forks round in Bowser's Castle -
+    is entered from one neighbouring piece and left towards another. Cut it at
+    the points nearest those two, keeping the longer way round: for the
+    corkscrew both are the same point and that is the whole loop."""
+    ends = [e for p in others for e in (p[0], p[-1])]
+    near = sorted(range(len(ring)),
+                  key=lambda i: min(math.dist(ring[i], e) for e in ends))
+    a = near[0]
+    b = next((i for i in near if math.dist(ring[i], ring[a]) > 3), a)
+    if a == b:
+        return ring[a:] + ring[:a + 1]
+    a, b = min(a, b), max(a, b)
+    inner, outer = ring[a:b + 1], ring[b:] + ring[:a + 1]
+    return inner if len(inner) >= len(outer) else outer[::-1]
+
+
+def duplicate(f, pieces, width):
+    """Is piece `f` the other way past something another piece already goes
+    past? Decided by where its ends land: both on the middle of another
+    piece, well away from that piece's ends, with about as much of that
+    piece between them as `f` is long - the other way round an obstacle.
+    Mushroom Gorge draws the cave and the road past it side by side, and the
+    lap takes one of them.
+
+    Ends landing on another piece's *ends* mean nothing: Koopa Cape's
+    hairpin by the start and the straight it hangs off share both ends, and
+    both are driven. Nor do ends landing on the middle of a piece with most
+    of that piece between them: GCN Waluigi Stadium's middle straight runs
+    from one bridge to the other, and the rest of the course is what the
+    bridges carry."""
+    edge = max(2 * width, 6)
+    a, b = f["pts"][0], f["pts"][-1]
+    for o in pieces:
+        if o is f or o["closed"]:
+            continue
+        pts = o["pts"]
+        near = [min(range(len(pts)), key=lambda i: math.dist(pts[i], e)) for e in (a, b)]
+        if any(math.dist(pts[i], e) >= edge for i, e in zip(near, (a, b))):
+            continue
+        margin = 3 * width
+        if all(margin < i < len(pts) - margin for i in near) \
+                and abs(near[0] - near[1]) < 2 * len(f["pts"]):
+            return True
+    return False
 
 
 def trace(path):
@@ -556,31 +872,88 @@ def trace(path):
         if len(comp) < 300:
             continue
         skeleton = thin(comp, w, h)
-        if len(comp) / max(len(skeleton), 1) > MAX_ROAD_WIDTH:
+        width = len(comp) / max(len(skeleton), 1)
+        holes = holes_of(comp, w, h)
+        # The course interior is the biggest thing the piece goes round, and
+        # is big; the ring round a roundabout island is neither.
+        hole = holes[0] if holes and len(holes[0]) >= MIN_HOLE * len(comp) else None
+        holes = {k for hole_ in holes for k in hole_}
+        # What the course encircles is wide and encloses nothing. The one
+        # road wider than the limit is GBA Shy Guy Beach, a beach the width
+        # of the island it goes round, and the island is what lets it in.
+        if width > MAX_ROAD_WIDTH and not hole:
             continue
-        pixels, closed = longest_loop(
-            prune(graph_of(skeleton, w, h), w), w, h)
+        pixels, closed, others = lap_of(prune(graph_of(skeleton, w, h), w), hole, w)
         if len(pixels) < 40:
             continue
-        found.append({"pts": [(k % w, k // w) for k in pixels],
-                      "closed": closed, "comp": comp, "skeleton": len(skeleton)})
+        xy = lambda pixels: [(k % w, k // w) for k in pixels]
+        across, deep = medial_width(comp, pixels, w, h)
+        found.append({"pts": xy(pixels), "ways": [xy(p) for p in others],
+                      "closed": closed, "comp": comp, "skeleton": len(skeleton),
+                      "width": width, "holes": holes, "ring": hole is not None,
+                      "across": across})
     if not found:
         return None
 
-    longest = max(len(f["pts"]) for f in found)
-    keep = [f for f in found if len(f["pts"]) >= longest * MIN_PIECE]
+    main = max(found, key=lambda f: len(f["pts"]))
+    if main["closed"]:
+        # The longest piece is already a lap, so nothing else in the drawing
+        # is road the lap runs through: Daisy Circuit's courtyard and Dry Dry
+        # Ruins' interior came out as road pieces and were being stitched on.
+        keep = [main]
+    else:
+        keep = [main]
+        for f in found:
+            if f is main or len(f["pts"]) < len(main["pts"]) * MIN_PIECE:
+                continue
+            # Inside what the main piece goes round, or much wider than it:
+            # an island, not road. So is a blob: a ribbon's area is about
+            # its length times its width, and Koopa Cape's river - the
+            # triangle inside the hairpin by the start - is 1.7 times that,
+            # against 1.0-1.45 for every real stretch of road. A piece that
+            # is a ring round something is measured along the ring and is
+            # not a blob whatever that ratio says.
+            # "Inside" is measured with the main piece grown a few pixels,
+            # which closes the breaks drawn where the road bridges itself,
+            # so on GCN Waluigi Stadium the stretch between two bridges
+            # reads as inside the rest. A piece whose end meets an end of
+            # the main piece is the next stretch of road, wherever it sits.
+            inside = sum(1 for k in f["comp"] if k in main["holes"])
+            joins = any(math.dist(a, b) < max(2 * main["across"], 6)
+                        for a in (f["pts"][0], f["pts"][-1])
+                        for b in (main["pts"][0], main["pts"][-1]))
+            fill = len(f["comp"]) / (len(f["pts"]) * max(f["across"], 1))
+            if (inside > len(f["comp"]) / 2 and not joins) \
+                    or f["across"] > 2 * main["across"] \
+                    or (fill > 1.6 and not f["ring"]):
+                continue
+            keep.append(f)
+        for f in keep:
+            if f["closed"]:
+                f["pts"] = open_ring(f["pts"], [o["pts"] for o in keep
+                                                if o is not f and not o["closed"]])
+        keep = [f for f in keep if f is main or not duplicate(f, keep, main["across"])]
+        # A gap bigger than this is not the same road. Rainbow Road has the
+        # widest real one, at a third of the drawing's diagonal.
+        limit = 0.40 * math.hypot(w, h)
+        keep = [f for f in keep if f is main or any(
+            math.dist(a, b) <= limit
+            for o in keep if o is not f
+            for a in (f["pts"][0], f["pts"][-1]) for b in (o["pts"][0], o["pts"][-1]))]
+
     width = (sum(len(f["comp"]) for f in keep)
              / max(sum(f["skeleton"] for f in keep), 1))
-
-    main = max(keep, key=lambda f: len(f["pts"]))
-    if main["closed"]:                   # the longest piece is already a lap
-        pts, closed = main["pts"], True
+    if len(keep) == 1:
+        pts, closed = main["pts"], main["closed"]
     else:
-        pts = stitch([f["pts"] for f in keep], w, h)
+        pts = stitch([[f["pts"]] + f["ways"] for f in keep], w, h)
+        closed = False
+    if not closed:
         # Two ends that meet are a loop that was cut - by the bridge drawn
         # where a course crosses over itself, or by the start line.
         closed = math.dist(pts[0], pts[-1]) < max(4 * width, 0.08 * math.hypot(w, h))
 
+    raw = pts
     pts = smooth(resample(pts, closed), closed)
     length = length_of(pts, closed)
     # The road itself, as a shape rather than a picture: the edge of every
@@ -595,15 +968,66 @@ def trace(path):
     road = sum(f["skeleton"] for f in keep)
     return {
         "w": w, "h": h,
-        "d": path_d(pts, closed),
-        "outline": outline_d(loops),
+        "pts": pts,
         "closed": closed,
+        "outline": outline_d(loops),
         "width": round(width, 1),
         "length": round(length, 1),
         "pieces": len(keep),
         "loops": len(loops),
         "covers": round(length / max(road, 1), 2),
+        # For --check only: the lap before resampling, so a jump between
+        # pieces is still a long step, and the road the outline was cut from.
+        "raw": raw,
+        "road": {k for f in keep for k in f["comp"]},
     }
+
+
+def same_way(old, new):
+    """Does `new` run the same way round the course as `old`?
+
+    The start line and the racing direction are set by hand at #/tracks
+    against whichever path tracks.ts held at the time, and the direction is
+    kept as a flag meaning "the path runs against the race". That flag only
+    survives a re-trace if the new path runs the same way round as the old
+    one, so every rebuild is turned to match what was there before.
+
+    Measured by walking the new path and asking where each point's nearest
+    old point is: same way round and those land later and later along the
+    old path. Not the sign of the enclosed area, because a figure-eight
+    (Mario Circuit) has two lobes of opposite sign that nearly cancel."""
+    n = len(old)
+    forward = backward = 0
+    prev = None
+    for p in new[::max(1, len(new) // 60)]:
+        j = min(range(n), key=lambda i: math.dist(old[i], p))
+        if prev is not None:
+            step = (j - prev) % n
+            if 0 < step < n / 2:
+                forward += 1
+            elif step > n / 2:
+                backward += 1
+        prev = j
+    return forward >= backward
+
+
+def read_existing():
+    """What tracks.ts holds now, per course, in the shape emit() takes."""
+    if not os.path.exists(OUT):
+        return {}
+    text = open(OUT).read()
+    out = {}
+    for m in re.finditer(r"^  (\d+): \{\n(.*?)^  \},", text, re.S | re.M):
+        code, body = int(m.group(1)), m.group(2)
+        field = lambda name: re.search(r"^    %s: (.*),$" % name, body, re.M).group(1)
+        size = json.loads(field("size"))
+        out[code] = {
+            "name": json.loads(field("name")), "source": json.loads(field("source")),
+            "image": json.loads(field("image")), "w": size[0], "h": size[1],
+            "closed": field("closed") == "true", "width": float(field("width")),
+            "outline": json.loads(field("outline")), "d": json.loads(field("d")),
+        }
+    return out
 
 
 # --- the game's own geometry, when there is any ----------------------------
@@ -698,7 +1122,7 @@ def compare(kmp, drawing):
     if not drawing:
         return None
     a = points_of(kmp["d"])
-    b = points_of(drawing["d"])
+    b = drawing["pts"]
     box = lambda pts, w, h: [(x / w, y / h) for x, y in pts]
     a = box(a, kmp["w"], kmp["h"])
     b = box(b, drawing["w"], drawing["h"])
@@ -708,6 +1132,108 @@ def compare(kmp, drawing):
 def points_of(d):
     return [(float(x), float(y))
             for x, y in re.findall(r"([\d.]+)\s+([\d.]+)", d)]
+
+
+# --- check images ----------------------------------------------------------
+#
+# `--check <dir>` writes one PNG per course: the drawing scaled up with the
+# traced lap drawn over it, a green dot at the path's first point and the
+# 10%..90% marks numbered. Numbers like `covers` cannot tell a lap that goes
+# once round from one that goes round an island and back; a picture can.
+
+CHECK_SCALE = 4
+
+DIGITS = {                     # 3x5 bitmap font, one string per row
+    "0": ("111", "101", "101", "101", "111"), "1": ("010", "110", "010", "010", "111"),
+    "2": ("111", "001", "111", "100", "111"), "3": ("111", "001", "111", "001", "111"),
+    "4": ("101", "101", "111", "001", "001"), "5": ("111", "100", "111", "001", "111"),
+    "6": ("111", "100", "111", "101", "111"), "7": ("111", "001", "001", "001", "001"),
+    "8": ("111", "101", "111", "101", "111"), "9": ("111", "101", "111", "001", "111"),
+}
+
+
+def encode_png(path, w, h, rgb):
+    raw = b"".join(b"\x00" + bytes(rgb[y * w * 3:(y + 1) * w * 3]) for y in range(h))
+
+    def chunk(kind, body):
+        return (struct.pack(">I", len(body)) + kind + body
+                + struct.pack(">I", zlib.crc32(kind + body) & 0xFFFFFFFF))
+
+    with open(path, "wb") as f:
+        f.write(b"\x89PNG\r\n\x1a\n")
+        f.write(chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0)))
+        f.write(chunk(b"IDAT", zlib.compress(raw, 9)))
+        f.write(chunk(b"IEND", b""))
+
+
+def check_image(png, result, out):
+    w, h, gray, alpha = decode_png(png)
+    S = CHECK_SCALE
+    W, H = w * S, h * S
+    rgb = bytearray(b"\xff" * (W * H * 3))
+
+    def put(x, y, colour):
+        if 0 <= x < W and 0 <= y < H:
+            k = (y * W + x) * 3
+            rgb[k:k + 3] = bytes(colour)
+
+    def blob(x, y, r, colour):
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                if dx * dx + dy * dy <= r * r:
+                    put(x + dx, y + dy, colour)
+
+    def line(a, b, colour, r=1):
+        n = int(max(abs(b[0] - a[0]), abs(b[1] - a[1]))) + 1
+        for i in range(n + 1):
+            f = i / n
+            blob(round(a[0] + (b[0] - a[0]) * f),
+                 round(a[1] + (b[1] - a[1]) * f), r, colour)
+
+    def text(x, y, s, colour, scale=2):
+        for ch in s:
+            for row, bits in enumerate(DIGITS.get(ch, ())):
+                for col, bit in enumerate(bits):
+                    if bit == "1":
+                        for dy in range(scale):
+                            for dx in range(scale):
+                                put(x + col * scale + dx, y + row * scale + dy, colour)
+            x += 4 * scale
+
+    road = result.get("road", set())
+    for y in range(h):
+        for x in range(w):
+            k = y * w + x
+            if alpha[k] <= INK_ALPHA:
+                continue
+            g = 40 if gray[k] < INK_LUM else 160 + gray[k] * 95 // 255
+            colour = (255, 245, 190) if k in road and g > 40 else (g, g, g)
+            for dy in range(S):
+                for dx in range(S):
+                    put(x * S + dx, y * S + dy, colour)
+
+    scaled = lambda p: (p[0] * S + S / 2, p[1] * S + S / 2)
+    pts = [scaled(p) for p in result["pts"]]
+    n = len(pts)
+    segs = list(zip(pts, pts[1:])) + ([(pts[-1], pts[0])] if result["closed"] else [])
+    for a, b in segs:
+        line(a, b, (220, 40, 40))
+    # A jump between pieces is a long step in the lap before resampling
+    # spreads it evenly. Drawn in magenta so it cannot hide in the red.
+    raw = [scaled(p) for p in result.get("raw", [])]
+    jumps = list(zip(raw, raw[1:])) + ([(raw[-1], raw[0])] if result["closed"] and raw else [])
+    for a, b in jumps:
+        if math.dist(a, b) > 4 * S:
+            line(a, b, (255, 0, 255), 2)
+    for k in range(1, 10):
+        i = k * n // 10
+        x, y = round(pts[i][0]), round(pts[i][1])
+        blob(x, y, 4, (30, 90, 220))
+        text(x + 6, y - 6, str(k), (0, 0, 0), 2)
+    x, y = round(pts[0][0]), round(pts[0][1])
+    blob(x, y, 7, (20, 170, 60))
+    text(x + 9, y - 6, "0", (0, 0, 0), 2)
+    encode_png(out, W, H, rgb)
 
 
 HEAD = '''// Generated by tools/build_tracks.py - do not edit.
@@ -793,14 +1319,32 @@ def main():
         at = args.index("--kmp")
         kmp_root = args[at + 1] if len(args) > at + 1 else "."
         del args[at:at + 2]
+    check = None
+    if "--check" in args:
+        at = args.index("--check")
+        check = args[at + 1] if len(args) > at + 1 else "check"
+        del args[at:at + 2]
+        os.makedirs(check, exist_ok=True)
     which = args[0] if args else ""
 
+    # What is there now: a filtered run keeps the other courses as they were,
+    # and every re-traced course is turned to run the way its old path did.
+    old = read_existing()
     tracks, missing = {}, []
     for code, name in sorted(COURSES.items()):
         if which and which.lower() not in name.lower():
+            if code in old:
+                tracks[code] = old[code]
             continue
         png = os.path.join(SOURCE, slug(name) + ".png")
         drawn = trace(png) if os.path.exists(png) else None
+        if drawn:
+            was = old.get(code)
+            if was and was["source"] == "drawing" and \
+                    not same_way(points_of(was["d"]), drawn["pts"]):
+                drawn["pts"].reverse()
+                drawn["raw"].reverse()
+            drawn["d"] = path_d(drawn["pts"], drawn["closed"])
 
         real = None
         if kmp_root:
@@ -821,6 +1365,8 @@ def main():
         elif drawn:
             tracks[code] = dict(drawn, name=name, source="drawing",
                                 image="/assets/tracks/source/%s.png" % slug(name))
+            if check:
+                check_image(png, drawn, os.path.join(check, slug(name) + ".png"))
             print("  %-24s drawing:  %3dx%-3d %s %4.0fpx lap, road %2.0fpx wide,"
                   " %d outline loop%s, covers %.2f%s%s"
                   % (name, drawn["w"], drawn["h"],
@@ -834,9 +1380,7 @@ def main():
             missing.append(name)
 
     if which:
-        print("\n(only %r - not writing tracks.ts from a partial run)" % which)
-        return 0
-
+        print("\n(only %r - the other courses are as they were)" % which)
     emit(tracks)
     if missing:
         print("missing (%d): %s" % (len(missing), ", ".join(missing)))

@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRace } from "../lib/data";
 import { replayData, slotsOf } from "../lib/stats";
 import { trackFor } from "../data/tracks";
-import { oriented, useStarts } from "../lib/route";
+import { useRoutes, useStarts, withRoute } from "../lib/route";
 import { CHARACTERS } from "../data/names";
 import {
   Card,
@@ -31,14 +31,15 @@ const SPEEDS = ["1", "2", "4", "8"] as const;
 export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
   const [starts] = useStarts();
+  const [routes] = useRoutes();
   const players = stats?.players ?? [];
-  const data = useMemo(
-    () => (log ? replayData(log, players) : null),
-    [log, players],
-  );
-
   // The same Characters/Names choice the dashboard is showing.
   const mode = (localStorage.getItem("mkw.mode") as NameMode) ?? "characters";
+  const data = useMemo(
+    () => (log ? replayData(log, players, (p, character) => nameOf(p, mode, character)) : null),
+    [log, players, mode],
+  );
+
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>("2");
@@ -47,8 +48,8 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
 
   const raw = data?.course != null ? trackFor(data.course) : null;
   const track = useMemo(
-    () => (raw ? oriented(raw, starts[raw.course]) : null),
-    [raw, starts],
+    () => (raw ? withRoute(raw, routes[raw.course], starts[raw.course]) : null),
+    [raw, routes, starts],
   );
 
   useEffect(() => {
@@ -78,13 +79,13 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
 
   if (error)
     return (
-      <Shell dir={dir}>
+      <Shell dir={dir} file={file}>
         <Card className="p-5 text-sm">{error}</Card>
       </Shell>
     );
   if (!data || !log || !stats)
     return (
-      <Shell dir={dir}>
+      <Shell dir={dir} file={file}>
         <Card className="p-5 text-sm text-muted">Loading…</Card>
       </Shell>
     );
@@ -115,7 +116,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   const jumps = jumpPoints(data);
 
   return (
-    <Shell dir={dir}>
+    <Shell dir={dir} file={file}>
       <div className="mb-5 flex flex-wrap items-end gap-x-4 gap-y-2">
         <div className="mr-auto">
           <h1 className="text-3xl font-bold tracking-tight text-brand-deep">
@@ -215,6 +216,8 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
               "No outline for this course yet — a generic loop, so only the order and the gaps mean anything."
             ) : track.source === "course" ? (
               "The course's own checkpoints: real road, real start line, real direction."
+            ) : routes[track.course] ? (
+              "The road is traced from the layout drawing; the lap round it was drawn by hand at #/tracks, so it starts at the start line and runs the way it is driven."
             ) : starts[track.course] ? (
               "The real course, traced from its layout drawing, with the start line and direction set by hand at #/tracks."
             ) : (
@@ -222,7 +225,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
                 The real course, but nobody has said where its start line is, so
                 a lap is measured from wherever the tracing began.{" "}
                 <a href="#/tracks" className="text-brand underline">
-                  Set it
+                  Set it, or draw the lap
                 </a>
                 .
               </>
@@ -346,15 +349,25 @@ function Kart({
   );
 }
 
-function Shell({ dir, children }: { dir: string; children: React.ReactNode }) {
+function Shell({
+  dir,
+  file,
+  children,
+}: {
+  dir: string;
+  file: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-8">
-      <a
-        href={`#/s/${dir}`}
-        className="mb-4 inline-block text-sm text-brand hover:underline"
-      >
-        ← back to the night
-      </a>
+      <nav className="mb-4 flex gap-4 text-sm">
+        <a href={`#/race/${dir}/${encodeURIComponent(file)}`} className="text-brand hover:underline">
+          ← back to the race
+        </a>
+        <a href={`#/s/${dir}`} className="text-brand hover:underline">
+          ← back to stats
+        </a>
+      </nav>
       {children}
     </div>
   );
@@ -367,9 +380,11 @@ function Ticker({
   events: { t: number; text: string }[];
   t: number;
 }) {
-  const shown = events.filter((e) => e.t <= t).slice(-9).reverse();
+  // Everything so far, newest first, in a box that scrolls rather than a list
+  // that grows down the page.
+  const shown = events.filter((e) => e.t <= t).reverse();
   return (
-    <ul className="max-h-80 divide-y divide-line-soft overflow-y-auto border-t border-line-soft">
+    <ul className="max-h-[420px] divide-y divide-line-soft overflow-y-auto border-t border-line-soft">
       {shown.length === 0 && (
         <li className="px-4 py-3 text-sm text-muted">Nothing yet.</li>
       )}

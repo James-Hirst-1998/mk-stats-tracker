@@ -32,11 +32,15 @@ the course, and folds each race into the totals when its file lands. Stopping
 the tracker removes the file. Old sessions are picked from the dropdown - same
 screen, no live pill.
 
-Three screens, all under the one hash router:
+Four screens, all under the one hash router:
 
-- `#/` the night: the leaderboard, points, totals, awards, and every race, each
-  of which opens to per-player numbers and a chart of how it unfolded.
-- `#/replay/<session>/<race>` one race played back on its course.
+- `#/` the night: the leaderboard, then a grid of widgets - points, blue
+  shells, awards, items, what everybody was hit by, who hit whom, totals - and
+  the list of races.
+- `#/race/<session>/<race>` one race: the per-player table, and the same grid
+  for that race alone - how it unfolded, time in each position, items, every
+  hit and who threw it, every blue shell, who hit whom.
+- `#/replay/<session>/<race>` that race played back on its course.
 - `#/tracks` every course outline. **Check** puts the layout drawing back
   behind it, with the traced centreline and the point a lap is measured from -
   this is how the tracing gets checked.
@@ -95,6 +99,12 @@ count as attackers, victims and opponents but never get a row.
   tokens are in `web/src/styles.css`; nothing is imported from that repo.
 - **All players equal.** No "you". The tracker's `local_slot` is not used for
   display at all.
+- **Widgets, not a column.** The night and a race are each a grid of small
+  cards that sit beside each other, so the whole thing is on one screen, and
+  each opens large (⤢) for the detail - the full-size chart, the table with
+  every item or every CPU. James asked for this in place of the full-width
+  charts: "widgets on the screen rather than massive ones, and a way to drill
+  down". The small version is a summary; the large one leaves nothing out.
 - **The slider is the whole screen, and sits above all of it.** It means
   "after race N": every card, total, award and nemesis line below it is
   computed over races 1 to N, so dragging it back is the screen the night had
@@ -132,8 +142,19 @@ count as attackers, victims and opponents but never get a row.
   on, so the karts are fanned into three lanes by running order purely so that
   twelve of them at the start line are twelve things rather than one. The
   caption under the course says so.
-- **The blue shell chart is the whole night**, whatever the slider says, and is
-  labelled with that. Everything else on the screen follows the slider.
+- **Everything follows the slider**, the blue shell widget included. It used
+  to be the whole night regardless, and was the one thing on the screen that
+  did not move with the control above it, which read as a bug.
+- **A blue shell dodge is derived** (`stats.ts::blueShells`): a Blue Shell
+  `use` with no launched, un-caught, blue-object hit within 15s, credited to
+  whoever was leading among the unfinished racers when it was thrown - a
+  cannon, a Mushroom timed right, a Star, a Bill. The 15s comes from the
+  use-to-hit gaps in the stored races, 3.2-9.6s. The pairing is measured in
+  EXPERIMENTS.md under 2026-09-03.
+- **Landed can exceed thrown.** A triple is one `use` in the log and each
+  banana that lands is a hit, so a sniper can be "23 hits from 22 throws".
+  Counting the three shots would mean watching each object in the pool, and
+  RACE_LOG.md says why that was not done.
 
 ## Course outlines
 
@@ -158,8 +179,14 @@ writes `web/src/data/tracks.ts`, which is checked in. Two things come out of
 each drawing:
 
 - **the centreline**, `d` - the road is the region the outline encloses,
-  thinned to one pixel wide, and the lap is the longest route through what is
-  left. This is the line a lap fraction is measured along.
+  thinned to one pixel wide, and the lap is the shortest loop through what is
+  left that goes once round what the road encircles. Shortest, not longest:
+  where the road forks round an island the longest route went round the
+  island and carried on, which is the "loops round in a circle" James saw on
+  Daisy Circuit. A stretch that goes out and back through one junction (GCN
+  Peach Beach) is spliced in. A drawing with no such loop - a gap in the
+  outline, or a bridge drawn as a break - gets the longest route that passes
+  no junction twice. This is the line a lap fraction is measured along.
 - **the road**, `outline` - every side of a road pixel that faces something
   outside the road, chained into closed loops and filled even-odd, so a course
   drawn as a ring keeps its hole. It is a path rather than a picture because
@@ -170,10 +197,22 @@ each drawing:
 
 The tool prints what it found for each course, including `covers`: the traced
 lap divided by all the road in the drawing. About 1.0 means the lap covers the
-course; the tool flags anything outside 0.75-1.25. Nine courses are not drawn
-as one continuous ribbon - Rainbow Road and Grumble Volcano have gaps you jump,
-Mushroom Gorge has the bouncy mushrooms - and their pieces are joined end to
-end.
+course; the tool flags anything outside 0.75-1.25. Under 1.0 is expected
+wherever the road forks, since the lap takes one side. Ten courses are not
+drawn as one continuous ribbon - Rainbow Road and Grumble Volcano have gaps
+you jump, Mushroom Gorge has the bouncy mushrooms - and their pieces are put
+end to end in the order and directions that keep the gaps shortest in total,
+with islands, the interior and the other way round an obstacle left out.
+
+`--check DIR` writes one PNG per course with the drawing, the road the lap
+was cut from, the lap, its first point and its 10% marks, and any jump
+between pieces in magenta. That is how the tracing is checked; `covers`
+cannot tell a lap that goes once round from one that goes round an island.
+
+Re-running the tool keeps each course running the same way round as the
+path already in `tracks.ts`, because the direction flag in `starts.json`
+means "against the path" and only survives if the path does not turn. A
+filtered run (`build_tracks luigi`) rewrites just the matching courses.
 
 **What this is not**: the drawing is the real course and the trace follows it,
 but nothing in it says where the start line is or which way round the course
@@ -196,6 +235,23 @@ Automatic detection was tried and does not work. Some drawings mark the
 start with a grey band across the road - Mario Circuit and GCN Waluigi Stadium
 do - but most do not, and grey pixels inside the road are mostly the
 anti-aliased edge of the outline. Direction is not in the drawing at all.
+
+### Drawing the lap by hand
+
+When the trace itself is wrong - it took the wrong side of a fork, or joined
+two pieces across the drawing - moving the start line does not help. **Draw**
+at `#/tracks` is the answer to that: click round the course, first click on
+the start line, following the road the way it is driven, and those points are
+the lap. It saves to `assets/tracks/routes.json`, which is checked in, and a
+drawn lap is used in preference to the traced one everywhere.
+
+A drawn lap needs neither a start point nor a reverse flag, because the first
+point is the start line and the order is the direction. The replay measures a
+lap fraction along the path by arc length, so the points do not have to be
+evenly spaced - click where the road bends and nowhere else.
+
+The road under it is still the traced outline. Only the line a lap is measured
+along is being replaced, which is the part a drawing cannot say.
 
 ### Making it exact
 

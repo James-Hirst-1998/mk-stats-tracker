@@ -11,21 +11,26 @@ import { useSession, useSessions } from "../lib/data";
 import {
   awards as computeAwards,
   duelTotals,
+  hitMatrix,
+  hitsTakenBy,
+  itemTally,
+  itemsSeen,
   pointsSeries,
   totalsFor,
   type Player,
   type SessionStats,
 } from "../lib/stats";
 import { CHARACTERS, courseName } from "../data/names";
-import { Awards } from "../ui/Awards";
-import { FaceBars } from "../ui/FaceBars";
+import { AwardList } from "../ui/Awards";
+import { BlueBars, BlueList } from "../ui/BlueShells";
+import { HitMatrixTable } from "../ui/HitMatrix";
+import { CauseStrip, CausesTable, ItemStrip, ItemsTable } from "../ui/Items";
 import { Players } from "../ui/Players";
 import {
   Card,
   Face,
   Rank,
   Segmented,
-  Tabs,
   colorOf,
   nameOf,
   secs,
@@ -34,6 +39,8 @@ import {
 } from "../ui/common";
 import { PointsChart } from "../ui/PointsChart";
 import { RaceList } from "../ui/RaceList";
+import { Widget, WidgetGrid } from "../ui/Widget";
+import { PerPlayer } from "./Race";
 
 export function Dashboard({ dir }: { dir: string | null }) {
   const sessions = useSessions();
@@ -265,8 +272,6 @@ function NightBar({
   );
 }
 
-type ChartTab = "points" | "blues";
-
 function Body({
   stats,
   mode,
@@ -276,40 +281,49 @@ function Body({
   mode: NameMode;
   thru: number;
 }) {
-  const [tab, setTab] = useState<ChartTab>("points");
   const upto = useMemo(() => stats.races.slice(0, thru), [stats.races, thru]);
   const totals = useMemo(
     () => stats.players.map((_, i) => totalsFor(upto, i)),
     [stats.players, upto],
   );
-  const whole = useMemo(
-    () => stats.players.map((_, i) => totalsFor(stats.races, i)),
-    [stats.players, stats.races],
-  );
-  const awards = useMemo(
-    () => computeAwards(upto, stats.players),
+  const awards = useMemo(() => computeAwards(upto, stats.players), [upto, stats.players]);
+  const duels = useMemo(() => duelTotals(upto, stats.players), [upto, stats.players]);
+  const tallies = useMemo(
+    () => stats.players.map((_, i) => itemTally(upto, i)),
     [upto, stats.players],
   );
-  const duels = useMemo(
-    () => duelTotals(upto, stats.players),
+  const items = useMemo(() => itemsSeen(upto, stats.players), [upto, stats.players]);
+  const causes = useMemo(
+    () => stats.players.map((_, i) => hitsTakenBy(upto, i)),
     [upto, stats.players],
   );
+  const matrix = useMemo(() => hitMatrix(upto, stats.players), [upto, stats.players]);
 
   const label = (p: Player) =>
     nameOf(p, mode, mode === "characters" ? latestCharacter(stats, p.index) : null);
   const face = (p: Player) =>
     latestCharacter(stats, p.index) ?? p.characterName ?? null;
+  const idName = (id: { player: number | null; name: string }) =>
+    id.player != null ? label(stats.players[id.player]) : id.name;
 
   const ranked = stats.players
     .map((p, i) => ({ player: p, total: totals[i] }))
     .sort((a, b) => b.total.points - a.total.points);
 
   const maxRaces = Math.max(stats.plannedRaces ?? 0, stats.races.length);
+  const points = stats.players.map((p) => ({
+    player: p.index,
+    label: label(p),
+    points: pointsSeries(stats.races, p.index),
+  }));
+  const hitsTaken = causes.reduce((n, c) => n + c.reduce((m, x) => m + x.count, 0), 0);
 
   return (
     <>
-      <Card title="Leaderboard" className="mt-5">
-        <div className="grid gap-3 px-5 pb-1 sm:grid-cols-2 xl:grid-cols-4">
+      <Card title="Leaderboard" className="mt-4">
+        {/* As many columns as there are players, up to four. A fixed four
+            leaves half the row empty on a two-player night. */}
+        <div className={`grid gap-3 px-5 pb-4 sm:grid-cols-2 ${LEADER_COLS[Math.min(ranked.length, 4)]}`}>
           {ranked.map(({ player, total }, rank) => (
             <PlayerCard
               key={player.index}
@@ -325,17 +339,14 @@ function Body({
 
         {stats.teams.length > 0 && (
           <>
-            <h3 className="px-5 pt-4 text-xs font-semibold tracking-wide text-muted uppercase">
+            <h3 className="px-5 text-xs font-semibold tracking-wide text-muted uppercase">
               Constructors
             </h3>
             <div className="grid gap-3 px-5 pt-2 pb-5 sm:grid-cols-2">
               {[...stats.teams]
                 .map((t) => ({
                   team: t,
-                  points: t.members.reduce(
-                    (n, i) => n + (totals[i]?.points ?? 0),
-                    0,
-                  ),
+                  points: t.members.reduce((n, i) => n + (totals[i]?.points ?? 0), 0),
                 }))
                 .sort((a, b) => b.points - a.points)
                 .map(({ team, points }) => (
@@ -359,9 +370,7 @@ function Body({
                     </span>
                     <span className="nums ml-auto text-lg font-bold text-brand">
                       {points}
-                      <span className="ml-1 text-xs font-normal text-muted">
-                        pts
-                      </span>
+                      <span className="ml-1 text-xs font-normal text-muted">pts</span>
                     </span>
                   </div>
                 ))}
@@ -370,62 +379,98 @@ function Body({
         )}
       </Card>
 
-      <Card className="mt-5">
-        <Tabs
-          value={tab}
-          onChange={setTab}
-          options={[
-            { value: "points", label: "Points progress" },
-            { value: "blues", label: "Blue shells" },
-          ]}
-        />
+      <WidgetGrid className="mt-4">
+        <Widget
+          title="Points progress"
+          expanded={
+            <div className="p-4">
+              <PointsChart series={points} races={thru} maxRaces={maxRaces} />
+            </div>
+          }
+        >
+          <div className="px-2 pb-2">
+            <PointsChart series={points} races={thru} maxRaces={maxRaces} compact />
+          </div>
+        </Widget>
 
-        {tab === "points" ? (
-          <div className="px-3 pt-2 pb-3">
-            <PointsChart
-              series={stats.players.map((p) => ({
+        <Widget
+          title="Blue shells"
+          expandedTitle="Every blue shell"
+          expanded={<BlueList races={upto} players={stats.players} mode={mode} />}
+        >
+          <BlueBars
+            rows={stats.players
+              .map((p, i) => ({
                 player: p.index,
                 label: label(p),
-                points: pointsSeries(stats.races, p.index),
-              }))}
-              races={thru}
-              maxRaces={maxRaces}
-            />
-          </div>
-        ) : (
-          <>
-            <p className="px-5 pt-3 text-xs text-muted">
-              Blue shells taken across the whole night — this one does not follow
-              the slider.
-            </p>
-            <FaceBars
-              rows={stats.players
-                .map((p, i) => ({
-                  player: p.index,
-                  label: label(p),
-                  character: face(p),
-                  value: whole[i].blues,
-                }))
-                .sort((a, b) => b.value - a.value)}
-              max={Math.max(...whole.map((t) => t.blues), 1)}
-              unit="taken"
-              empty="Nobody has been hit by a blue shell yet."
-            />
-          </>
-        )}
-      </Card>
+                character: face(p),
+                taken: totals[i].blues,
+                dodged: totals[i].bluesDodged,
+              }))
+              .sort((a, b) => b.taken - a.taken || b.dodged - a.dodged)}
+          />
+        </Widget>
 
-      <div className="mt-5 grid items-start gap-5 lg:grid-cols-[1.45fr_1fr]">
-        <Card title="Totals">
+        <Widget title="Awards">
+          <AwardList awards={awards} players={stats.players} label={label} />
+        </Widget>
+
+        <Widget
+          title="Items"
+          note="picked up / thrown"
+          expanded={
+            <ItemsTable
+              players={stats.players}
+              tallies={tallies}
+              items={items}
+              label={label}
+              face={face}
+            />
+          }
+        >
+          <PerPlayer players={stats.players} label={label} face={face}>
+            {(i) => <ItemStrip tally={tallies[i]} />}
+          </PerPlayer>
+        </Widget>
+
+        <Widget
+          title="Hit by"
+          note={`${hitsTaken} hit${hitsTaken === 1 ? "" : "s"} taken`}
+          expanded={
+            <CausesTable players={stats.players} causes={causes} label={label} face={face} />
+          }
+        >
+          <PerPlayer players={stats.players} label={label} face={face}>
+            {(i) => <CauseStrip causes={causes[i]} />}
+          </PerPlayer>
+        </Widget>
+
+        <Widget
+          title="Who hit who"
+          expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
+        >
+          <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
+        </Widget>
+
+        <Widget title="Totals" className="md:col-span-2 xl:col-span-3">
           <TotalsTable stats={stats} totals={totals} label={label} face={face} />
-        </Card>
-        <Awards awards={awards} players={stats.players} label={label} />
-      </div>
+        </Widget>
+      </WidgetGrid>
 
       <RaceList stats={stats} mode={mode} thru={thru} />
     </>
   );
 }
+
+/** Leaderboard columns by player count. Written out rather than built,
+ *  because Tailwind only ships the classes it can see. */
+const LEADER_COLS: Record<number, string> = {
+  0: "",
+  1: "xl:grid-cols-1",
+  2: "xl:grid-cols-2",
+  3: "xl:grid-cols-3",
+  4: "xl:grid-cols-4",
+};
 
 function PlayerCard({
   player,
@@ -505,11 +550,14 @@ function TotalsTable({
     ["wins", (t: (typeof totals)[0]) => t.wins],
     ["avg", (t: (typeof totals)[0]) => t.avgPosition ?? "-"],
     ["led", (t: (typeof totals)[0]) => secs(t.led)],
+    ["got", (t: (typeof totals)[0]) => t.got],
     ["thrown", (t: (typeof totals)[0]) => t.thrown],
     ["landed", (t: (typeof totals)[0]) => t.landed],
     ["taken", (t: (typeof totals)[0]) => t.taken],
     ["blues", (t: (typeof totals)[0]) => t.blues],
+    ["dodged", (t: (typeof totals)[0]) => t.bluesDodged],
     ["boosts", (t: (typeof totals)[0]) => t.boosts],
+    ["out", (t: (typeof totals)[0]) => secs(t.out)],
   ] as const;
 
   return (
@@ -552,8 +600,10 @@ function TotalsTable({
         </tbody>
       </table>
       <p className="px-5 py-3 text-xs text-muted">
-        Boosts are boost items used — mushrooms, golden, star, bullet. Trick and
-        drift boosts are not in the logs.
+        Got is items that landed in their hands; thrown is items used; landed is
+        hits those caused. Dodged is blue shells aimed at them that never
+        landed. Boosts are boost items used — mushrooms, golden, star, bullet;
+        trick and drift boosts are not in the logs.
       </p>
     </div>
   );

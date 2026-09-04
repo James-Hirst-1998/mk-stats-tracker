@@ -25,7 +25,21 @@ export interface Start {
 
 export type Starts = Record<number, Start>;
 
+/** A lap drawn by hand at #/tracks, in the drawing's own coordinates.
+ *
+ *  The tracing gets the shape of the road right and still has to guess which
+ *  way a fork goes; a drawn lap is somebody saying. The first point is the
+ *  start line and the order is the direction, so a drawn course needs neither
+ *  a start point nor a reverse flag. */
+export interface DrawnRoute {
+  points: [number, number][];
+  closed: boolean;
+}
+
+export type Routes = Record<number, DrawnRoute>;
+
 export const STARTS_URL = "/assets/tracks/starts.json";
+export const ROUTES_URL = "/assets/tracks/routes.json";
 
 /** The points of a path built by tools/build_tracks.py: all M and L, evenly
  *  spaced, so an index into them is a fraction of a lap. */
@@ -73,6 +87,18 @@ export function oriented(track: Track, start: Start | undefined): Track {
   };
 }
 
+/** A drawn lap wins over the traced one: it starts where it was told to and
+ *  runs the way it was drawn, so nothing is rotated or turned round. */
+export function withRoute(
+  track: Track,
+  route: DrawnRoute | undefined,
+  start: Start | undefined,
+): Track {
+  if (route && route.points.length >= 3)
+    return { ...track, d: pathOf(route.points, route.closed), closed: route.closed };
+  return oriented(track, start);
+}
+
 /** The file, kept in step with what the tracks screen saves. */
 export function useStarts(): [Starts, (next: Starts) => Promise<void>] {
   const [starts, setStarts] = useState<Starts>({});
@@ -98,4 +124,31 @@ export function useStarts(): [Starts, (next: Starts) => Promise<void>] {
   };
 
   return [starts, save];
+}
+
+/** The drawn laps, kept in step with what the tracks screen saves. */
+export function useRoutes(): [Routes, (next: Routes) => Promise<void>] {
+  const [routes, setRoutes] = useState<Routes>({});
+
+  useEffect(() => {
+    let alive = true;
+    fetch(ROUTES_URL, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((got) => alive && setRoutes(got ?? {}))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const save = async (next: Routes) => {
+    setRoutes(next);
+    await fetch("/api/routes", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(next),
+    });
+  };
+
+  return [routes, save];
 }
