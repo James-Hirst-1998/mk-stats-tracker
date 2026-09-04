@@ -7,6 +7,7 @@
 
 import { useState } from "react";
 import { ITEMS } from "../data/names";
+import { causeRank, itemRank } from "../lib/stats";
 import type { HitCause, ItemTally, Player } from "../lib/stats";
 import { Face, colorOf, secs, slug } from "./common";
 
@@ -53,7 +54,11 @@ export function ItemIcon({
 export const itemName = (id: number) => ITEMS[id] ?? `item ${id}`;
 
 /** One player's items in a line: the icons they picked up most, with how
- *  many times, and the throw count under each. */
+ *  many times, and the throw count under each.
+ *
+ *  Which ones is by count, because a strip this narrow can only show a few and
+ *  the few worth showing are the ones they kept getting; the order they are
+ *  drawn in is ITEM_ORDER, so every strip reads the same way round. */
 export function ItemStrip({
   tally,
   limit = 6,
@@ -64,7 +69,8 @@ export function ItemStrip({
   const ids = [...tally.got]
     .sort((a, b) => b[1] - a[1] || a[0] - b[0])
     .slice(0, limit)
-    .map(([id]) => id);
+    .map(([id]) => id)
+    .sort((a, b) => itemRank(a) - itemRank(b));
   if (!ids.length) return <span className="text-xs text-muted">nothing yet</span>;
   return (
     <span className="flex flex-wrap gap-x-3 gap-y-1">
@@ -81,8 +87,8 @@ export function ItemStrip({
   );
 }
 
-/** Players down the side, items across the top: picked up / thrown, and the
- *  ones knocked out of their hands in a small red figure. */
+/** Players down the side, items across the top: picked up / thrown, with a
+ *  red ring round anything knocked out of their hands. */
 export function ItemsTable({
   players,
   tallies,
@@ -135,12 +141,19 @@ export function ItemsTable({
                   return (
                     <td key={id} className="px-1.5 py-1.5 text-center">
                       {got || used ? (
-                        <span title={`${itemName(id)}: picked up ${got}, thrown ${used}${lost ? `, lost ${lost}` : ""}`}>
+                        <span
+                          // The ring says one was lost. The count is in the
+                          // tooltip: a "−2" beside two other figures read as
+                          // arithmetic on them.
+                          className={
+                            lost > 0
+                              ? "inline-block rounded-full px-1.5 ring-1 ring-red-400"
+                              : undefined
+                          }
+                          title={`${itemName(id)}: picked up ${got}, thrown ${used}${lost ? `, ${lost} knocked out of their hands` : ""}`}
+                        >
                           <span className="font-semibold">{got}</span>
                           <span className="text-muted">/{used}</span>
-                          {lost > 0 && (
-                            <span className="ml-0.5 text-[10px] text-red-600">−{lost}</span>
-                          )}
                         </span>
                       ) : (
                         <span className="text-line">·</span>
@@ -154,19 +167,24 @@ export function ItemsTable({
         </tbody>
       </table>
       <p className="px-4 py-3 text-xs text-muted">
-        Picked up / thrown. A red figure is an item knocked out of their hands
-        before it could be used. A triple is one pickup and one throw.
+        Picked up / thrown. A red ring is an item knocked out of their hands
+        before it could be used; hover it for how many. A triple is one pickup
+        and one throw.
       </p>
     </div>
   );
 }
 
-/** One player's worst enemies among the items, as icons with counts. */
+/** One player's worst enemies among the items, as icons with counts. The
+ *  ones they took most, drawn in the order the item columns use. */
 export function CauseStrip({ causes, limit = 5 }: { causes: HitCause[]; limit?: number }) {
   if (!causes.length) return <span className="text-xs text-muted">never hit</span>;
+  const shown = causes
+    .slice(0, limit)
+    .sort((a, b) => causeRank(a.cause) - causeRank(b.cause));
   return (
     <span className="flex flex-wrap gap-x-3 gap-y-1">
-      {causes.slice(0, limit).map((c) => (
+      {shown.map((c) => (
         <span key={c.cause} className="inline-flex items-center gap-1" title={c.cause}>
           <ItemIcon name={c.cause} size={22} />
           <span className="nums text-sm font-semibold">{c.count}</span>
@@ -191,7 +209,9 @@ export function CausesTable({
   const all = new Map<string, number>();
   for (const list of causes)
     for (const c of list) all.set(c.cause, (all.get(c.cause) ?? 0) + c.count);
-  const columns = [...all].sort((a, b) => b[1] - a[1]).map(([c]) => c);
+  // Items first, in the order the item table uses, then everything nobody
+  // threw - a Chain Chomp is not somebody's doing (stats.ts::causeRank).
+  const columns = [...all.keys()].sort((a, b) => causeRank(a) - causeRank(b));
   if (!columns.length)
     return <p className="px-5 py-6 text-sm text-muted">Nobody has been hit yet.</p>;
   return (
@@ -254,5 +274,35 @@ export function CausesTable({
         the hits cost, over the hits whose end was seen.
       </p>
     </div>
+  );
+}
+
+/** One player's items picked up off the road, as icons with counts. */
+export function ScavengedStrip({ found }: { found: Map<number, number> }) {
+  const ids = [...found.keys()].sort((a, b) => itemRank(a) - itemRank(b));
+  if (!ids.length) return <span className="text-xs text-muted">none</span>;
+  return (
+    <span className="flex flex-wrap gap-x-3 gap-y-1">
+      {ids.map((id) => (
+        <span key={id} className="inline-flex items-center gap-1" title={itemName(id)}>
+          <ItemIcon name={itemName(id)} size={22} />
+          <span className="nums text-sm font-semibold">{found.get(id)}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/** What an empty scavenger widget means, which is not "nobody did it".
+ *  James drove over a Star on Mario Circuit that the log has nothing for. */
+export function ScavengedNote() {
+  return (
+    <p className="px-4 pt-1 pb-4 text-sm text-muted">
+      Nothing picked up off the road. An item counts as one when it lands in
+      somebody's hands with no item box before it — all 715 pickups in the
+      stored races follow a box, and whether the game writes anything at all
+      for one off the road is still open
+      (<code className="font-mono">docs/EXPERIMENTS.md</code>, 2026-09-03).
+    </p>
   );
 }

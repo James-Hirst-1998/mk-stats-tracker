@@ -59,10 +59,6 @@ export function BlueBars({ rows }: { rows: BlueRow[] }) {
           </span>
         </li>
       ))}
-      <li className="pt-1 text-[11px] text-muted">
-        Solid is a shell that landed; hatched is one aimed at them that never
-        did.
-      </li>
     </ul>
   );
 }

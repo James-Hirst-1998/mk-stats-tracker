@@ -5,7 +5,7 @@
 // source for every figure and keeps the components to rendering.
 //
 // The unit of identity is the *player*: a person who keeps the same character
-// for a night. `players.json` in a session directory says who is tracked:
+// for a session. `players.json` in a session directory says who is tracked:
 //
 //     {"planned_races": 32,
 //      "players": [{"name": "James", "human": true},
@@ -32,6 +32,72 @@ export const BOOST_ITEMS = new Set(
     )
     .map(([id]) => Number(id)),
 );
+
+/** The order items are shown in, front of the field to back: what lands in
+ *  your hands while you are winning first, what lands in them while you are
+ *  losing last. James gave the sequence; the ones he did not name sit with
+ *  their neighbours. Names rather than ids, so a corrected id in mkw/names.py
+ *  moves with it - the same reason BOOST_ITEMS is built this way. */
+export const ITEM_ORDER = [
+  "Banana",
+  "Triple Bananas",
+  "Fake Item Box",
+  "Green Shell",
+  "Triple Green Shells",
+  "Red Shell",
+  "Triple Red Shells",
+  "Bob-omb",
+  "Mushroom",
+  "Triple Mushrooms",
+  "Blooper",
+  "POW Block",
+  "Thunder Cloud",
+  "Mega Mushroom",
+  "Star",
+  "Golden Mushroom",
+  "Bullet Bill",
+  "Blue Shell",
+  "Lightning",
+];
+
+/** Where an item sorts. Anything unlisted goes after the lot, in id order, so
+ *  an item added to the table without being added here still has one place. */
+export function itemRank(id: number): number {
+  const i = ITEM_ORDER.indexOf(ITEMS[id] ?? "");
+  return i < 0 ? ITEM_ORDER.length + id : i;
+}
+
+/** Hits where the object was not read, so the name covers two items
+ *  (DAMAGE_TYPES in mkw/names.py). They sort after the items they might be. */
+const UNCERTAIN_CAUSES = ["Shell or Fake Item Box", "Bob-omb or Blue Shell"];
+
+/** Everything that hits you that nobody threw. Last, because a Chain Chomp is
+ *  not somebody's doing and does not belong among the items. */
+const HAZARD_CAUSES = [
+  "an enemy",
+  "Chain Chomp",
+  "a boosted kart, cow or car",
+  "a Moonview car",
+  "a Moonview truck",
+  "a Cataquack",
+  "a Thwomp",
+  "a Thwomp, then respawned",
+  "a Zapper",
+  "fire",
+  "something",
+];
+
+/** Where a cause sorts: the items in ITEM_ORDER, then the two-item names,
+ *  then the hazards. `causeOf` gives these names. */
+export function causeRank(cause: string): number {
+  const item = ITEM_ORDER.indexOf(cause);
+  if (item >= 0) return item;
+  const uncertain = UNCERTAIN_CAUSES.indexOf(cause);
+  if (uncertain >= 0) return ITEM_ORDER.length + uncertain;
+  const hazard = HAZARD_CAUSES.indexOf(cause);
+  const tail = ITEM_ORDER.length + UNCERTAIN_CAUSES.length;
+  return hazard >= 0 ? tail + hazard : tail + HAZARD_CAUSES.length;
+}
 
 /** World-object type of the Blue Shell. */
 export const BLUE_OBJECT = 5;
@@ -192,17 +258,27 @@ function hits(log: RaceLog): RaceEvent[] {
 }
 
 export function rowsFor(log: RaceLog, players: Player[]): Map<number, Row> {
+  const race = raceRows(log);
+  const rows = new Map<number, Row>();
+  for (const [i, slot] of slotsOf(players, log)) {
+    const row = race.get(slot);
+    if (row) rows.set(i, row);
+  }
+  return rows;
+}
+
+/** The same row for every racer in the field, keyed by slot. Tracked players
+ *  and CPUs are measured by one function so a CPU's line on the leaderboard
+ *  cannot mean something different from a player's. */
+export function raceRows(log: RaceLog): Map<number, Row> {
   const stats = summary(log);
-  const slots = slotsOf(players, log);
   const rows = new Map<number, Row>();
   const landedHits = hits(log);
   const blues = blueShells(log);
-  for (const [i, slot] of slots) {
-    const r = stats.get(slot);
-    if (!r) continue;
+  for (const [slot, r] of stats) {
     const mine = log.events.filter((e) => !e.after && e.slot === slot);
     const uses = mine.filter((e) => e.type === "use");
-    rows.set(i, {
+    rows.set(slot, {
       slot,
       character: r.character,
       characterName: log.field.name(slot),
@@ -245,7 +321,7 @@ export function duelTotals(races: RaceStats[], players: Player[]): Duel[] {
 }
 
 /** Who hit whom, keyed by player index where tracked and by character
- *  ("c17") where not, so a CPU nemesis keeps one identity across the night. */
+ *  ("c17") where not, so a CPU nemesis keeps one identity across a session. */
 function duelsIn(log: RaceLog, players: Player[]): Map<string, number> {
   const slots = slotsOf(players, log);
   const bySlot = new Map([...slots].map(([i, s]) => [s, i]));
@@ -313,7 +389,7 @@ export interface Awards {
   } | null;
 }
 
-/** Whole-night awards. Fixed rules, so the same night gives the same winners;
+/** Whole-session awards. Fixed rules, so the same races give the same winners;
  *  ties are shown as ties rather than broken arbitrarily. */
 export function awards(races: RaceStats[], players: Player[]): Awards {
   const totals = players.map(() => ({ blues: 0, thrown: 0, landed: 0 }));
@@ -436,10 +512,15 @@ export interface Totals {
   lost: number;
 }
 
-/** One player's night so far. The slider on the dashboard is just a shorter
+/** One player's session so far. The slider on the dashboard is just a shorter
  *  list of races going into this. */
 export function totalsFor(races: RaceStats[], player: number): Totals {
-  const rows = races.map((r) => r.rows.get(player)).filter((r) => r != null);
+  return totalsOf(races.map((r) => r.rows.get(player)).filter((r) => r != null));
+}
+
+/** Add up whatever rows are handed over. Players and CPUs both come through
+ *  here, so a CPU's column means exactly what a player's column means. */
+export function totalsOf(rows: Row[]): Totals {
   const finishes = rows.map((r) => r.position).filter((p): p is number => p != null);
   const sum = (pick: (r: Row) => number) => rows.reduce((n, r) => n + pick(r), 0);
   return {
@@ -462,6 +543,42 @@ export function totalsFor(races: RaceStats[], player: number): Totals {
     got: sum((r) => r.got),
     lost: sum((r) => r.lost),
   };
+}
+
+/** A CPU on the leaderboard: the character, and the same totals a player
+ *  gets. */
+export interface CpuStanding {
+  key: string;
+  character: number;
+  name: string;
+  totals: Totals;
+}
+
+/** Every CPU in these races, added up the same way the players are.
+ *
+ *  Identity is the character, the key `duelTotals` and `hitMatrix` already
+ *  use, so the Waluigi on the leaderboard is the Waluigi in the hit matrix.
+ *  Two CPUs on one character would therefore be one row; no stored race has
+ *  a repeated character. */
+export function cpuTotals(races: RaceStats[], players: Player[]): CpuStanding[] {
+  const rows = new Map<number, Row[]>();
+  for (const race of races) {
+    const tracked = new Set(slotsOf(players, race.log).values());
+    for (const [slot, row] of raceRows(race.log)) {
+      if (tracked.has(slot)) continue;
+      const c = race.log.racer(slot)?.character;
+      if (c == null) continue;
+      rows.set(c, [...(rows.get(c) ?? []), row]);
+    }
+  }
+  return [...rows]
+    .map(([character, list]) => ({
+      key: `c${character}`,
+      character,
+      name: CHARACTERS[character] ?? `character ${character}`,
+      totals: totalsOf(list),
+    }))
+    .sort((a, b) => b.totals.points - a.totals.points || a.name.localeCompare(b.name));
 }
 
 /** Cumulative points after each race, index 0 = after race 1. */
@@ -691,15 +808,48 @@ export function itemTally(races: RaceStats[], player: number): ItemTally {
   return out;
 }
 
-/** Every item anybody in these races picked up, most picked up first, so a
- *  table has the same columns for every player. */
+/** Every item anybody in these races picked up, in ITEM_ORDER, so a table has
+ *  the same columns for every player and they read in one sequence rather
+ *  than in whatever order the races happened to hand them out. */
 export function itemsSeen(races: RaceStats[], players: Player[]): number[] {
-  const total = new Map<number, number>();
+  const seen = new Set<number>();
   players.forEach((_, i) => {
-    for (const [item, n] of itemTally(races, i).got)
-      total.set(item, (total.get(item) ?? 0) + n);
+    for (const item of itemTally(races, i).got.keys()) seen.add(item);
   });
-  return [...total].sort((a, b) => b[1] - a[1] || a[0] - b[0]).map(([item]) => item);
+  return [...seen].sort((a, b) => itemRank(a) - itemRank(b));
+}
+
+/** How long after an item box the item lands in your hands. Measured over the
+ *  715 holds in the stored races: 0.98-3.80s, 1.15 median (CPUs are quick,
+ *  a human waits out the roulette). 6s is well clear of the longest. */
+export const BOX_TO_HOLD = 6;
+
+/** Items picked up off the road rather than out of a box, by item id.
+ *
+ *  The rule: a `hold` with no `box` for that racer in the BOX_TO_HOLD seconds
+ *  before it, each box counting for one hold. Nothing else in the log
+ *  distinguishes the two.
+ *
+ *  This is 0 in every stored race - all 715 holds follow a box - and James
+ *  drove over a Star on Mario Circuit that the log has nothing for at all, so
+ *  a count of zero here means "the recorder saw none", not "there were none".
+ *  docs/EXPERIMENTS.md, 2026-09-03. */
+export function scavenged(races: RaceStats[], player: number): Map<number, number> {
+  const out = new Map<number, number>();
+  for (const race of races) {
+    const slot = race.rows.get(player)?.slot;
+    if (slot == null) continue;
+    let box: RaceEvent | null = null;
+    for (const e of race.log.events) {
+      if (e.after || e.slot !== slot) continue;
+      if (e.type === "box") box = e;
+      else if (e.type === "hold" && e.item != null) {
+        if (box && e.t - box.t <= BOX_TO_HOLD) box = null;
+        else out.set(e.item, (out.get(e.item) ?? 0) + 1);
+      }
+    }
+  }
+  return out;
 }
 
 export interface HitCause {

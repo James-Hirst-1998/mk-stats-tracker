@@ -1,30 +1,40 @@
-// The night, on one screen.
+// The whole session, on one screen.
 //
 // The slider is the only global control: everything above the race list is
-// "after race N", so moving it back is the same screen the night had at that
-// point. Nobody is the subject of this page - the four players are drawn the
-// same way, in the same order, everywhere.
+// "after race N", so moving it back is the screen these races gave at that
+// point. Nobody is the subject of this page - the players are drawn the same
+// way, in the same order, everywhere.
 
 import { useEffect, useMemo, useState } from "react";
 import { go } from "../App";
 import { useSession, useSessions } from "../lib/data";
 import {
   awards as computeAwards,
+  cpuTotals,
   duelTotals,
   hitMatrix,
   hitsTakenBy,
   itemTally,
   itemsSeen,
   pointsSeries,
+  scavenged,
   totalsFor,
   type Player,
   type SessionStats,
+  type Totals,
 } from "../lib/stats";
 import { CHARACTERS, courseName } from "../data/names";
 import { AwardList } from "../ui/Awards";
 import { BlueBars, BlueList } from "../ui/BlueShells";
 import { HitMatrixTable } from "../ui/HitMatrix";
-import { CauseStrip, CausesTable, ItemStrip, ItemsTable } from "../ui/Items";
+import {
+  CauseStrip,
+  CausesTable,
+  ItemStrip,
+  ItemsTable,
+  ScavengedNote,
+  ScavengedStrip,
+} from "../ui/Items";
 import { Players } from "../ui/Players";
 import {
   Card,
@@ -51,7 +61,7 @@ export function Dashboard({ dir }: { dir: string | null }) {
   );
   useEffect(() => localStorage.setItem("mkw.mode", mode), [mode]);
 
-  // null means "follow the latest race", so a night being recorded keeps
+  // null means "follow the latest race", so a session being recorded keeps
   // moving on its own; dragging the slider back pins it.
   const [pinned, setPinned] = useState<number | null>(null);
   const count = stats?.races.length ?? 0;
@@ -88,7 +98,7 @@ export function Dashboard({ dir }: { dir: string | null }) {
 
       {stats && stats.races.length > 0 && (
         // The one control over the whole screen, above everything it changes.
-        <NightBar
+        <RaceRange
           thru={thru}
           races={stats.races.length}
           planned={stats.plannedRaces}
@@ -207,12 +217,12 @@ function TopBar({
   );
 }
 
-/** How much of the night the screen is showing.
+/** How many races the screen is showing.
  *
  *  It sits above everything it changes and stays there when the page scrolls,
  *  because the thing it does is change every number below it. 0 is before the
- *  first race, so the night can be watched from nothing. */
-function NightBar({
+ *  first race, so a session can be watched from nothing. */
+function RaceRange({
   thru,
   races,
   planned,
@@ -265,7 +275,7 @@ function NightBar({
         </button>
 
         <span className="hidden text-[11px] whitespace-nowrap text-muted xl:inline">
-          everything below is the night as it stood then
+          everything below is how it stood then
         </span>
       </div>
     </div>
@@ -298,6 +308,15 @@ function Body({
     [upto, stats.players],
   );
   const matrix = useMemo(() => hitMatrix(upto, stats.players), [upto, stats.players]);
+  const cpus = useMemo(() => cpuTotals(upto, stats.players), [upto, stats.players]);
+  const scavenge = useMemo(
+    () => stats.players.map((_, i) => scavenged(upto, i)),
+    [upto, stats.players],
+  );
+
+  // Off every time the page loads, deliberately: the players are the subject
+  // and the ten CPUs are the detail you go looking for.
+  const [showCpus, setShowCpus] = useState(false);
 
   const label = (p: Player) =>
     nameOf(p, mode, mode === "characters" ? latestCharacter(stats, p.index) : null);
@@ -306,9 +325,29 @@ function Body({
   const idName = (id: { player: number | null; name: string }) =>
     id.player != null ? label(stats.players[id.player]) : id.name;
 
-  const ranked = stats.players
-    .map((p, i) => ({ player: p, total: totals[i] }))
-    .sort((a, b) => b.total.points - a.total.points);
+  // Players and CPUs on one ladder when the CPUs are shown, so their points
+  // say where they actually came. Equal points keeps players in front, and
+  // sort is stable, so the order is the same every render.
+  const standings: Standing[] = [
+    ...stats.players.map((p, i) => ({
+      key: String(i),
+      label: label(p),
+      character: face(p),
+      color: colorOf(p.index),
+      cpu: false,
+      total: totals[i],
+    })),
+    ...(showCpus
+      ? cpus.map((c) => ({
+          key: c.key,
+          label: c.name,
+          character: c.name,
+          color: CPU_COLOR,
+          cpu: true,
+          total: c.totals,
+        }))
+      : []),
+  ].sort((a, b) => b.total.points - a.total.points || Number(a.cpu) - Number(b.cpu));
 
   const maxRaces = Math.max(stats.plannedRaces ?? 0, stats.races.length);
   const points = stats.players.map((p) => ({
@@ -317,22 +356,38 @@ function Body({
     points: pointsSeries(stats.races, p.index),
   }));
   const hitsTaken = causes.reduce((n, c) => n + c.reduce((m, x) => m + x.count, 0), 0);
+  const scavenged1 = scavenge.reduce(
+    (n, m) => n + [...m.values()].reduce((a, b) => a + b, 0),
+    0,
+  );
 
   return (
     <>
-      <Card title="Leaderboard" className="mt-4">
-        {/* As many columns as there are players, up to four. A fixed four
-            leaves half the row empty on a two-player night. */}
-        <div className={`grid gap-3 px-5 pb-4 sm:grid-cols-2 ${LEADER_COLS[Math.min(ranked.length, 4)]}`}>
-          {ranked.map(({ player, total }, rank) => (
+      <Card
+        title="Leaderboard"
+        className="mt-4"
+        right={
+          <button
+            onClick={() => setShowCpus(!showCpus)}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              showCpus
+                ? "border-brand bg-brand text-white"
+                : "border-line bg-white/80 hover:bg-line-soft"
+            }`}
+          >
+            {showCpus ? "Hide CPUs" : "Show CPUs"}
+          </button>
+        }
+      >
+        {/* As many columns as there are cards, up to four. A fixed four
+            leaves half the row empty with two players. */}
+        <div className={`grid gap-3 px-5 pb-4 sm:grid-cols-2 ${LEADER_COLS[Math.min(standings.length, 4)]}`}>
+          {standings.map((s, rank) => (
             <PlayerCard
-              key={player.index}
-              player={player}
-              label={label(player)}
-              character={face(player)}
-              total={total}
+              key={s.key}
+              standing={s}
               rank={rank + 1}
-              nemesis={nemesisOf(player.index, duels, stats, mode)}
+              nemesis={nemesisOf(s.key, duels, stats, mode)}
             />
           ))}
         </div>
@@ -380,8 +435,12 @@ function Body({
       </Card>
 
       <WidgetGrid className="mt-4">
+        {/* Two columns wide and two rows tall, so the chart everything else
+            is about is the thing you look at first; blue shells and awards
+            stack in the column beside it, and the row under it is three. */}
         <Widget
           title="Points progress"
+          className="md:col-span-2 xl:row-span-2"
           expanded={
             <div className="p-4">
               <PointsChart series={points} races={thru} maxRaces={maxRaces} />
@@ -445,8 +504,19 @@ function Body({
           </PerPlayer>
         </Widget>
 
+        <Widget title="Scavenger" note="picked up off the road">
+          {scavenged1 === 0 ? (
+            <ScavengedNote />
+          ) : (
+            <PerPlayer players={stats.players} label={label} face={face}>
+              {(i) => <ScavengedStrip found={scavenge[i]} />}
+            </PerPlayer>
+          )}
+        </Widget>
+
         <Widget
           title="Who hit who"
+          className="xl:col-span-3"
           expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
         >
           <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
@@ -472,43 +542,55 @@ const LEADER_COLS: Record<number, string> = {
   4: "xl:grid-cols-4",
 };
 
+/** One card on the leaderboard: a player, or a CPU when they are shown. The
+ *  two are the same card so the numbers are comparable at a glance; a CPU is
+ *  greyed and tagged rather than given a shape of its own. */
+interface Standing {
+  key: string;
+  label: string;
+  character: string | null;
+  color: string;
+  cpu: boolean;
+  total: Totals;
+}
+
+/** The colour every CPU card gets. Not one of PLAYER_COLORS, which are
+ *  assigned by player index and must not be borrowed. */
+const CPU_COLOR = "#adb5bd";
+
 function PlayerCard({
-  player,
-  label,
-  character,
-  total,
+  standing,
   rank,
   nemesis,
 }: {
-  player: Player;
-  label: string;
-  character: string | null;
-  total: ReturnType<typeof totalsFor>;
+  standing: Standing;
   rank: number;
   nemesis: string | null;
 }) {
+  const { label, character, color, cpu, total } = standing;
   return (
-    <section className="rounded-xl border border-line bg-white p-4">
+    <section
+      className={`rounded-xl border border-line p-4 ${cpu ? "bg-line-soft/40" : "bg-white"}`}
+    >
       <div className="flex items-center gap-3">
         <Rank n={rank} />
-        <Face
-          character={character}
-          color={colorOf(player.index)}
-          label={label}
-          size={52}
-        />
+        <Face character={character} color={color} label={label} size={52} />
         <div className="min-w-0 flex-1">
-          <div className="truncate font-semibold">{label}</div>
+          <div className="flex items-center gap-1.5">
+            <span className="truncate font-semibold">{label}</span>
+            {cpu && (
+              <span className="shrink-0 rounded-full border border-line px-1.5 text-[10px] text-muted">
+                CPU
+              </span>
+            )}
+          </div>
           <div className="text-xs text-muted">
             {rank === 1 ? "leading" : `${rank}${suffix(rank)} on points`}
           </div>
         </div>
       </div>
       <div className="nums mt-3 flex items-baseline gap-1.5">
-        <span
-          className="text-3xl leading-none font-bold"
-          style={{ color: colorOf(player.index) }}
-        >
+        <span className="text-3xl leading-none font-bold" style={{ color }}>
           {total.points}
         </span>
         <span className="text-xs text-muted">points</span>
@@ -617,14 +699,15 @@ function latestCharacter(stats: SessionStats, player: number): string | null {
   return null;
 }
 
-/** "Most hit by Waluigi (5)", honest about ties. */
+/** "Most hit by Waluigi (5)", honest about ties. `key` is a player index or
+ *  a CPU's `c<character>`, the keys `duelTotals` uses. */
 function nemesisOf(
-  player: number,
+  key: string,
   duels: { from: string; to: string; count: number }[],
   stats: SessionStats,
   mode: NameMode,
 ): string | null {
-  const against = duels.filter((d) => d.to === String(player));
+  const against = duels.filter((d) => d.to === key);
   if (!against.length) return null;
   const top = against[0].count;
   const names = against

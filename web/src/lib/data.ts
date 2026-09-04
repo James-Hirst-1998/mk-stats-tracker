@@ -78,7 +78,7 @@ export interface Loaded {
   loading: boolean;
 }
 
-/** The session, kept up to date while a night is being recorded. */
+/** The session, kept up to date while races are being recorded. */
 export function useSession(dir: string | null): Loaded {
   const [state, setState] = useState<Loaded>({
     stats: null,

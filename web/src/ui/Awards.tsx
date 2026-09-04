@@ -1,5 +1,5 @@
-// Whole-night awards. The rules are in stats.ts and are fixed, so these are
-// the same every time the same night is loaded, and a tie stays a tie.
+// Whole-session awards. The rules are in stats.ts and are fixed, so these are
+// the same every time the same session is loaded, and a tie stays a tie.
 
 import type { Awards as AwardSet, Player } from "../lib/stats";
 import { colorOf } from "./common";

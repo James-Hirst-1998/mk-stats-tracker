@@ -2,7 +2,7 @@
 // large when there is more to see.
 //
 // The screen is a set of these rather than a column of full-width cards so
-// that the whole night is visible at once; the expanded view is the drill-
+// that the whole session is visible at once; the expanded view is the drill-
 // down, and shows the same numbers with nothing summarised away.
 
 import { useEffect, useState } from "react";

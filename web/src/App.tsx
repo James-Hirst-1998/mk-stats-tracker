@@ -1,4 +1,4 @@
-// Four screens, and the hash says which: the night, one race, that race
+// Four screens, and the hash says which: the session, one race, that race
 // played back, and the course outlines.
 // A hash keeps the replay linkable without a router or a server that knows
 // about routes.

@@ -15,6 +15,7 @@ import {
   itemsSeen,
   playerOfSlot,
   raceDetail,
+  scavenged,
   type Player,
   type RaceStats,
   type SessionStats,
@@ -33,7 +34,15 @@ import {
 } from "../ui/common";
 import { BlueList } from "../ui/BlueShells";
 import { HitMatrixTable } from "../ui/HitMatrix";
-import { CauseStrip, CausesTable, ItemIcon, ItemStrip, ItemsTable } from "../ui/Items";
+import {
+  CauseStrip,
+  CausesTable,
+  ItemIcon,
+  ItemStrip,
+  ItemsTable,
+  ScavengedNote,
+  ScavengedStrip,
+} from "../ui/Items";
 import { PositionTime } from "../ui/PositionTime";
 import { PositionWorm } from "../ui/PositionWorm";
 import { TrackShape } from "../ui/TrackShape";
@@ -88,6 +97,7 @@ function Body({
   const tallies = useMemo(() => players.map((_, i) => itemTally([race], i)), [race, players]);
   const items = useMemo(() => itemsSeen([race], players), [race, players]);
   const causes = useMemo(() => players.map((_, i) => hitsTakenBy([race], i)), [race, players]);
+  const scavenge = useMemo(() => players.map((_, i) => scavenged([race], i)), [race, players]);
   const matrix = useMemo(() => hitMatrix([race], players), [race, players]);
   const hitLog = useMemo(
     () =>
@@ -260,18 +270,28 @@ function Body({
           </PerPlayer>
         </Widget>
 
+        {/* Two columns, with the scavenger beside it, so the row fills. */}
         <Widget
           title="Blue shells"
           note={`${race.blueShells.length} thrown`}
+          className="md:col-span-2 xl:col-span-2"
         >
           <BlueList races={[race]} players={players} mode={mode} />
         </Widget>
 
-        {/* One column narrower than the row, so the blue shell list beside it
-            fills the last row instead of leaving two columns empty. */}
+        <Widget title="Scavenger" note="picked up off the road">
+          {scavenge.every((m) => m.size === 0) ? (
+            <ScavengedNote />
+          ) : (
+            <PerPlayer players={players} label={label} face={face}>
+              {(i) => <ScavengedStrip found={scavenge[i]} />}
+            </PerPlayer>
+          )}
+        </Widget>
+
         <Widget
           title="Who hit who"
-          className="xl:col-span-2"
+          className="xl:col-span-3"
           expanded={<HitMatrixTable matrix={matrix} nameOf={idName} full />}
         >
           <HitMatrixTable matrix={matrix} nameOf={idName} full={false} />
