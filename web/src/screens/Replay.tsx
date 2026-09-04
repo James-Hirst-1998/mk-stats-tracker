@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRace } from "../lib/data";
 import { replayData, slotsOf } from "../lib/stats";
 import { trackFor } from "../data/tracks";
-import { oriented, useStarts } from "../lib/route";
+import { useRoutes, useStarts, withRoute } from "../lib/route";
 import { CHARACTERS } from "../data/names";
 import {
   Card,
@@ -31,6 +31,7 @@ const SPEEDS = ["1", "2", "4", "8"] as const;
 export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
   const [starts] = useStarts();
+  const [routes] = useRoutes();
   const players = stats?.players ?? [];
   // The same Characters/Names choice the dashboard is showing.
   const mode = (localStorage.getItem("mkw.mode") as NameMode) ?? "characters";
@@ -47,8 +48,8 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
 
   const raw = data?.course != null ? trackFor(data.course) : null;
   const track = useMemo(
-    () => (raw ? oriented(raw, starts[raw.course]) : null),
-    [raw, starts],
+    () => (raw ? withRoute(raw, routes[raw.course], starts[raw.course]) : null),
+    [raw, routes, starts],
   );
 
   useEffect(() => {
@@ -215,6 +216,8 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
               "No outline for this course yet — a generic loop, so only the order and the gaps mean anything."
             ) : track.source === "course" ? (
               "The course's own checkpoints: real road, real start line, real direction."
+            ) : routes[track.course] ? (
+              "The road is traced from the layout drawing; the lap round it was drawn by hand at #/tracks, so it starts at the start line and runs the way it is driven."
             ) : starts[track.course] ? (
               "The real course, traced from its layout drawing, with the start line and direction set by hand at #/tracks."
             ) : (
@@ -222,7 +225,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
                 The real course, but nobody has said where its start line is, so
                 a lap is measured from wherever the tracing began.{" "}
                 <a href="#/tracks" className="text-brand underline">
-                  Set it
+                  Set it, or draw the lap
                 </a>
                 .
               </>

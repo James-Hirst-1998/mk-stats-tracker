@@ -20,7 +20,7 @@ import {
   type SessionStats,
 } from "../lib/stats";
 import { trackFor } from "../data/tracks";
-import { oriented, useStarts } from "../lib/route";
+import { useRoutes, useStarts, withRoute } from "../lib/route";
 import {
   Card,
   Face,
@@ -42,6 +42,7 @@ import { Widget, WidgetGrid } from "../ui/Widget";
 export function Race({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
   const [starts] = useStarts();
+  const [routes] = useRoutes();
   const mode = (localStorage.getItem("mkw.mode") as NameMode) ?? "characters";
   const race = stats?.races.find((r) => r.file === file) ?? null;
 
@@ -59,7 +60,7 @@ export function Race({ dir, file }: { dir: string; file: string }) {
     );
   return (
     <Shell dir={dir}>
-      <Body stats={stats} race={race} mode={mode} starts={starts} />
+      <Body stats={stats} race={race} mode={mode} starts={starts} routes={routes} />
     </Shell>
   );
 }
@@ -69,11 +70,13 @@ function Body({
   race,
   mode,
   starts,
+  routes,
 }: {
   stats: SessionStats;
   race: RaceStats;
   mode: NameMode;
   starts: ReturnType<typeof useStarts>[0];
+  routes: ReturnType<typeof useRoutes>[0];
 }) {
   const players = stats.players;
   const label = (p: Player) =>
@@ -98,7 +101,7 @@ function Body({
   );
 
   const raw = race.course != null ? trackFor(race.course) : null;
-  const track = raw ? oriented(raw, starts[raw.course]) : null;
+  const track = raw ? withRoute(raw, routes[raw.course], starts[raw.course]) : null;
   const rows = [...race.rows].sort((a, b) => (a[1].position ?? 99) - (b[1].position ?? 99));
   const prev = stats.races.find((r) => r.n === race.n - 1);
   const next = stats.races.find((r) => r.n === race.n + 1);
@@ -209,7 +212,7 @@ function Body({
 
         <Widget title="Course">
           <div className="px-3 pb-3 text-center">
-            <TrackShape track={track} start={Boolean(track && (starts[track.course] || track.source === "course"))} className="mx-auto h-44 w-full" />
+            <TrackShape track={track} start={Boolean(track && (routes[track.course] || starts[track.course] || track.source === "course"))} className="mx-auto h-44 w-full" />
             <div className="mt-1 text-sm font-medium">{race.courseName}</div>
             <a
               href={`#/replay/${stats.dir}/${encodeURIComponent(race.file)}`}

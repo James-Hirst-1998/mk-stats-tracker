@@ -236,6 +236,23 @@ start with a grey band across the road - Mario Circuit and GCN Waluigi Stadium
 do - but most do not, and grey pixels inside the road are mostly the
 anti-aliased edge of the outline. Direction is not in the drawing at all.
 
+### Drawing the lap by hand
+
+When the trace itself is wrong - it took the wrong side of a fork, or joined
+two pieces across the drawing - moving the start line does not help. **Draw**
+at `#/tracks` is the answer to that: click round the course, first click on
+the start line, following the road the way it is driven, and those points are
+the lap. It saves to `assets/tracks/routes.json`, which is checked in, and a
+drawn lap is used in preference to the traced one everywhere.
+
+A drawn lap needs neither a start point nor a reverse flag, because the first
+point is the start line and the order is the direction. The replay measures a
+lap fraction along the path by arc length, so the points do not have to be
+evenly spaced - click where the road bends and nowhere else.
+
+The road under it is still the traced outline. Only the line a lap is measured
+along is being replaced, which is the part a drawing cannot say.
+
 ### Making it exact
 
 Every course on the disc carries a `course.kmp` with its checkpoints in it:

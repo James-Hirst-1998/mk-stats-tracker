@@ -76,13 +76,14 @@ const JSON_HEAD = {
   "Cache-Control": "no-store",
 };
 
-/** The whole body, or null if it is not JSON or is longer than 64 kB. */
+/** The whole body, or null if it is not JSON or is longer than 1 MB. The
+ *  limit is for the drawn laps: 32 courses of a few hundred points each. */
 function body(req) {
   return new Promise((resolve) => {
     let text = "";
     req.on("data", (chunk) => {
       text += chunk;
-      if (text.length > 65536) {
+      if (text.length > 1048576) {
         text = "";
         req.destroy();
         resolve(null);
@@ -147,6 +148,28 @@ function saveStarts(sent) {
   return out;
 }
 
+/** A lap drawn by hand at #/tracks: the points, in the drawing's own
+ *  coordinates, first point first. Same shape of write as saveStarts. */
+function saveRoutes(sent) {
+  const out = {};
+  for (const [code, value] of Object.entries(sent || {})) {
+    if (!/^\d+$/.test(code)) continue;
+    const points = [];
+    for (const p of Array.isArray(value?.points) ? value.points : []) {
+      const x = Number(p?.[0]);
+      const y = Number(p?.[1]);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      points.push([Math.round(x * 10) / 10, Math.round(y * 10) / 10]);
+      if (points.length >= 500) break;
+    }
+    if (points.length < 3) continue;
+    out[code] = { points, closed: value?.closed !== false };
+  }
+  fs.mkdirSync(path.join(ASSETS, "tracks"), { recursive: true });
+  writeJson(path.join(ASSETS, "tracks", "routes.json"), out);
+  return out;
+}
+
 /** Handle one request. Returns true if it was ours. */
 export function handle(req, res) {
   const url = new URL(req.url, "http://localhost");
@@ -187,6 +210,9 @@ export function handle(req, res) {
 
   if (req.method === "PUT" && parts.length === 2 && parts[1] === "starts")
     return put((sent) => send(200, saveStarts(sent)));
+
+  if (req.method === "PUT" && parts.length === 2 && parts[1] === "routes")
+    return put((sent) => send(200, saveRoutes(sent)));
 
   if (parts.length === 3 && parts[1] === "session") {
     const got = session(parts[2]);

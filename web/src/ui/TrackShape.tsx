@@ -19,6 +19,7 @@ export function TrackShape({
   lineRef,
   className = "",
   onPick,
+  onHover,
   children,
 }: {
   track: Track | null;
@@ -35,6 +36,8 @@ export function TrackShape({
   className?: string;
   /** Called with a point in the course's own coordinates. */
   onPick?: (x: number, y: number) => void;
+  /** The same, as the pointer moves. Null when it leaves. */
+  onHover?: (point: [number, number] | null) => void;
   children?: React.ReactNode;
 }) {
   const t = track ?? FALLBACK;
@@ -45,18 +48,23 @@ export function TrackShape({
   const pad = Math.max(t.width * 0.6, 4 * unit);
   const view = { x: -pad, y: -pad, w: w + 2 * pad, h: h + 2 * pad };
 
+  // The viewBox is letterboxed into the element by xMidYMid meet, so undo the
+  // fit before undoing the scale.
+  const pointIn = (e: React.MouseEvent<SVGSVGElement>): [number, number] => {
+    const box = e.currentTarget.getBoundingClientRect();
+    const scale = Math.min(box.width / view.w, box.height / view.h);
+    const left = box.left + (box.width - view.w * scale) / 2;
+    const top = box.top + (box.height - view.h * scale) / 2;
+    return [
+      (e.clientX - left) / scale + view.x,
+      (e.clientY - top) / scale + view.y,
+    ];
+  };
+
   const pick = onPick
     ? (e: React.MouseEvent<SVGSVGElement>) => {
-        const box = e.currentTarget.getBoundingClientRect();
-        // The viewBox is letterboxed into the element by xMidYMid meet, so
-        // undo the fit before undoing the scale.
-        const scale = Math.min(box.width / view.w, box.height / view.h);
-        const left = box.left + (box.width - view.w * scale) / 2;
-        const top = box.top + (box.height - view.h * scale) / 2;
-        onPick(
-          (e.clientX - left) / scale + view.x,
-          (e.clientY - top) / scale + view.y,
-        );
+        const [x, y] = pointIn(e);
+        onPick(x, y);
       }
     : undefined;
 
@@ -66,6 +74,8 @@ export function TrackShape({
       className={className}
       preserveAspectRatio="xMidYMid meet"
       onClick={pick}
+      onMouseMove={onHover ? (e) => onHover(pointIn(e)) : undefined}
+      onMouseLeave={onHover ? () => onHover(null) : undefined}
     >
       {drawing && t.image && (
         <image href={t.image} width={w} height={h} opacity={0.35} />
