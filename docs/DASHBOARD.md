@@ -158,8 +158,14 @@ writes `web/src/data/tracks.ts`, which is checked in. Two things come out of
 each drawing:
 
 - **the centreline**, `d` - the road is the region the outline encloses,
-  thinned to one pixel wide, and the lap is the longest route through what is
-  left. This is the line a lap fraction is measured along.
+  thinned to one pixel wide, and the lap is the shortest loop through what is
+  left that goes once round what the road encircles. Shortest, not longest:
+  where the road forks round an island the longest route went round the
+  island and carried on, which is the "loops round in a circle" James saw on
+  Daisy Circuit. A stretch that goes out and back through one junction (GCN
+  Peach Beach) is spliced in. A drawing with no such loop - a gap in the
+  outline, or a bridge drawn as a break - gets the longest route that passes
+  no junction twice. This is the line a lap fraction is measured along.
 - **the road**, `outline` - every side of a road pixel that faces something
   outside the road, chained into closed loops and filled even-odd, so a course
   drawn as a ring keeps its hole. It is a path rather than a picture because
@@ -170,10 +176,22 @@ each drawing:
 
 The tool prints what it found for each course, including `covers`: the traced
 lap divided by all the road in the drawing. About 1.0 means the lap covers the
-course; the tool flags anything outside 0.75-1.25. Nine courses are not drawn
-as one continuous ribbon - Rainbow Road and Grumble Volcano have gaps you jump,
-Mushroom Gorge has the bouncy mushrooms - and their pieces are joined end to
-end.
+course; the tool flags anything outside 0.75-1.25. Under 1.0 is expected
+wherever the road forks, since the lap takes one side. Ten courses are not
+drawn as one continuous ribbon - Rainbow Road and Grumble Volcano have gaps
+you jump, Mushroom Gorge has the bouncy mushrooms - and their pieces are put
+end to end in the order and directions that keep the gaps shortest in total,
+with islands, the interior and the other way round an obstacle left out.
+
+`--check DIR` writes one PNG per course with the drawing, the road the lap
+was cut from, the lap, its first point and its 10% marks, and any jump
+between pieces in magenta. That is how the tracing is checked; `covers`
+cannot tell a lap that goes once round from one that goes round an island.
+
+Re-running the tool keeps each course running the same way round as the
+path already in `tracks.ts`, because the direction flag in `starts.json`
+means "against the path" and only survives if the path does not turn. A
+filtered run (`build_tracks luigi`) rewrites just the matching courses.
 
 **What this is not**: the drawing is the real course and the trace follows it,
 but nothing in it says where the start line is or which way round the course
