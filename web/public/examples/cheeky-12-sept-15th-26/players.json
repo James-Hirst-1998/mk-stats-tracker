@@ -1,0 +1,20 @@
+{
+ "players": [
+  {
+   "name": "James",
+   "character": 17
+  },
+  {
+   "name": "Seb",
+   "character": 15
+  },
+  {
+   "name": "Shikhar",
+   "character": 6
+  },
+  {
+   "name": "Wang",
+   "character": 4
+  }
+ ]
+}

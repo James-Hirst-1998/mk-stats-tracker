@@ -67,7 +67,7 @@ session folder dropped or picked, or loose `.jsonl` files, and works out every
 number in the browser exactly as it does locally (`web/src/lib/local.ts`).
 Picking `races/` itself loads every session in it. Without a
 server there is also **See an example night**, which loads the copy of
-`cheeky-12-sept-15th-26` in `web/public/examples/` the same way, without its
+`cheeky-12-sept-15th-26` in `web/public/examples/` the same way, with its
 `players.json`; `public/` is
 served at `/` and copied into the build. The text is kept in the
 browser's IndexedDB, so a reload or a link to one race still works; nothing is
@@ -83,6 +83,11 @@ nothing there can be saved.
 The written pages are Markdown in `web/content/`, bundled at build time.
 `web/content/README.md` says which file is which page and how an update is
 named.
+
+A production build reports visits to PostHog's EU cloud
+(`web/src/lib/analytics.ts`); `npm run dev` sends nothing. Routes are in the
+hash, so pageviews are counted on hash changes and URLs keep the hash, both of
+which PostHog's current defaults turn off.
 
 ## Naming the players
 
