@@ -124,6 +124,10 @@ you can leave it open on a second screen: `tools/track.py` says which race is
 in progress and each one folds into the totals as it finishes. No sudo, and it
 reads nothing but the race logs. [docs/DASHBOARD.md](docs/DASHBOARD.md).
 
+`npm --prefix web run build` makes the same thing a static website: with no
+races directory behind it, you load a session folder into the page instead,
+and it is read in the browser.
+
 ## Record a race to work on offline
 
 Live debugging against a moving race is miserable. Record once, then test
@@ -154,7 +158,8 @@ mk/bin/python3 -m tools.replay_live mushroom-gorge --save   # and store it
 | `mkw/` | the library: addresses, names, live reads, event stream |
 | `mkw/capture/` | the recorder and the offline replay harness |
 | `tools/` | things you run: `track`, `report`, `record`, `verify`, `probe`, `replay_live` |
-| `web/` | the dashboard: a local web app over the stored races. [docs/DASHBOARD.md](docs/DASHBOARD.md) |
+| `web/` | the dashboard and the website around it. [docs/DASHBOARD.md](docs/DASHBOARD.md) |
+| `web/content/` | the site's written pages - setup guide, how it was built, updates - as Markdown |
 | `assets/` | character, item and course art the dashboard draws |
 | `races/` | saved sessions, one small file per race. Git-ignored by default |
 | `analysis/` | offline checks that produce the evidence for what's claimed |

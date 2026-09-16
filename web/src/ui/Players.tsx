@@ -4,10 +4,12 @@
 // are named after whoever they were driving, and the Characters/Names toggle
 // has nothing to switch to. Saving writes races/<session>/players.json, which
 // is the same file tools/report.py reads, so naming somebody here names them
-// everywhere rather than only in this browser.
+// everywhere rather than only in this browser. A session loaded from files
+// has no directory to write to, so its names are kept with the loaded copy.
 
 import { useEffect, useState } from "react";
-import type { Player } from "../lib/stats";
+import { isLocal, saveLocalPlayers } from "../lib/local";
+import type { PlayersFile, Player } from "../lib/stats";
 import { Card, Face, colorOf } from "./common";
 
 export function Players({
@@ -32,23 +34,28 @@ export function Players({
   const save = async () => {
     setSaving(true);
     setError(null);
+    const file: PlayersFile = {
+      players: players.map((p, i) => ({
+        name: names[i]?.trim() || p.name,
+        // Kept from what the session already matched on, so renaming
+        // somebody never changes which racer they are.
+        ...(p.character != null ? { character: p.character } : {}),
+        ...(p.human ? { human: true } : {}),
+      })),
+    };
     try {
-      const res = await fetch(`/api/session/${dir}/players`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          players: players.map((p, i) => ({
-            name: names[i]?.trim() || p.name,
-            // Kept from what the session already matched on, so renaming
-            // somebody never changes which racer they are.
-            ...(p.character != null ? { character: p.character } : {}),
-            ...(p.human ? { human: true } : {}),
-          })),
-        }),
-      });
-      if (!res.ok) {
-        const said = await res.json().catch(() => null);
-        throw new Error(said?.error || `${res.status}`);
+      if (isLocal(dir)) {
+        await saveLocalPlayers(dir, file);
+      } else {
+        const res = await fetch(`/api/session/${dir}/players`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(file),
+        });
+        if (!res.ok) {
+          const said = await res.json().catch(() => null);
+          throw new Error(said?.error || `${res.status}`);
+        }
       }
       onSaved();
     } catch (err) {
@@ -113,7 +120,10 @@ export function Players({
           Close
         </button>
         <span className="text-xs text-muted">
-          {error ?? `Written to races/${dir}/players.json.`}
+          {error ??
+            (isLocal(dir)
+              ? "Kept in this browser with the loaded files."
+              : `Written to races/${dir}/players.json.`)}
         </span>
       </div>
     </Card>
