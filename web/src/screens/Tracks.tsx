@@ -67,7 +67,7 @@ export function Tracks() {
 
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-8">
-      <a href="#/" className="mb-4 inline-block text-sm text-brand hover:underline">
+      <a href="#/stats" className="mb-4 inline-block text-sm text-brand hover:underline">
         ← back to stats
       </a>
 

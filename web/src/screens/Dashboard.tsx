@@ -7,7 +7,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { go } from "../App";
-import { useSession, useSessions } from "../lib/data";
+import {
+  useHasApi,
+  useSession,
+  useSessions,
+  type SessionListing,
+} from "../lib/data";
 import {
   awards as computeAwards,
   cpuTotals,
@@ -32,6 +37,7 @@ import {
   ItemStrip,
   ItemsTable,
 } from "../ui/Items";
+import { LoadRaces } from "../ui/LoadRaces";
 import { Players } from "../ui/Players";
 import {
   Card,
@@ -50,7 +56,8 @@ import { Widget, WidgetGrid } from "../ui/Widget";
 import { PerPlayer } from "./Race";
 
 export function Dashboard({ dir }: { dir: string | null }) {
-  const sessions = useSessions();
+  const { list: sessions, ready } = useSessions();
+  const api = useHasApi();
   const chosen = dir ?? sessions[0]?.dir ?? null;
   const { stats, live, error, loading } = useSession(chosen);
   const [mode, setMode] = useState<NameMode>(
@@ -64,6 +71,8 @@ export function Dashboard({ dir }: { dir: string | null }) {
   const count = stats?.races.length ?? 0;
   const thru = pinned == null ? count : Math.min(pinned, count);
   const [naming, setNaming] = useState(false);
+  const [picking, setPicking] = useState(false);
+  const empty = ready && sessions.length === 0;
 
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-8">
@@ -76,7 +85,23 @@ export function Dashboard({ dir }: { dir: string | null }) {
         setMode={setMode}
         naming={naming}
         setNaming={setNaming}
+        picking={picking}
+        setPicking={setPicking}
       />
+
+      {empty && (
+        <p className="mt-4 max-w-2xl text-sm text-ink-soft">
+          No races here yet. Load a night you tracked and every number below is
+          worked out from those files, in this browser.{" "}
+          <a href="#/setup" className="text-brand hover:underline">
+            How to track one
+          </a>
+          .
+        </p>
+      )}
+      {(picking || empty) && (
+        <LoadRaces onClose={empty ? undefined : () => setPicking(false)} />
+      )}
 
       {naming && stats && chosen && (
         <Players
@@ -126,10 +151,15 @@ export function Dashboard({ dir }: { dir: string | null }) {
       <footer className="mt-10 pb-6 text-center text-xs text-muted">
         Every number here is computed from the stored race logs by fixed rules
         (<code className="font-mono">web/src/lib/stats.ts</code>). Same files in,
-        same numbers out. ·{" "}
-        <a href="#/tracks" className="text-brand hover:underline">
-          course outlines
-        </a>
+        same numbers out.
+        {api && (
+          <>
+            {" "}·{" "}
+            <a href="#/tracks" className="text-brand hover:underline">
+              course outlines
+            </a>
+          </>
+        )}
       </footer>
     </div>
   );
@@ -144,8 +174,10 @@ function TopBar({
   setMode,
   naming,
   setNaming,
+  picking,
+  setPicking,
 }: {
-  sessions: { dir: string; name: string; started: string; races: number }[];
+  sessions: SessionListing[];
   chosen: string | null;
   live: { race: number; course: number | null } | null;
   stats: SessionStats | null;
@@ -153,12 +185,14 @@ function TopBar({
   setMode: (m: NameMode) => void;
   naming: boolean;
   setNaming: (b: boolean) => void;
+  picking: boolean;
+  setPicking: (b: boolean) => void;
 }) {
   return (
     <header className="flex flex-wrap items-end gap-x-4 gap-y-3">
       <div className="mr-auto">
         <h1 className="text-3xl font-bold tracking-tight text-brand-deep">
-          {stats?.name ?? "Mario Kart"}
+          {stats?.name ?? "Race stats"}
         </h1>
         <p className="mt-0.5 text-sm text-ink-soft">
           {stats?.started ? new Date(stats.started).toLocaleString() : " "}
@@ -178,6 +212,8 @@ function TopBar({
         </span>
       )}
 
+      {stats && (
+      <>
       <Segmented
         value={mode}
         onChange={setMode}
@@ -197,19 +233,37 @@ function TopBar({
       >
         Who is who
       </button>
+      </>
+      )}
 
-      <select
-        value={chosen ?? ""}
-        onChange={(e) => go(`/s/${e.target.value}`)}
-        className="rounded-full border border-line bg-white/80 px-4 py-1.5 text-sm"
-      >
-        {sessions.map((s) => (
-          <option key={s.dir} value={s.dir}>
-            {s.name} · {s.started.slice(0, 10)} · {s.races} race
-            {s.races === 1 ? "" : "s"}
-          </option>
-        ))}
-      </select>
+      {sessions.length > 0 && (
+        <select
+          value={chosen ?? ""}
+          onChange={(e) => go(`/s/${e.target.value}`)}
+          className="max-w-full rounded-full border border-line bg-white/80 px-4 py-1.5 text-sm"
+        >
+          {sessions.map((s) => (
+            <option key={s.dir} value={s.dir}>
+              {s.name} · {s.started.slice(0, 10)} · {s.races} race
+              {s.races === 1 ? "" : "s"}
+              {s.local ? " · loaded" : ""}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {sessions.length > 0 && (
+        <button
+          onClick={() => setPicking(!picking)}
+          className={`rounded-full border px-4 py-1.5 text-sm ${
+            picking
+              ? "border-brand bg-brand text-white"
+              : "border-line bg-white/80 hover:bg-line-soft"
+          }`}
+        >
+          Load races
+        </button>
+      )}
     </header>
   );
 }

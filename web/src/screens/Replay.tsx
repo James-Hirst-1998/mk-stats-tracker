@@ -8,7 +8,7 @@
 // an estimate and is labelled as one.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRace } from "../lib/data";
+import { useHasApi, useRace } from "../lib/data";
 import { replayData, slotsOf } from "../lib/stats";
 import { trackFor } from "../data/tracks";
 import { useRoutes, useStarts, withRoute } from "../lib/route";
@@ -35,6 +35,7 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
   const { stats, log, error } = useRace(dir, file);
   const [starts] = useStarts();
   const [routes] = useRoutes();
+  const api = useHasApi();
   const players = stats?.players ?? [];
   // The same Characters/Names choice the dashboard is showing.
   const mode = (localStorage.getItem("mkw.mode") as NameMode) ?? "characters";
@@ -226,11 +227,16 @@ export function Replay({ dir, file }: { dir: string; file: string }) {
             ) : (
               <>
                 The real course, but nobody has said where its start line is, so
-                a lap is measured from wherever the tracing began.{" "}
-                <a href="#/tracks" className="text-brand underline">
-                  Set it, or draw the lap
-                </a>
-                .
+                a lap is measured from wherever the tracing began.
+                {api && (
+                  <>
+                    {" "}
+                    <a href="#/tracks" className="text-brand underline">
+                      Set it, or draw the lap
+                    </a>
+                    .
+                  </>
+                )}
               </>
             )}{" "}
             How far round the lap each kart is comes from the log; which lane it

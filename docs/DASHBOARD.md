@@ -45,6 +45,45 @@ Four screens, all under the one hash router:
   behind it, with the traced centreline and the point a lap is measured from -
   this is how the tracing gets checked.
 
+Those sit inside a small site: `#/` the front page, `#/stats` the session
+screen above, and three written pages, `#/setup`, `#/journey` and `#/updates`.
+
+## The website
+
+The same app, built, runs on any static host with no races directory behind
+it.
+
+```
+npm --prefix web run build
+```
+
+Upload `web/dist`. The build copies `assets/` in beside the app (Vite's own
+files go under `dist/app/` so the two never share a directory), except
+`assets/tracks/source`, the layout drawings, which only the `#/tracks` editor
+shows.
+
+With no server, the stats page asks for files instead: **Load races** takes a
+session folder dropped or picked, or loose `.jsonl` files, and works out every
+number in the browser exactly as it does locally (`web/src/lib/local.ts`).
+Picking `races/` itself loads every session in it. Without a
+server there is also **See an example night**, which loads the copy of
+`cheeky-12-sept-15th-26` in `web/public/examples/` the same way, without its
+`players.json`; `public/` is
+served at `/` and copied into the build. The text is kept in the
+browser's IndexedDB, so a reload or a link to one race still works; nothing is
+uploaded. **Who is who** saves names with the loaded copy rather than to
+`players.json`.
+
+Whether there is a server is asked once, at load, by fetching
+`/api/sessions`: a static host answers with a 404 or with `index.html`, and
+neither is JSON. With a server, loaded sessions are listed above the ones on
+disk and marked "loaded". The `#/tracks` links are hidden without one, since
+nothing there can be saved.
+
+The written pages are Markdown in `web/content/`, bundled at build time.
+`web/content/README.md` says which file is which page and how an update is
+named.
+
 ## Naming the players
 
 **Who is who** on the dashboard is the easy way: it lists the racers the logs

@@ -9,10 +9,12 @@
     "check": "tsc -b --noEmit"
   },
   "dependencies": {
+    "marked": "^18.0.13",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.14",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
