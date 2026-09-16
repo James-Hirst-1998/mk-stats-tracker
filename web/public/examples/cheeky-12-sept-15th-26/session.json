@@ -1,0 +1,105 @@
+{
+ "type": "session",
+ "version": 1,
+ "name": "cheeky-12-sept-15th-26",
+ "started": "2026-09-15T19:55:34",
+ "races": [
+  {
+   "n": 1,
+   "file": "01-gba-shy-guy-beach.jsonl",
+   "course": 31,
+   "events": 869,
+   "your_position": 1,
+   "your_time": 114.565
+  },
+  {
+   "n": 2,
+   "file": "02-moo-moo-meadows.jsonl",
+   "course": 1,
+   "events": 691,
+   "your_position": 1,
+   "your_time": 93.493
+  },
+  {
+   "n": 3,
+   "file": "03-bowser-s-castle.jsonl",
+   "course": 12,
+   "events": 1386,
+   "your_position": 1,
+   "your_time": 200.466
+  },
+  {
+   "n": 4,
+   "file": "04-snes-ghost-valley-2.jsonl",
+   "course": 25,
+   "events": 606,
+   "your_position": 3,
+   "your_time": 74.208
+  },
+  {
+   "n": 5,
+   "file": "05-coconut-mall.jsonl",
+   "course": 5,
+   "events": 798,
+   "your_position": 1,
+   "your_time": 152.284
+  },
+  {
+   "n": 6,
+   "file": "06-luigi-circuit.jsonl",
+   "course": 8,
+   "events": 676,
+   "your_position": 9,
+   "your_time": 97.889
+  },
+  {
+   "n": 7,
+   "file": "07-ds-yoshi-falls.jsonl",
+   "course": 20,
+   "events": 470,
+   "your_position": 1,
+   "your_time": 80.396
+  },
+  {
+   "n": 8,
+   "file": "08-n64-dk-s-jungle-parkway.jsonl",
+   "course": 29,
+   "events": 1019,
+   "your_position": 9,
+   "your_time": 190.622
+  },
+  {
+   "n": 9,
+   "file": "09-koopa-cape.jsonl",
+   "course": 15,
+   "events": 939,
+   "your_position": 5,
+   "your_time": 184.557
+  },
+  {
+   "n": 10,
+   "file": "10-ds-delfino-square.jsonl",
+   "course": 23,
+   "events": 799,
+   "your_position": 3,
+   "your_time": 166.62
+  },
+  {
+   "n": 11,
+   "file": "11-gcn-waluigi-stadium.jsonl",
+   "course": 18,
+   "events": 939,
+   "your_position": 4,
+   "your_time": 161.922
+  },
+  {
+   "n": 12,
+   "file": "12-dry-dry-ruins.jsonl",
+   "course": 14,
+   "events": 769,
+   "your_position": 8,
+   "your_time": 152.044
+  }
+ ],
+ "ended": "2026-09-15T20:30:32"
+}

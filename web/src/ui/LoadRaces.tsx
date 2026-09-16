@@ -196,7 +196,7 @@ export function LoadRaces({ onClose }: { onClose?: () => void }) {
             <ExampleButton className="font-semibold text-brand hover:underline disabled:opacity-50">
               See an example night →
             </ExampleButton>
-            <span className="text-muted">four players, Maple Treeway and Koopa Cape</span>
+            <span className="text-muted">four players, twelve races</span>
           </div>
         )}
 
