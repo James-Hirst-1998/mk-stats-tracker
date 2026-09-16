@@ -240,7 +240,7 @@ function TopBar({
         <select
           value={chosen ?? ""}
           onChange={(e) => go(`/s/${e.target.value}`)}
-          className="rounded-full border border-line bg-white/80 px-4 py-1.5 text-sm"
+          className="max-w-full rounded-full border border-line bg-white/80 px-4 py-1.5 text-sm"
         >
           {sessions.map((s) => (
             <option key={s.dir} value={s.dir}>

@@ -3,7 +3,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { go } from "../App";
-import { forget, loadFiles, useLocalSessions, type Picked } from "../lib/local";
+import { useHasApi } from "../lib/data";
+import {
+  forget,
+  loadExample,
+  loadFiles,
+  useLocalSessions,
+  type Picked,
+} from "../lib/local";
 import { Card } from "./common";
 
 /** Everything under a dropped entry. A browser hands a dropped folder over as
@@ -28,8 +35,41 @@ async function walk(entry: FileSystemEntry, into: string, out: Picked[]) {
   }
 }
 
+/** Loads the example night and opens it. */
+export function ExampleButton({
+  className,
+  children,
+}: {
+  className: string;
+  children: React.ReactNode;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  const open = async () => {
+    setBusy(true);
+    setFailed(null);
+    try {
+      go(`/s/${await loadExample()}`);
+    } catch (err) {
+      setFailed(`Could not load the example: ${err instanceof Error ? err.message : err}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <button onClick={open} disabled={busy} className={className}>
+        {busy ? "Loading…" : children}
+      </button>
+      {failed && <span className="text-xs text-muted">{failed}</span>}
+    </>
+  );
+}
+
 export function LoadRaces({ onClose }: { onClose?: () => void }) {
   const loaded = useLocalSessions();
+  // The example is for visitors. Running locally, there are real races.
+  const hosted = useHasApi() === false;
   const [over, setOver] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notes, setNotes] = useState<string[]>([]);
@@ -149,6 +189,16 @@ export function LoadRaces({ onClose }: { onClose?: () => void }) {
             onChange={(e) => fromInput(e.currentTarget)}
           />
         </div>
+
+        {hosted && (
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-soft">
+            <span>No races of your own?</span>
+            <ExampleButton className="font-semibold text-brand hover:underline disabled:opacity-50">
+              See an example night →
+            </ExampleButton>
+            <span className="text-muted">four players, Maple Treeway and Koopa Cape</span>
+          </div>
+        )}
 
         {notes.length > 0 && (
           <ul className="mt-3 space-y-1 text-sm text-ink-soft">

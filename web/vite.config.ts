@@ -27,7 +27,9 @@ function copyAssets(): Plugin {
 // dashboard share one copy).
 export default defineConfig({
   plugins: [react(), tailwind(), racesApi(), copyAssets()],
-  publicDir: false,
+  // public/ holds the example night the site offers to people with no races
+  // of their own; it is served at /examples and copied into the build.
+  publicDir: "public",
   server: { port: 8125, strictPort: true },
   // Vite's own bundles go under app/, because assets/ is the repo's art.
   build: { outDir: "dist", emptyOutDir: true, assetsDir: "app" },

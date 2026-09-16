@@ -197,3 +197,26 @@ export async function loadFiles(picked: Picked[]) {
     skipped.push("No race logs in that. Pick a session folder from races/, or its .jsonl files.");
   return { loaded, skipped };
 }
+
+/** A real night shipped with the site, so somebody with no races of their own
+ *  can see every screen. James chose which: four players, two races. It goes
+ *  through loadFiles like a dropped folder, so it is shown exactly as one. */
+const EXAMPLE = {
+  folder: "cheeky-16-sept-15th-26",
+  files: ["session.json", "01-maple-treeway.jsonl", "02-koopa-cape.jsonl"],
+};
+
+export async function loadExample(): Promise<string> {
+  const dir = PREFIX + EXAMPLE.folder;
+  if (await localSession(dir)) return dir;
+  const picked = await Promise.all(
+    EXAMPLE.files.map(async (name) => {
+      const res = await fetch(`/examples/${EXAMPLE.folder}/${name}`);
+      if (!res.ok) throw new Error(`${name}: ${res.status}`);
+      return { path: `${EXAMPLE.folder}/${name}`, file: new File([await res.text()], name) };
+    }),
+  );
+  const { loaded } = await loadFiles(picked);
+  if (!loaded.length) throw new Error("the example did not load");
+  return loaded[0];
+}

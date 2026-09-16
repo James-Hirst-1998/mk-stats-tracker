@@ -65,7 +65,10 @@ shows.
 With no server, the stats page asks for files instead: **Load races** takes a
 session folder dropped or picked, or loose `.jsonl` files, and works out every
 number in the browser exactly as it does locally (`web/src/lib/local.ts`).
-Picking `races/` itself loads every session in it. The text is kept in the
+Picking `races/` itself loads every session in it. Without a
+server there is also **See an example night**, which loads the copy of
+`cheeky-16-sept-15th-26` in `web/public/examples/` the same way; `public/` is
+served at `/` and copied into the build. The text is kept in the
 browser's IndexedDB, so a reload or a link to one race still works; nothing is
 uploaded. **Who is who** saves names with the loaded copy rather than to
 `players.json`.

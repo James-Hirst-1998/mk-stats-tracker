@@ -1,0 +1,1126 @@
+{"type": "race", "version": 1, "recorded": "2026-09-15T19:41:11", "course": 11, "laps": 3, "begins": 0.033, "local_slot": 0, "racers": [{"slot": 0, "character": 17, "vehicle": 22, "type": 0, "cpu": false, "grid": 12}, {"slot": 1, "character": 15, "vehicle": 22, "type": 0, "cpu": false, "grid": 11}, {"slot": 2, "character": 6, "vehicle": 21, "type": 0, "cpu": false, "grid": 10}, {"slot": 3, "character": 13, "vehicle": 21, "type": 0, "cpu": false, "grid": 9}, {"slot": 4, "character": 5, "vehicle": 12, "type": 1, "cpu": true, "grid": 8}, {"slot": 5, "character": 16, "vehicle": 16, "type": 1, "cpu": true, "grid": 7}, {"slot": 6, "character": 18, "vehicle": 31, "type": 1, "cpu": true, "grid": 6}, {"slot": 7, "character": 12, "vehicle": 21, "type": 1, "cpu": true, "grid": 5}, {"slot": 8, "character": 21, "vehicle": 32, "type": 1, "cpu": true, "grid": 4}, {"slot": 9, "character": 9, "vehicle": 17, "type": 1, "cpu": true, "grid": 3}, {"slot": 10, "character": 23, "vehicle": 5, "type": 1, "cpu": true, "grid": 2}, {"slot": 11, "character": 22, "vehicle": 20, "type": 1, "cpu": true, "grid": 1}], "source": "live", "settings": ["0x0000000b", "0x00000002", "0x00000001", "0x00000000", "0x00000000", "0x00000002", "0x00000001", "0x00010203", "0x00000000", "0x00030000", "0x00000000", "0x841e4132", "0x000082e4", "0x00000000", "0x00000000", "0x00000000"]}
+{"t": 0.033, "type": "start", "course": 11}
+{"t": 0.033, "type": "field", "text": "you are Birdo on the Mach Bike, starting 12th"}
+{"t": 0.033, "type": "field", "text": "3 human: Daisy, Baby Mario, Toadette"}
+{"t": 0.033, "type": "field", "text": "8 CPU: Dry Bones, Peach, Diddy Kong, Baby Luigi, Dry Bowser, Donkey Kong, Rosalina, Funky Kong"}
+{"t": 0.317, "type": "pos", "slot": 3, "from": 9, "to": 8}
+{"t": 0.317, "type": "pos", "slot": 4, "from": 8, "to": 9}
+{"t": 0.583, "type": "pos", "slot": 2, "from": 10, "to": 9}
+{"t": 0.583, "type": "pos", "slot": 4, "from": 9, "to": 10}
+{"t": 0.65, "type": "pos", "slot": 1, "from": 11, "to": 10}
+{"t": 0.65, "type": "pos", "slot": 4, "from": 10, "to": 11}
+{"t": 0.75, "type": "pos", "slot": 0, "from": 12, "to": 11}
+{"t": 0.75, "type": "pos", "slot": 4, "from": 11, "to": 12}
+{"t": 1.85, "type": "pos", "slot": 0, "from": 11, "to": 10}
+{"t": 1.85, "type": "pos", "slot": 1, "from": 10, "to": 11}
+{"t": 2.117, "type": "pos", "slot": 3, "from": 8, "to": 7}
+{"t": 2.117, "type": "pos", "slot": 5, "from": 7, "to": 8}
+{"t": 2.517, "type": "pos", "slot": 3, "from": 7, "to": 8}
+{"t": 2.517, "type": "pos", "slot": 5, "from": 8, "to": 7}
+{"t": 2.917, "type": "pos", "slot": 7, "from": 5, "to": 4}
+{"t": 2.917, "type": "pos", "slot": 8, "from": 4, "to": 5}
+{"t": 3.35, "type": "pos", "slot": 6, "from": 6, "to": 5}
+{"t": 3.35, "type": "pos", "slot": 8, "from": 5, "to": 6}
+{"t": 3.583, "type": "pos", "slot": 7, "from": 4, "to": 3}
+{"t": 3.583, "type": "pos", "slot": 9, "from": 3, "to": 4}
+{"t": 3.783, "type": "pos", "slot": 6, "from": 5, "to": 4}
+{"t": 3.783, "type": "pos", "slot": 9, "from": 4, "to": 5}
+{"t": 3.85, "type": "pos", "slot": 7, "from": 3, "to": 2}
+{"t": 3.85, "type": "pos", "slot": 10, "from": 2, "to": 3}
+{"t": 4.017, "type": "pos", "slot": 6, "from": 4, "to": 3}
+{"t": 4.017, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 4.25, "type": "pos", "slot": 7, "from": 2, "to": 1}
+{"t": 4.25, "type": "pos", "slot": 11, "from": 1, "to": 2}
+{"t": 4.25, "type": "box", "slot": 11, "item": 3}
+{"t": 4.283, "type": "box", "slot": 7, "item": 18}
+{"t": 4.417, "type": "pos", "slot": 6, "from": 3, "to": 2}
+{"t": 4.417, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 4.75, "type": "pos", "slot": 5, "from": 7, "to": 6}
+{"t": 4.75, "type": "pos", "slot": 8, "from": 6, "to": 7}
+{"t": 4.75, "type": "box", "slot": 9, "item": 16}
+{"t": 4.85, "type": "pos", "slot": 2, "from": 9, "to": 8}
+{"t": 4.85, "type": "pos", "slot": 3, "from": 8, "to": 9}
+{"t": 4.85, "type": "pos", "slot": 5, "from": 6, "to": 5}
+{"t": 4.85, "type": "pos", "slot": 9, "from": 5, "to": 6}
+{"t": 5.25, "type": "pos", "slot": 1, "from": 11, "to": 12}
+{"t": 5.25, "type": "box", "slot": 2, "item": 10}
+{"t": 5.25, "type": "pos", "slot": 4, "from": 12, "to": 11}
+{"t": 5.25, "type": "pos", "slot": 5, "from": 5, "to": 4}
+{"t": 5.25, "type": "pos", "slot": 10, "from": 4, "to": 5}
+{"t": 5.417, "type": "pos", "slot": 6, "from": 2, "to": 1}
+{"t": 5.417, "type": "pos", "slot": 7, "from": 1, "to": 2}
+{"t": 5.417, "type": "hold", "slot": 11, "item": 3}
+{"t": 5.483, "type": "pos", "slot": 5, "from": 4, "to": 5}
+{"t": 5.483, "type": "hold", "slot": 7, "item": 18}
+{"t": 5.483, "type": "pos", "slot": 10, "from": 5, "to": 4}
+{"t": 5.517, "type": "pos", "slot": 7, "from": 2, "to": 3}
+{"t": 5.517, "type": "use", "slot": 7, "item": 18}
+{"t": 5.517, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 5.75, "type": "pos", "slot": 5, "from": 5, "to": 7}
+{"t": 5.75, "type": "pos", "slot": 8, "from": 7, "to": 6}
+{"t": 5.75, "type": "pos", "slot": 9, "from": 6, "to": 5}
+{"t": 5.817, "type": "pos", "slot": 8, "from": 6, "to": 5}
+{"t": 5.817, "type": "pos", "slot": 9, "from": 5, "to": 6}
+{"t": 5.983, "type": "pos", "slot": 7, "from": 3, "to": 4}
+{"t": 5.983, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 6.133, "type": "pos", "slot": 7, "from": 4, "to": 5}
+{"t": 6.133, "type": "pos", "slot": 8, "from": 5, "to": 4}
+{"t": 6.283, "type": "pos", "slot": 7, "from": 5, "to": 6}
+{"t": 6.283, "type": "pos", "slot": 9, "from": 6, "to": 5}
+{"t": 6.583, "type": "box", "slot": 1, "item": 9}
+{"t": 6.617, "type": "pos", "slot": 2, "from": 8, "to": 7}
+{"t": 6.617, "type": "pos", "slot": 5, "from": 7, "to": 8}
+{"t": 6.783, "type": "pos", "slot": 3, "from": 9, "to": 8}
+{"t": 6.783, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 7.183, "type": "hit", "slot": 3, "damage": 0, "object": 2, "by": [7], "place": 8, "for": 0.667}
+{"t": 7.25, "type": "pos", "slot": 2, "from": 7, "to": 6}
+{"t": 7.25, "type": "pos", "slot": 7, "from": 6, "to": 7}
+{"t": 7.417, "type": "pos", "slot": 3, "from": 8, "to": 7}
+{"t": 7.417, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 7.65, "type": "pos", "slot": 3, "from": 7, "to": 8}
+{"t": 7.65, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 7.75, "type": "pos", "slot": 8, "from": 4, "to": 5}
+{"t": 7.75, "type": "pos", "slot": 9, "from": 5, "to": 4}
+{"t": 7.85, "type": "pos", "slot": 3, "from": 8, "to": 9}
+{"t": 7.85, "type": "pos", "slot": 5, "from": 9, "to": 8}
+{"t": 7.917, "type": "pos", "slot": 6, "from": 1, "to": 2}
+{"t": 7.917, "type": "pos", "slot": 11, "from": 2, "to": 1}
+{"t": 7.983, "type": "pos", "slot": 0, "from": 10, "to": 9}
+{"t": 7.983, "type": "pos", "slot": 3, "from": 9, "to": 10}
+{"t": 8.183, "type": "pos", "slot": 0, "from": 9, "to": 8}
+{"t": 8.183, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 8.817, "type": "hold", "slot": 2, "item": 10}
+{"t": 10.15, "type": "hold", "slot": 1, "item": 9}
+{"t": 11.75, "type": "pos", "slot": 6, "from": 2, "to": 1}
+{"t": 11.75, "type": "pos", "slot": 11, "from": 1, "to": 2}
+{"t": 12.25, "type": "use", "slot": 11, "item": 3}
+{"t": 12.533, "type": "hit", "slot": 10, "damage": 2, "object": 0, "by": [9], "place": 3, "for": 1.683}
+{"t": 12.817, "type": "pos", "slot": 9, "from": 4, "to": 3}
+{"t": 12.817, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 13.383, "type": "pos", "slot": 0, "from": 8, "to": 7}
+{"t": 13.383, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 13.383, "type": "pos", "slot": 8, "from": 5, "to": 4}
+{"t": 13.383, "type": "pos", "slot": 10, "from": 4, "to": 5}
+{"t": 13.55, "type": "pos", "slot": 2, "from": 6, "to": 5}
+{"t": 13.55, "type": "pos", "slot": 10, "from": 5, "to": 6}
+{"t": 13.617, "type": "pos", "slot": 0, "from": 7, "to": 6}
+{"t": 13.617, "type": "pos", "slot": 10, "from": 6, "to": 7}
+{"t": 13.717, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 13.717, "type": "pos", "slot": 10, "from": 7, "to": 8}
+{"t": 13.833, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 13.833, "type": "pos", "slot": 8, "from": 4, "to": 5}
+{"t": 14.167, "type": "pos", "slot": 5, "from": 9, "to": 8}
+{"t": 14.167, "type": "pos", "slot": 10, "from": 8, "to": 9}
+{"t": 14.617, "type": "use", "slot": 1, "item": 9}
+{"t": 14.783, "type": "pos", "slot": 3, "from": 10, "to": 9}
+{"t": 14.783, "type": "pos", "slot": 10, "from": 9, "to": 10}
+{"t": 15.183, "type": "pos", "slot": 0, "from": 6, "to": 5}
+{"t": 15.183, "type": "pos", "slot": 8, "from": 5, "to": 6}
+{"t": 15.217, "type": "pos", "slot": 2, "from": 4, "to": 3}
+{"t": 15.217, "type": "pos", "slot": 4, "from": 11, "to": 10}
+{"t": 15.217, "type": "pos", "slot": 9, "from": 3, "to": 4}
+{"t": 15.217, "type": "pos", "slot": 10, "from": 10, "to": 11}
+{"t": 15.283, "type": "pos", "slot": 1, "from": 12, "to": 11}
+{"t": 15.283, "type": "pos", "slot": 10, "from": 11, "to": 12}
+{"t": 15.35, "type": "pos", "slot": 1, "from": 11, "to": 10}
+{"t": 15.35, "type": "pos", "slot": 4, "from": 10, "to": 11}
+{"t": 15.45, "type": "hit", "slot": 3, "damage": 3, "object": null, "by": [1], "place": 9, "guess": true, "for": 1.633}
+{"t": 15.517, "type": "pos", "slot": 1, "from": 10, "to": 9}
+{"t": 15.517, "type": "pos", "slot": 3, "from": 9, "to": 10}
+{"t": 15.567, "type": "pos", "slot": 3, "from": 10, "to": 11}
+{"t": 15.567, "type": "pos", "slot": 4, "from": 11, "to": 10}
+{"t": 15.683, "type": "pos", "slot": 3, "from": 11, "to": 12}
+{"t": 15.683, "type": "pos", "slot": 10, "from": 12, "to": 11}
+{"t": 16.283, "type": "pos", "slot": 2, "from": 3, "to": 2}
+{"t": 16.283, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 16.783, "type": "pos", "slot": 2, "from": 2, "to": 1}
+{"t": 16.783, "type": "pos", "slot": 6, "from": 1, "to": 2}
+{"t": 16.85, "type": "pos", "slot": 4, "from": 10, "to": 11}
+{"t": 16.85, "type": "pos", "slot": 10, "from": 11, "to": 10}
+{"t": 17.017, "type": "hit", "slot": 7, "damage": 2, "object": 0, "by": [9], "place": 7, "for": 1.667}
+{"t": 17.35, "type": "pos", "slot": 1, "from": 9, "to": 8}
+{"t": 17.35, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 17.517, "type": "pos", "slot": 1, "from": 8, "to": 7}
+{"t": 17.517, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 17.683, "type": "pos", "slot": 5, "from": 9, "to": 8}
+{"t": 17.683, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 18.25, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 18.25, "type": "pos", "slot": 10, "from": 10, "to": 9}
+{"t": 18.583, "type": "pos", "slot": 4, "from": 11, "to": 10}
+{"t": 18.583, "type": "pos", "slot": 7, "from": 10, "to": 11}
+{"t": 18.783, "type": "box", "slot": 0, "item": 11}
+{"t": 19.817, "type": "box", "slot": 1, "item": 17}
+{"t": 20.317, "type": "box", "slot": 10, "item": 11}
+{"t": 20.65, "type": "use", "slot": 2, "item": 10}
+{"t": 21.117, "type": "box", "slot": 4, "item": 9}
+{"t": 21.517, "type": "hold", "slot": 10, "item": 11}
+{"t": 21.85, "type": "pos", "slot": 1, "from": 7, "to": 6}
+{"t": 21.85, "type": "pos", "slot": 8, "from": 6, "to": 7}
+{"t": 22.25, "type": "hold", "slot": 4, "item": 9}
+{"t": 22.35, "type": "hold", "slot": 0, "item": 11}
+{"t": 22.417, "type": "box", "slot": 7, "item": 9}
+{"t": 22.683, "type": "use", "slot": 4, "item": 9}
+{"t": 23.25, "type": "pos", "slot": 0, "from": 5, "to": 6}
+{"t": 23.25, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 23.317, "type": "hold", "slot": 1, "item": 17}
+{"t": 23.483, "type": "use", "slot": 0, "item": 11}
+{"t": 23.517, "type": "hit", "slot": 3, "damage": 0, "object": 2, "by": [10], "place": 12, "for": 0.667}
+{"t": 23.583, "type": "hold", "slot": 7, "item": 9}
+{"t": 23.75, "type": "use", "slot": 10, "item": 11}
+{"t": 24.083, "type": "hit", "slot": 5, "damage": 13, "object": null, "by": [10], "place": 8, "guess": true, "for": 0.333}
+{"t": 24.117, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 24.117, "type": "pos", "slot": 10, "from": 9, "to": 8}
+{"t": 24.417, "type": "pos", "slot": 0, "from": 6, "to": 5}
+{"t": 24.417, "type": "pos", "slot": 1, "from": 5, "to": 7}
+{"t": 24.417, "type": "pos", "slot": 2, "from": 1, "to": 2}
+{"t": 24.417, "type": "pos", "slot": 6, "from": 2, "to": 1}
+{"t": 24.417, "type": "pos", "slot": 8, "from": 7, "to": 6}
+{"t": 24.467, "type": "use", "slot": 1, "item": 17}
+{"t": 24.517, "type": "pos", "slot": 0, "from": 5, "to": 6}
+{"t": 24.517, "type": "pos", "slot": 8, "from": 6, "to": 5}
+{"t": 24.617, "type": "hit", "slot": 5, "damage": 3, "object": null, "by": [4], "place": 9, "guess": true, "for": 1.7}
+{"t": 24.683, "type": "pos", "slot": 4, "from": 10, "to": 9}
+{"t": 24.683, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 24.917, "type": "pos", "slot": 1, "from": 7, "to": 8}
+{"t": 24.917, "type": "pos", "slot": 10, "from": 8, "to": 7}
+{"t": 25.517, "type": "pos", "slot": 1, "from": 8, "to": 9}
+{"t": 25.517, "type": "pos", "slot": 4, "from": 9, "to": 8}
+{"t": 25.65, "type": "pos", "slot": 9, "from": 4, "to": 3}
+{"t": 25.65, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 25.85, "type": "pos", "slot": 0, "from": 6, "to": 5}
+{"t": 25.85, "type": "pos", "slot": 8, "from": 5, "to": 6}
+{"t": 25.983, "type": "pos", "slot": 2, "from": 2, "to": 1}
+{"t": 25.983, "type": "pos", "slot": 6, "from": 1, "to": 2}
+{"t": 26.317, "type": "pos", "slot": 6, "from": 2, "to": 3}
+{"t": 26.317, "type": "pos", "slot": 9, "from": 3, "to": 2}
+{"t": 26.417, "type": "pos", "slot": 6, "from": 3, "to": 4}
+{"t": 26.417, "type": "pos", "slot": 11, "from": 4, "to": 3}
+{"t": 26.483, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 26.483, "type": "pos", "slot": 7, "from": 11, "to": 10}
+{"t": 26.817, "type": "use", "slot": 7, "item": 9}
+{"t": 27.383, "type": "pos", "slot": 0, "from": 5, "to": 4}
+{"t": 27.383, "type": "pos", "slot": 6, "from": 4, "to": 5}
+{"t": 27.483, "type": "pos", "slot": 1, "from": 9, "to": 10}
+{"t": 27.483, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 27.767, "type": "pos", "slot": 6, "from": 5, "to": 6}
+{"t": 27.767, "type": "pos", "slot": 8, "from": 6, "to": 5}
+{"t": 27.817, "type": "pos", "slot": 3, "from": 12, "to": 11}
+{"t": 27.817, "type": "pos", "slot": 5, "from": 11, "to": 12}
+{"t": 27.817, "type": "pos", "slot": 6, "from": 6, "to": 7}
+{"t": 27.817, "type": "pos", "slot": 8, "from": 5, "to": 6}
+{"t": 27.817, "type": "pos", "slot": 10, "from": 7, "to": 5}
+{"t": 28.15, "type": "pos", "slot": 6, "from": 7, "to": 6}
+{"t": 28.15, "type": "pos", "slot": 8, "from": 6, "to": 7}
+{"t": 28.283, "type": "pos", "slot": 0, "from": 4, "to": 5}
+{"t": 28.283, "type": "pos", "slot": 10, "from": 5, "to": 4}
+{"t": 28.383, "type": "pos", "slot": 4, "from": 8, "to": 6}
+{"t": 28.383, "type": "pos", "slot": 6, "from": 6, "to": 8}
+{"t": 28.783, "type": "pos", "slot": 1, "from": 10, "to": 11}
+{"t": 28.783, "type": "pos", "slot": 3, "from": 11, "to": 10}
+{"t": 28.95, "type": "pos", "slot": 0, "from": 5, "to": 6}
+{"t": 28.95, "type": "pos", "slot": 4, "from": 6, "to": 5}
+{"t": 28.95, "type": "hit", "slot": 0, "damage": 3, "object": null, "by": [4], "place": 6, "guess": true, "for": 1.633}
+{"t": 29.35, "type": "hit", "slot": 3, "damage": 2, "object": 1, "by": [1], "place": 10, "for": 1.633}
+{"t": 29.583, "type": "hit", "slot": 11, "damage": 13, "object": null, "by": [10], "place": 3, "guess": true, "for": 0.333}
+{"t": 29.683, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 29.683, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 30.083, "type": "pos", "slot": 6, "from": 8, "to": 9}
+{"t": 30.083, "type": "pos", "slot": 7, "from": 9, "to": 8}
+{"t": 30.15, "type": "pos", "slot": 4, "from": 5, "to": 4}
+{"t": 30.15, "type": "pos", "slot": 11, "from": 4, "to": 5}
+{"t": 30.15, "type": "hit", "slot": 8, "damage": 3, "object": null, "by": [7], "place": 7, "guess": true, "for": 1.65}
+{"t": 30.183, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 30.183, "type": "pos", "slot": 8, "from": 7, "to": 8}
+{"t": 30.317, "type": "pos", "slot": 1, "from": 11, "to": 10}
+{"t": 30.317, "type": "pos", "slot": 3, "from": 10, "to": 11}
+{"t": 30.583, "type": "pos", "slot": 6, "from": 9, "to": 8}
+{"t": 30.583, "type": "pos", "slot": 8, "from": 8, "to": 9}
+{"t": 30.65, "type": "hit", "slot": 0, "damage": 3, "object": null, "by": [7], "place": 6, "guess": true, "for": 1.667}
+{"t": 30.683, "type": "pos", "slot": 3, "from": 11, "to": 12}
+{"t": 30.683, "type": "pos", "slot": 5, "from": 12, "to": 11}
+{"t": 30.75, "type": "pos", "slot": 0, "from": 6, "to": 7}
+{"t": 30.75, "type": "pos", "slot": 7, "from": 7, "to": 6}
+{"t": 31.683, "type": "pos", "slot": 0, "from": 7, "to": 8}
+{"t": 31.683, "type": "pos", "slot": 6, "from": 8, "to": 7}
+{"t": 32.817, "type": "pos", "slot": 1, "from": 10, "to": 9}
+{"t": 32.817, "type": "pos", "slot": 8, "from": 9, "to": 10}
+{"t": 33.883, "type": "pos", "slot": 0, "from": 8, "to": 9}
+{"t": 33.883, "type": "pos", "slot": 1, "from": 9, "to": 8}
+{"t": 33.95, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 33.95, "type": "pos", "slot": 8, "from": 10, "to": 11}
+{"t": 34.15, "type": "box", "slot": 2, "item": 0}
+{"t": 34.983, "type": "box", "slot": 9, "item": 18}
+{"t": 35.683, "type": "pos", "slot": 0, "from": 9, "to": 10}
+{"t": 35.683, "type": "pos", "slot": 5, "from": 10, "to": 9}
+{"t": 36.117, "type": "pos", "slot": 0, "from": 10, "to": 9}
+{"t": 36.117, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 36.117, "type": "hold", "slot": 9, "item": 18}
+{"t": 36.183, "type": "use", "slot": 9, "item": 18}
+{"t": 37.417, "type": "pos", "slot": 1, "from": 8, "to": 7}
+{"t": 37.417, "type": "pos", "slot": 6, "from": 7, "to": 8}
+{"t": 37.517, "type": "box", "slot": 10, "item": 18}
+{"t": 37.75, "type": "hold", "slot": 2, "item": 0}
+{"t": 37.917, "type": "box", "slot": 4, "item": 6}
+{"t": 38.317, "type": "use", "slot": 2, "item": 0}
+{"t": 38.483, "type": "pos", "slot": 0, "from": 9, "to": 8}
+{"t": 38.483, "type": "pos", "slot": 6, "from": 8, "to": 9}
+{"t": 38.65, "type": "hold", "slot": 10, "item": 18}
+{"t": 38.717, "type": "use", "slot": 10, "item": 18}
+{"t": 39.05, "type": "hold", "slot": 4, "item": 6}
+{"t": 39.15, "type": "pos", "slot": 5, "from": 10, "to": 9}
+{"t": 39.15, "type": "pos", "slot": 6, "from": 9, "to": 10}
+{"t": 39.65, "type": "pos", "slot": 3, "from": 12, "to": 11}
+{"t": 39.65, "type": "pos", "slot": 8, "from": 11, "to": 12}
+{"t": 39.717, "type": "pos", "slot": 3, "from": 11, "to": 10}
+{"t": 39.717, "type": "pos", "slot": 6, "from": 10, "to": 11}
+{"t": 40.617, "type": "box", "slot": 1, "item": 13}
+{"t": 40.617, "type": "use", "slot": 4, "item": 6}
+{"t": 40.783, "type": "hit", "slot": 2, "damage": 0, "object": 2, "by": [2], "place": 1, "for": 0.633}
+{"t": 41.017, "type": "hit", "slot": 10, "damage": 2, "object": 0, "by": [2], "place": 3, "for": 1.067}
+{"t": 41.25, "type": "pos", "slot": 2, "from": 1, "to": 2}
+{"t": 41.25, "type": "pos", "slot": 9, "from": 2, "to": 1}
+{"t": 41.683, "type": "pos", "slot": 4, "from": 4, "to": 5}
+{"t": 41.683, "type": "pos", "slot": 11, "from": 5, "to": 4}
+{"t": 41.85, "type": "box", "slot": 5, "item": 4}
+{"t": 42.083, "type": "hit", "slot": 10, "damage": 7, "object": 9, "by": [4], "place": 3, "for": 2.0}
+{"t": 42.583, "type": "hit", "slot": 11, "damage": 0, "object": null, "by": null, "place": 4, "for": 0.667}
+{"t": 42.65, "type": "hit", "slot": 4, "damage": 0, "object": null, "by": null, "place": 5, "for": 0.667}
+{"t": 42.75, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 42.75, "type": "pos", "slot": 11, "from": 4, "to": 3}
+{"t": 42.817, "type": "hit", "slot": 7, "damage": 2, "object": 1, "by": [1], "place": 6, "for": 1.667}
+{"t": 42.85, "type": "hold", "slot": 5, "item": 4}
+{"t": 42.983, "type": "pos", "slot": 4, "from": 5, "to": 4}
+{"t": 42.983, "type": "pos", "slot": 10, "from": 4, "to": 5}
+{"t": 44.217, "type": "hold", "slot": 1, "item": 13}
+{"t": 44.317, "type": "use", "slot": 5, "item": 4}
+{"t": 44.75, "type": "hit", "slot": 2, "damage": 0, "object": 2, "by": [9], "place": 2, "for": 0.683}
+{"t": 44.95, "type": "pos", "slot": 1, "from": 7, "to": 6}
+{"t": 44.95, "type": "use", "slot": 1, "item": 13}
+{"t": 44.95, "type": "pos", "slot": 7, "from": 6, "to": 7}
+{"t": 45.817, "type": "pos", "slot": 0, "from": 8, "to": 7}
+{"t": 45.817, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 45.883, "type": "pos", "slot": 0, "from": 7, "to": 8}
+{"t": 45.883, "type": "pos", "slot": 5, "from": 9, "to": 7}
+{"t": 45.883, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 46.85, "type": "hit", "slot": 4, "damage": 11, "object": null, "by": [1], "place": 4, "guess": true, "for": 1.7}
+{"t": 46.85, "type": "hit", "slot": 7, "damage": 11, "object": null, "by": [1], "place": 9, "guess": true, "for": 1.7}
+{"t": 46.85, "type": "hit", "slot": 9, "damage": 11, "object": null, "by": [1], "place": 1, "guess": true, "for": 1.7}
+{"t": 46.85, "type": "hit", "slot": 11, "damage": 11, "object": null, "by": [1], "place": 3, "guess": true, "for": 0.633}
+{"t": 46.95, "type": "hit", "slot": 10, "damage": 11, "object": null, "by": [1], "place": 5, "guess": true, "for": 1.733}
+{"t": 47.717, "type": "pos", "slot": 2, "from": 2, "to": 3}
+{"t": 47.717, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 47.717, "type": "hit", "slot": 3, "damage": 0, "object": 2, "by": [9], "place": 10, "for": 0.667}
+{"t": 48.05, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 48.05, "type": "pos", "slot": 3, "from": 10, "to": 9}
+{"t": 48.05, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 48.05, "type": "pos", "slot": 10, "from": 5, "to": 6}
+{"t": 48.45, "type": "pos", "slot": 5, "from": 7, "to": 6}
+{"t": 48.45, "type": "pos", "slot": 10, "from": 6, "to": 7}
+{"t": 48.95, "type": "pos", "slot": 1, "from": 5, "to": 6}
+{"t": 48.95, "type": "pos", "slot": 5, "from": 6, "to": 5}
+{"t": 49.117, "type": "pos", "slot": 0, "from": 8, "to": 7}
+{"t": 49.117, "type": "pos", "slot": 10, "from": 7, "to": 8}
+{"t": 49.183, "type": "box", "slot": 9, "item": 18}
+{"t": 49.283, "type": "box", "slot": 8, "item": 10}
+{"t": 49.583, "type": "pos", "slot": 0, "from": 7, "to": 6}
+{"t": 49.583, "type": "pos", "slot": 1, "from": 6, "to": 7}
+{"t": 50.35, "type": "hold", "slot": 9, "item": 18}
+{"t": 50.417, "type": "use", "slot": 9, "item": 18}
+{"t": 50.45, "type": "hold", "slot": 8, "item": 10}
+{"t": 50.517, "type": "pos", "slot": 6, "from": 11, "to": 10}
+{"t": 50.517, "type": "pos", "slot": 7, "from": 10, "to": 11}
+{"t": 50.583, "type": "pos", "slot": 3, "from": 9, "to": 8}
+{"t": 50.583, "type": "pos", "slot": 10, "from": 8, "to": 9}
+{"t": 50.683, "type": "pos", "slot": 4, "from": 4, "to": 5}
+{"t": 50.683, "type": "pos", "slot": 5, "from": 5, "to": 4}
+{"t": 50.783, "type": "box", "slot": 11, "item": 2}
+{"t": 51.017, "type": "pos", "slot": 6, "from": 10, "to": 9}
+{"t": 51.017, "type": "pos", "slot": 7, "from": 11, "to": 10}
+{"t": 51.017, "type": "pos", "slot": 10, "from": 9, "to": 11}
+{"t": 51.25, "type": "pos", "slot": 0, "from": 6, "to": 5}
+{"t": 51.25, "type": "pos", "slot": 4, "from": 5, "to": 6}
+{"t": 51.867, "type": "hold", "slot": 11, "item": 2}
+{"t": 52.417, "type": "pos", "slot": 2, "from": 3, "to": 4}
+{"t": 52.417, "type": "pos", "slot": 5, "from": 4, "to": 3}
+{"t": 52.717, "type": "use", "slot": 11, "item": 2}
+{"t": 53.05, "type": "pos", "slot": 1, "from": 7, "to": 6}
+{"t": 53.05, "type": "pos", "slot": 4, "from": 6, "to": 7}
+{"t": 53.317, "type": "pos", "slot": 3, "from": 8, "to": 7}
+{"t": 53.317, "type": "pos", "slot": 4, "from": 7, "to": 8}
+{"t": 53.717, "type": "box", "slot": 5, "item": 16}
+{"t": 53.883, "type": "box", "slot": 2, "item": 18}
+{"t": 53.883, "type": "pos", "slot": 4, "from": 8, "to": 9}
+{"t": 53.883, "type": "pos", "slot": 6, "from": 9, "to": 8}
+{"t": 54.05, "type": "pos", "slot": 4, "from": 9, "to": 10}
+{"t": 54.05, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 54.117, "type": "hit", "slot": 10, "damage": 0, "object": 2, "by": [9], "place": 11, "for": 0.667}
+{"t": 54.55, "type": "box", "slot": 9, "item": 3}
+{"t": 54.85, "type": "hold", "slot": 5, "item": 16}
+{"t": 54.883, "type": "use", "slot": 5, "item": 16}
+{"t": 55.283, "type": "pos", "slot": 8, "from": 12, "to": 11}
+{"t": 55.283, "type": "pos", "slot": 10, "from": 11, "to": 12}
+{"t": 55.383, "type": "box", "slot": 1, "item": 7}
+{"t": 56.083, "type": "pos", "slot": 0, "from": 5, "to": 4}
+{"t": 56.083, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 56.75, "type": "pos", "slot": 0, "from": 4, "to": 3}
+{"t": 56.75, "type": "pos", "slot": 5, "from": 3, "to": 4}
+{"t": 57.067, "type": "hold", "slot": 9, "item": 3}
+{"t": 57.117, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 57.117, "type": "pos", "slot": 5, "from": 4, "to": 5}
+{"t": 57.383, "type": "hold", "slot": 2, "item": 18}
+{"t": 58.35, "type": "use", "slot": 9, "item": 3}
+{"t": 58.533, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 58.533, "type": "pos", "slot": 5, "from": 5, "to": 6}
+{"t": 58.65, "type": "box", "slot": 4, "item": 10}
+{"t": 58.683, "type": "use", "slot": 8, "item": 10}
+{"t": 58.817, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 58.817, "type": "pos", "slot": 5, "from": 6, "to": 8}
+{"t": 58.817, "type": "pos", "slot": 6, "from": 8, "to": 7}
+{"t": 58.917, "type": "hold", "slot": 1, "item": 7}
+{"t": 58.962, "type": "lap", "slot": 9, "lap": 1, "split": 58.962, "total": 58.962}
+{"t": 59.317, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 59.317, "type": "pos", "slot": 7, "from": 9, "to": 8}
+{"t": 59.317, "type": "box", "slot": 8, "item": 10}
+{"t": 59.483, "type": "use", "slot": 1, "item": 7}
+{"t": 59.483, "type": "pos", "slot": 3, "from": 6, "to": 7}
+{"t": 59.483, "type": "pos", "slot": 6, "from": 7, "to": 6}
+{"t": 59.583, "type": "pos", "slot": 5, "from": 9, "to": 8}
+{"t": 59.583, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 59.717, "type": "pos", "slot": 0, "from": 3, "to": 4}
+{"t": 59.717, "type": "box", "slot": 1, "item": 11}
+{"t": 59.717, "type": "pos", "slot": 2, "from": 4, "to": 3}
+{"t": 59.717, "type": "hold", "slot": 4, "item": 10}
+{"t": 59.767, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 59.767, "type": "pos", "slot": 7, "from": 9, "to": 8}
+{"t": 60.217, "type": "use", "slot": 2, "item": 18}
+{"t": 60.439, "type": "lap", "slot": 11, "lap": 1, "split": 60.439, "total": 60.439}
+{"t": 60.45, "type": "hold", "slot": 8, "item": 10}
+{"t": 60.517, "type": "box", "slot": 10, "item": 8}
+{"t": 60.883, "type": "pos", "slot": 1, "from": 5, "to": 6}
+{"t": 60.883, "type": "pos", "slot": 6, "from": 6, "to": 5}
+{"t": 61.35, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 61.35, "type": "pos", "slot": 6, "from": 5, "to": 6}
+{"t": 61.683, "type": "hold", "slot": 10, "item": 8}
+{"t": 62.083, "type": "pos", "slot": 4, "from": 10, "to": 9}
+{"t": 62.083, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 62.65, "type": "lost", "slot": 4, "item": 10, "damage": 10}
+{"t": 62.65, "type": "lost", "slot": 8, "item": 10, "damage": 10}
+{"t": 62.65, "type": "use", "slot": 10, "item": 8}
+{"t": 62.65, "type": "hit", "slot": 0, "damage": 10, "object": null, "by": [10], "place": 4, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 1, "damage": 10, "object": null, "by": [10], "place": 5, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 2, "damage": 10, "object": null, "by": [10], "place": 3, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 3, "damage": 10, "object": null, "by": [10], "place": 7, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 4, "damage": 10, "object": null, "by": [10], "place": 9, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 5, "damage": 10, "object": null, "by": [10], "place": 10, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 6, "damage": 10, "object": null, "by": [10], "place": 6, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 7, "damage": 10, "object": null, "by": [10], "place": 8, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 8, "damage": 10, "object": null, "by": [10], "place": 11, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 9, "damage": 10, "object": null, "by": [10], "place": 1, "guess": true, "for": 1.167}
+{"t": 62.65, "type": "hit", "slot": 11, "damage": 10, "object": null, "by": [10], "place": 2, "guess": true, "for": 1.167}
+{"t": 62.712, "type": "lap", "slot": 2, "lap": 1, "split": 62.712, "total": 62.712}
+{"t": 62.85, "type": "pos", "slot": 1, "from": 5, "to": 6}
+{"t": 62.85, "type": "pos", "slot": 6, "from": 6, "to": 5}
+{"t": 62.857, "type": "lap", "slot": 0, "lap": 1, "split": 62.857, "total": 62.857}
+{"t": 63.65, "type": "pos", "slot": 8, "from": 11, "to": 12}
+{"t": 63.65, "type": "pos", "slot": 10, "from": 12, "to": 11}
+{"t": 63.983, "type": "box", "slot": 9, "item": 18}
+{"t": 64.483, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 64.483, "type": "pos", "slot": 10, "from": 11, "to": 10}
+{"t": 64.683, "type": "hit", "slot": 9, "damage": 7, "object": 5, "by": [1], "place": 1, "for": 2.0}
+{"t": 66.027, "type": "lap", "slot": 6, "lap": 1, "split": 66.027, "total": 66.027}
+{"t": 66.617, "type": "pos", "slot": 9, "from": 1, "to": 2}
+{"t": 66.617, "type": "pos", "slot": 11, "from": 2, "to": 1}
+{"t": 66.645, "type": "lap", "slot": 1, "lap": 1, "split": 66.645, "total": 66.645}
+{"t": 66.783, "type": "hit", "slot": 7, "damage": 2, "object": 7, "by": [9], "place": 8, "for": 1.667}
+{"t": 66.941, "type": "lap", "slot": 3, "lap": 1, "split": 66.941, "total": 66.941}
+{"t": 68.583, "type": "pos", "slot": 4, "from": 9, "to": 8}
+{"t": 68.583, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 68.817, "type": "lap", "slot": 4, "lap": 1, "split": 68.817, "total": 68.817}
+{"t": 69.35, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 69.35, "type": "pos", "slot": 10, "from": 10, "to": 9}
+{"t": 69.452, "type": "lap", "slot": 10, "lap": 1, "split": 69.452, "total": 69.452}
+{"t": 69.54, "type": "lap", "slot": 7, "lap": 1, "split": 69.54, "total": 69.54}
+{"t": 69.75, "type": "box", "slot": 2, "item": 18}
+{"t": 70.017, "type": "box", "slot": 0, "item": 17}
+{"t": 71.124, "type": "lap", "slot": 5, "lap": 1, "split": 71.124, "total": 71.124}
+{"t": 71.317, "type": "pos", "slot": 1, "from": 6, "to": 7}
+{"t": 71.317, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 72.583, "type": "pos", "slot": 1, "from": 7, "to": 8}
+{"t": 72.583, "type": "pos", "slot": 4, "from": 8, "to": 7}
+{"t": 72.75, "type": "box", "slot": 1, "item": 10}
+{"t": 72.75, "type": "box", "slot": 4, "item": 9}
+{"t": 73.25, "type": "pos", "slot": 1, "from": 8, "to": 9}
+{"t": 73.25, "type": "hold", "slot": 2, "item": 18}
+{"t": 73.25, "type": "pos", "slot": 10, "from": 9, "to": 8}
+{"t": 73.483, "type": "pos", "slot": 4, "from": 7, "to": 8}
+{"t": 73.483, "type": "pos", "slot": 10, "from": 8, "to": 7}
+{"t": 73.583, "type": "hold", "slot": 0, "item": 17}
+{"t": 73.917, "type": "hold", "slot": 4, "item": 9}
+{"t": 74.083, "type": "pos", "slot": 0, "from": 4, "to": 3}
+{"t": 74.083, "type": "pos", "slot": 2, "from": 3, "to": 4}
+{"t": 74.217, "type": "use", "slot": 2, "item": 18}
+{"t": 74.483, "type": "pos", "slot": 3, "from": 6, "to": 7}
+{"t": 74.483, "type": "pos", "slot": 10, "from": 7, "to": 6}
+{"t": 74.55, "type": "use", "slot": 0, "item": 17}
+{"t": 74.953, "type": "lap", "slot": 8, "lap": 1, "split": 74.953, "total": 74.953}
+{"t": 75.617, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 75.617, "type": "pos", "slot": 10, "from": 6, "to": 7}
+{"t": 76.283, "type": "hold", "slot": 1, "item": 10}
+{"t": 78.783, "type": "box", "slot": 8, "item": 9}
+{"t": 79.817, "type": "hit", "slot": 6, "damage": 2, "object": 1, "by": [0], "place": 5, "for": 1.667}
+{"t": 79.917, "type": "hold", "slot": 8, "item": 9}
+{"t": 80.15, "type": "use", "slot": 8, "item": 9}
+{"t": 80.2, "type": "use", "slot": 4, "item": 9}
+{"t": 80.883, "type": "pos", "slot": 3, "from": 6, "to": 5}
+{"t": 80.883, "type": "pos", "slot": 6, "from": 5, "to": 6}
+{"t": 80.983, "type": "pos", "slot": 6, "from": 6, "to": 7}
+{"t": 80.983, "type": "pos", "slot": 10, "from": 7, "to": 6}
+{"t": 81.05, "type": "pos", "slot": 4, "from": 8, "to": 7}
+{"t": 81.05, "type": "pos", "slot": 6, "from": 7, "to": 8}
+{"t": 81.317, "type": "pos", "slot": 3, "from": 5, "to": 7}
+{"t": 81.317, "type": "pos", "slot": 4, "from": 7, "to": 6}
+{"t": 81.317, "type": "pos", "slot": 10, "from": 6, "to": 5}
+{"t": 81.583, "type": "pos", "slot": 4, "from": 6, "to": 5}
+{"t": 81.583, "type": "pos", "slot": 10, "from": 5, "to": 6}
+{"t": 81.817, "type": "pos", "slot": 1, "from": 9, "to": 8}
+{"t": 81.817, "type": "pos", "slot": 6, "from": 8, "to": 9}
+{"t": 81.883, "type": "hit", "slot": 1, "damage": 0, "object": 2, "by": [9], "place": 8, "for": 0.667}
+{"t": 82.217, "type": "box", "slot": 11, "item": 3}
+{"t": 82.45, "type": "box", "slot": 9, "item": 18}
+{"t": 83.383, "type": "pos", "slot": 9, "from": 2, "to": 1}
+{"t": 83.383, "type": "pos", "slot": 11, "from": 1, "to": 2}
+{"t": 83.383, "type": "hold", "slot": 11, "item": 3}
+{"t": 84.117, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 84.117, "type": "pos", "slot": 10, "from": 6, "to": 7}
+{"t": 84.317, "type": "box", "slot": 0, "item": 14}
+{"t": 84.55, "type": "box", "slot": 2, "item": 3}
+{"t": 85.283, "type": "box", "slot": 4, "item": 16}
+{"t": 85.283, "type": "use", "slot": 11, "item": 3}
+{"t": 85.583, "type": "box", "slot": 3, "item": 7}
+{"t": 86.25, "type": "pos", "slot": 9, "from": 1, "to": 2}
+{"t": 86.25, "type": "pos", "slot": 11, "from": 2, "to": 1}
+{"t": 86.417, "type": "hold", "slot": 4, "item": 16}
+{"t": 86.45, "type": "use", "slot": 4, "item": 16}
+{"t": 86.517, "type": "pos", "slot": 9, "from": 2, "to": 1}
+{"t": 86.517, "type": "pos", "slot": 11, "from": 1, "to": 2}
+{"t": 86.683, "type": "pos", "slot": 1, "from": 8, "to": 7}
+{"t": 86.683, "type": "pos", "slot": 10, "from": 7, "to": 8}
+{"t": 87.483, "type": "pos", "slot": 1, "from": 7, "to": 6}
+{"t": 87.483, "type": "pos", "slot": 3, "from": 6, "to": 7}
+{"t": 87.85, "type": "cloud", "slot": 0}
+{"t": 88.083, "type": "hold", "slot": 2, "item": 3}
+{"t": 88.083, "type": "box", "slot": 7, "item": 10}
+{"t": 88.083, "type": "pos", "slot": 9, "from": 1, "to": 2}
+{"t": 88.083, "type": "pos", "slot": 11, "from": 2, "to": 1}
+{"t": 88.217, "type": "pos", "slot": 3, "from": 7, "to": 8}
+{"t": 88.217, "type": "pos", "slot": 10, "from": 8, "to": 7}
+{"t": 88.583, "type": "use", "slot": 1, "item": 10}
+{"t": 88.883, "type": "pos", "slot": 9, "from": 2, "to": 1}
+{"t": 88.883, "type": "pos", "slot": 11, "from": 1, "to": 2}
+{"t": 89.15, "type": "hold", "slot": 3, "item": 7}
+{"t": 89.217, "type": "hold", "slot": 7, "item": 10}
+{"t": 89.317, "type": "box", "slot": 5, "item": 5}
+{"t": 89.383, "type": "hit", "slot": 11, "damage": 2, "object": 1, "by": [0], "place": 2, "for": 1.633}
+{"t": 90.45, "type": "hold", "slot": 5, "item": 5}
+{"t": 90.85, "type": "use", "slot": 3, "item": 7}
+{"t": 91.083, "type": "pos", "slot": 0, "from": 3, "to": 2}
+{"t": 91.083, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 91.917, "type": "pos", "slot": 6, "from": 9, "to": 10}
+{"t": 91.917, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 92.65, "type": "pos", "slot": 0, "from": 2, "to": 3}
+{"t": 92.65, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 92.65, "type": "pos", "slot": 4, "from": 5, "to": 4}
+{"t": 92.65, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 92.983, "type": "pos", "slot": 1, "from": 6, "to": 7}
+{"t": 92.983, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 92.983, "type": "pos", "slot": 4, "from": 4, "to": 5}
+{"t": 92.983, "type": "pos", "slot": 10, "from": 7, "to": 6}
+{"t": 93.583, "type": "hit", "slot": 7, "damage": 2, "object": 0, "by": [4], "place": 9, "for": 1.7}
+{"t": 93.983, "type": "pos", "slot": 4, "from": 5, "to": 6}
+{"t": 93.983, "type": "pos", "slot": 10, "from": 6, "to": 5}
+{"t": 94.483, "type": "pos", "slot": 1, "from": 7, "to": 6}
+{"t": 94.483, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 94.483, "type": "pos", "slot": 4, "from": 6, "to": 7}
+{"t": 94.483, "type": "pos", "slot": 10, "from": 5, "to": 4}
+{"t": 94.783, "type": "pos", "slot": 6, "from": 10, "to": 9}
+{"t": 94.783, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 94.95, "type": "use", "slot": 5, "item": 5}
+{"t": 95.017, "type": "pos", "slot": 3, "from": 8, "to": 7}
+{"t": 95.017, "type": "pos", "slot": 4, "from": 7, "to": 8}
+{"t": 95.517, "type": "hit", "slot": 9, "damage": 7, "object": 5, "by": [3], "place": 1, "for": 2.033}
+{"t": 95.583, "type": "pos", "slot": 4, "from": 8, "to": 9}
+{"t": 95.583, "type": "pos", "slot": 6, "from": 9, "to": 8}
+{"t": 95.983, "type": "hit", "slot": 11, "damage": 7, "object": 5, "by": [3], "place": 2, "for": 2.067, "caught": true}
+{"t": 96.15, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 96.15, "type": "pos", "slot": 7, "from": 10, "to": 11}
+{"t": 96.25, "type": "pos", "slot": 3, "from": 7, "to": 8}
+{"t": 96.25, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 96.25, "type": "pos", "slot": 6, "from": 8, "to": 7}
+{"t": 96.25, "type": "pos", "slot": 7, "from": 11, "to": 10}
+{"t": 96.317, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 96.317, "type": "pos", "slot": 2, "from": 5, "to": 6}
+{"t": 96.583, "type": "pos", "slot": 0, "from": 3, "to": 2}
+{"t": 96.583, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 96.65, "type": "pos", "slot": 0, "from": 2, "to": 1}
+{"t": 96.65, "type": "pos", "slot": 4, "from": 9, "to": 10}
+{"t": 96.65, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 96.65, "type": "pos", "slot": 9, "from": 1, "to": 2}
+{"t": 97.017, "type": "use", "slot": 7, "item": 10}
+{"t": 97.383, "type": "pos", "slot": 3, "from": 8, "to": 9}
+{"t": 97.383, "type": "pos", "slot": 7, "from": 9, "to": 8}
+{"t": 97.717, "type": "pos", "slot": 4, "from": 10, "to": 11}
+{"t": 97.717, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 98.65, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 98.65, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 99.0, "type": "pos", "slot": 1, "from": 5, "to": 4}
+{"t": 99.0, "type": "pos", "slot": 11, "from": 4, "to": 5}
+{"t": 99.283, "type": "pos", "slot": 2, "from": 6, "to": 5}
+{"t": 99.283, "type": "pos", "slot": 11, "from": 5, "to": 6}
+{"t": 99.917, "type": "pos", "slot": 4, "from": 11, "to": 12}
+{"t": 99.917, "type": "pos", "slot": 8, "from": 12, "to": 11}
+{"t": 100.017, "type": "box", "slot": 0, "item": 3}
+{"t": 100.25, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 100.25, "type": "pos", "slot": 8, "from": 11, "to": 10}
+{"t": 101.05, "type": "pos", "slot": 4, "from": 12, "to": 11}
+{"t": 101.05, "type": "pos", "slot": 5, "from": 11, "to": 12}
+{"t": 101.683, "type": "box", "slot": 9, "item": 18}
+{"t": 102.65, "type": "box", "slot": 1, "item": 17}
+{"t": 102.65, "type": "pos", "slot": 9, "from": 2, "to": 3}
+{"t": 102.65, "type": "pos", "slot": 10, "from": 3, "to": 2}
+{"t": 102.817, "type": "hold", "slot": 9, "item": 18}
+{"t": 102.917, "type": "pos", "slot": 1, "from": 4, "to": 5}
+{"t": 102.917, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 102.917, "type": "use", "slot": 9, "item": 18}
+{"t": 103.083, "type": "pos", "slot": 2, "from": 4, "to": 3}
+{"t": 103.083, "type": "pos", "slot": 9, "from": 3, "to": 4}
+{"t": 103.25, "type": "pos", "slot": 1, "from": 5, "to": 4}
+{"t": 103.25, "type": "pos", "slot": 9, "from": 4, "to": 5}
+{"t": 103.55, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 103.55, "type": "pos", "slot": 2, "from": 3, "to": 4}
+{"t": 103.583, "type": "hold", "slot": 0, "item": 3}
+{"t": 103.583, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 103.583, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 103.583, "type": "pos", "slot": 9, "from": 5, "to": 3}
+{"t": 103.817, "type": "pos", "slot": 1, "from": 4, "to": 5}
+{"t": 103.817, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 104.55, "type": "pos", "slot": 1, "from": 5, "to": 4}
+{"t": 104.55, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 104.65, "type": "pos", "slot": 1, "from": 4, "to": 5}
+{"t": 104.65, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 104.783, "type": "box", "slot": 11, "item": 7}
+{"t": 105.217, "type": "pos", "slot": 6, "from": 7, "to": 8}
+{"t": 105.217, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 105.35, "type": "pos", "slot": 1, "from": 5, "to": 4}
+{"t": 105.35, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 105.583, "type": "box", "slot": 3, "item": 10}
+{"t": 105.817, "type": "pos", "slot": 3, "from": 9, "to": 8}
+{"t": 105.817, "type": "pos", "slot": 6, "from": 8, "to": 9}
+{"t": 105.917, "type": "hold", "slot": 11, "item": 7}
+{"t": 106.25, "type": "hold", "slot": 1, "item": 17}
+{"t": 106.817, "type": "use", "slot": 1, "item": 17}
+{"t": 107.05, "type": "pos", "slot": 4, "from": 11, "to": 10}
+{"t": 107.05, "type": "pos", "slot": 6, "from": 9, "to": 11}
+{"t": 107.05, "type": "pos", "slot": 8, "from": 10, "to": 9}
+{"t": 108.283, "type": "use", "slot": 11, "item": 7}
+{"t": 108.517, "type": "box", "slot": 8, "item": 9}
+{"t": 109.15, "type": "use", "slot": 0, "item": 3}
+{"t": 109.15, "type": "hold", "slot": 3, "item": 10}
+{"t": 109.65, "type": "box", "slot": 4, "item": 10}
+{"t": 109.65, "type": "hold", "slot": 8, "item": 9}
+{"t": 109.85, "type": "hit", "slot": 9, "damage": 2, "object": 7, "by": [0], "place": 3, "for": 1.667}
+{"t": 110.65, "type": "pos", "slot": 3, "from": 8, "to": 7}
+{"t": 110.65, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 110.767, "type": "hit", "slot": 3, "damage": 0, "object": 2, "by": [11], "place": 7, "for": 0.683}
+{"t": 110.817, "type": "hold", "slot": 4, "item": 10}
+{"t": 111.45, "type": "pos", "slot": 3, "from": 7, "to": 8}
+{"t": 111.45, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 111.85, "type": "pos", "slot": 3, "from": 8, "to": 7}
+{"t": 111.85, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 112.25, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 112.25, "type": "pos", "slot": 9, "from": 3, "to": 4}
+{"t": 112.35, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 112.35, "type": "pos", "slot": 9, "from": 4, "to": 5}
+{"t": 112.583, "type": "hit", "slot": 0, "damage": 7, "object": 5, "by": [11], "place": 1, "for": 2.033}
+{"t": 112.65, "type": "use", "slot": 8, "item": 9}
+{"t": 112.75, "type": "hit", "slot": 10, "damage": 7, "object": 5, "by": [11], "place": 2, "for": 2.033, "caught": true}
+{"t": 113.05, "type": "pos", "slot": 9, "from": 5, "to": 6}
+{"t": 113.05, "type": "pos", "slot": 11, "from": 6, "to": 5}
+{"t": 113.217, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 113.217, "type": "pos", "slot": 2, "from": 4, "to": 3}
+{"t": 113.55, "type": "pos", "slot": 9, "from": 6, "to": 5}
+{"t": 113.55, "type": "pos", "slot": 11, "from": 5, "to": 6}
+{"t": 113.55, "type": "hit", "slot": 2, "damage": 2, "object": 1, "by": [1], "place": 3, "for": 1.633}
+{"t": 113.65, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 113.65, "type": "pos", "slot": 2, "from": 3, "to": 4}
+{"t": 113.817, "type": "pos", "slot": 9, "from": 5, "to": 6}
+{"t": 113.817, "type": "pos", "slot": 11, "from": 6, "to": 5}
+{"t": 114.05, "type": "box", "slot": 6, "item": 9}
+{"t": 114.283, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 114.283, "type": "pos", "slot": 9, "from": 6, "to": 7}
+{"t": 114.55, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 114.55, "type": "pos", "slot": 11, "from": 5, "to": 4}
+{"t": 114.833, "type": "pos", "slot": 2, "from": 5, "to": 6}
+{"t": 114.833, "type": "pos", "slot": 3, "from": 6, "to": 5}
+{"t": 114.95, "type": "pos", "slot": 1, "from": 3, "to": 2}
+{"t": 114.95, "type": "pos", "slot": 10, "from": 2, "to": 3}
+{"t": 115.117, "type": "pos", "slot": 0, "from": 1, "to": 2}
+{"t": 115.117, "type": "pos", "slot": 1, "from": 2, "to": 1}
+{"t": 115.183, "type": "hold", "slot": 6, "item": 9}
+{"t": 115.35, "type": "use", "slot": 6, "item": 9}
+{"t": 115.417, "type": "box", "slot": 1, "item": 18}
+{"t": 115.683, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 115.683, "type": "pos", "slot": 11, "from": 4, "to": 3}
+{"t": 115.75, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 115.75, "type": "pos", "slot": 9, "from": 7, "to": 8}
+{"t": 115.917, "type": "pos", "slot": 0, "from": 2, "to": 3}
+{"t": 115.917, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 116.017, "type": "box", "slot": 11, "item": 0}
+{"t": 116.15, "type": "pos", "slot": 3, "from": 5, "to": 4}
+{"t": 116.15, "type": "pos", "slot": 10, "from": 4, "to": 5}
+{"t": 116.25, "type": "pos", "slot": 0, "from": 3, "to": 4}
+{"t": 116.25, "type": "pos", "slot": 3, "from": 4, "to": 3}
+{"t": 116.35, "type": "box", "slot": 10, "item": 14}
+{"t": 116.483, "type": "pos", "slot": 0, "from": 4, "to": 5}
+{"t": 116.483, "type": "pos", "slot": 10, "from": 5, "to": 4}
+{"t": 116.883, "type": "pos", "slot": 3, "from": 3, "to": 2}
+{"t": 116.883, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 117.083, "type": "pos", "slot": 2, "from": 6, "to": 7}
+{"t": 117.083, "type": "pos", "slot": 7, "from": 7, "to": 6}
+{"t": 117.15, "type": "hold", "slot": 11, "item": 0}
+{"t": 117.217, "type": "use", "slot": 3, "item": 10}
+{"t": 117.483, "type": "cloud", "slot": 10}
+{"t": 117.65, "type": "box", "slot": 5, "item": 5}
+{"t": 117.817, "type": "pos", "slot": 8, "from": 9, "to": 8}
+{"t": 117.817, "type": "pos", "slot": 9, "from": 8, "to": 9}
+{"t": 118.55, "type": "pos", "slot": 4, "from": 10, "to": 9}
+{"t": 118.55, "type": "pos", "slot": 9, "from": 9, "to": 10}
+{"t": 118.85, "type": "hold", "slot": 5, "item": 5}
+{"t": 118.95, "type": "hold", "slot": 1, "item": 18}
+{"t": 119.117, "type": "use", "slot": 11, "item": 0}
+{"t": 119.183, "type": "use", "slot": 4, "item": 10}
+{"t": 119.35, "type": "pos", "slot": 2, "from": 7, "to": 6}
+{"t": 119.35, "type": "pos", "slot": 7, "from": 6, "to": 7}
+{"t": 119.517, "type": "use", "slot": 1, "item": 18}
+{"t": 119.517, "type": "box", "slot": 8, "item": 1}
+{"t": 119.617, "type": "box", "slot": 4, "item": 5}
+{"t": 120.65, "type": "hold", "slot": 8, "item": 1}
+{"t": 120.817, "type": "hold", "slot": 4, "item": 5}
+{"t": 120.883, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 120.883, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 121.117, "type": "pos", "slot": 4, "from": 9, "to": 8}
+{"t": 121.117, "type": "pos", "slot": 8, "from": 8, "to": 9}
+{"t": 121.217, "type": "pos", "slot": 3, "from": 2, "to": 3}
+{"t": 121.217, "type": "pos", "slot": 10, "from": 3, "to": 2}
+{"t": 121.383, "type": "pos", "slot": 4, "from": 8, "to": 7}
+{"t": 121.383, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 121.517, "type": "box", "slot": 0, "item": 5}
+{"t": 121.55, "type": "hit", "slot": 10, "damage": 0, "object": 2, "by": [1], "place": 2, "for": 0.7}
+{"t": 121.717, "type": "use", "slot": 5, "item": 5}
+{"t": 121.783, "type": "pos", "slot": 1, "from": 1, "to": 2}
+{"t": 121.783, "type": "pos", "slot": 10, "from": 2, "to": 1}
+{"t": 122.117, "type": "pos", "slot": 3, "from": 3, "to": 1}
+{"t": 122.117, "type": "pos", "slot": 10, "from": 1, "to": 3}
+{"t": 122.683, "type": "use", "slot": 8, "item": 1}
+{"t": 122.683, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 122.683, "type": "pos", "slot": 11, "from": 4, "to": 3}
+{"t": 122.85, "type": "pos", "slot": 8, "from": 9, "to": 10}
+{"t": 122.85, "type": "pos", "slot": 9, "from": 10, "to": 9}
+{"t": 122.9, "type": "pos", "slot": 1, "from": 2, "to": 3}
+{"t": 122.9, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 123.95, "type": "hit", "slot": 7, "damage": 2, "object": 1, "by": [8], "place": 8, "for": 1.633}
+{"t": 124.05, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 124.05, "type": "pos", "slot": 9, "from": 9, "to": 8}
+{"t": 124.783, "type": "pos", "slot": 2, "from": 6, "to": 7}
+{"t": 124.783, "type": "pos", "slot": 4, "from": 7, "to": 6}
+{"t": 124.95, "type": "use", "slot": 4, "item": 5}
+{"t": 125.017, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 125.017, "type": "pos", "slot": 8, "from": 10, "to": 9}
+{"t": 125.095, "type": "lap", "slot": 3, "lap": 2, "split": 58.154, "total": 125.095}
+{"t": 125.117, "type": "hold", "slot": 0, "item": 5}
+{"t": 125.209, "type": "lap", "slot": 11, "lap": 2, "split": 64.77, "total": 125.209}
+{"t": 125.271, "type": "lap", "slot": 1, "lap": 2, "split": 58.626, "total": 125.271}
+{"t": 125.417, "type": "box", "slot": 6, "item": 9}
+{"t": 125.498, "type": "lap", "slot": 10, "lap": 2, "split": 56.046, "total": 125.498}
+{"t": 125.75, "type": "pos", "slot": 3, "from": 1, "to": 2}
+{"t": 125.75, "type": "pos", "slot": 11, "from": 2, "to": 1}
+{"t": 126.25, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 126.25, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 126.517, "type": "hold", "slot": 6, "item": 9}
+{"t": 127.319, "type": "lap", "slot": 0, "lap": 2, "split": 64.462, "total": 127.319}
+{"t": 127.55, "type": "hit", "slot": 11, "damage": 17, "object": null, "by": null, "place": 1, "from": 10, "passed": true, "for": 1.167}
+{"t": 127.7, "type": "lap", "slot": 4, "lap": 2, "split": 58.883, "total": 127.7}
+{"t": 128.142, "type": "lap", "slot": 2, "lap": 2, "split": 65.43, "total": 128.142}
+{"t": 128.683, "type": "pos", "slot": 3, "from": 2, "to": 3}
+{"t": 128.683, "type": "pos", "slot": 10, "from": 3, "to": 2}
+{"t": 128.783, "type": "pos", "slot": 3, "from": 3, "to": 2}
+{"t": 128.783, "type": "pos", "slot": 10, "from": 2, "to": 1}
+{"t": 128.783, "type": "pos", "slot": 11, "from": 1, "to": 3}
+{"t": 128.85, "type": "box", "slot": 5, "item": 15}
+{"t": 129.009, "type": "lap", "slot": 9, "lap": 2, "split": 70.047, "total": 129.009}
+{"t": 129.317, "type": "pos", "slot": 3, "from": 2, "to": 1}
+{"t": 129.317, "type": "pos", "slot": 10, "from": 1, "to": 2}
+{"t": 129.483, "type": "use", "slot": 6, "item": 9}
+{"t": 129.583, "type": "box", "slot": 3, "item": 18}
+{"t": 129.583, "type": "box", "slot": 6, "item": 9}
+{"t": 129.75, "type": "box", "slot": 10, "item": 3}
+{"t": 130.017, "type": "hold", "slot": 5, "item": 15}
+{"t": 130.317, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 130.317, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 130.367, "type": "use", "slot": 5, "item": 15}
+{"t": 130.483, "type": "box", "slot": 1, "item": 3}
+{"t": 130.55, "type": "pos", "slot": 0, "from": 5, "to": 6}
+{"t": 130.55, "type": "pos", "slot": 4, "from": 6, "to": 5}
+{"t": 130.75, "type": "hold", "slot": 6, "item": 9}
+{"t": 130.883, "type": "use", "slot": 6, "item": 9}
+{"t": 130.883, "type": "hold", "slot": 10, "item": 3}
+{"t": 131.283, "type": "pos", "slot": 0, "from": 6, "to": 5}
+{"t": 131.283, "type": "pos", "slot": 4, "from": 5, "to": 6}
+{"t": 131.783, "type": "box", "slot": 4, "item": 7}
+{"t": 131.95, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 131.95, "type": "pos", "slot": 8, "from": 9, "to": 10}
+{"t": 132.017, "type": "pos", "slot": 3, "from": 1, "to": 2}
+{"t": 132.017, "type": "pos", "slot": 10, "from": 2, "to": 1}
+{"t": 132.315, "type": "lap", "slot": 7, "lap": 2, "split": 62.775, "total": 132.315}
+{"t": 132.491, "type": "lap", "slot": 8, "lap": 2, "split": 57.538, "total": 132.491}
+{"t": 132.917, "type": "hold", "slot": 4, "item": 7}
+{"t": 133.15, "type": "hold", "slot": 3, "item": 18}
+{"t": 133.25, "type": "use", "slot": 4, "item": 7}
+{"t": 133.25, "type": "use", "slot": 10, "item": 3}
+{"t": 133.317, "type": "pos", "slot": 0, "from": 5, "to": 4}
+{"t": 133.317, "type": "pos", "slot": 2, "from": 7, "to": 6}
+{"t": 133.317, "type": "pos", "slot": 4, "from": 6, "to": 7}
+{"t": 133.317, "type": "pos", "slot": 11, "from": 4, "to": 5}
+{"t": 133.583, "type": "pos", "slot": 0, "from": 4, "to": 3}
+{"t": 133.583, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 133.717, "type": "pos", "slot": 0, "from": 3, "to": 2}
+{"t": 133.717, "type": "pos", "slot": 3, "from": 2, "to": 3}
+{"t": 133.718, "type": "lap", "slot": 6, "lap": 2, "split": 67.691, "total": 133.718}
+{"t": 133.95, "type": "pos", "slot": 4, "from": 7, "to": 8}
+{"t": 133.95, "type": "pos", "slot": 9, "from": 8, "to": 7}
+{"t": 134.05, "type": "hold", "slot": 1, "item": 3}
+{"t": 134.45, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 134.45, "type": "pos", "slot": 3, "from": 3, "to": 4}
+{"t": 134.869, "type": "lap", "slot": 5, "lap": 2, "split": 63.745, "total": 134.869}
+{"t": 136.383, "type": "pos", "slot": 6, "from": 11, "to": 10}
+{"t": 136.383, "type": "box", "slot": 7, "item": 9}
+{"t": 136.383, "type": "pos", "slot": 8, "from": 10, "to": 11}
+{"t": 137.017, "type": "box", "slot": 8, "item": 10}
+{"t": 137.517, "type": "hold", "slot": 7, "item": 9}
+{"t": 137.583, "type": "pos", "slot": 5, "from": 12, "to": 11}
+{"t": 137.583, "type": "pos", "slot": 8, "from": 11, "to": 12}
+{"t": 138.15, "type": "hold", "slot": 8, "item": 10}
+{"t": 138.35, "type": "use", "slot": 7, "item": 9}
+{"t": 138.417, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 138.417, "type": "pos", "slot": 6, "from": 10, "to": 11}
+{"t": 139.05, "type": "pos", "slot": 5, "from": 10, "to": 9}
+{"t": 139.05, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 139.15, "type": "hit", "slot": 3, "damage": 0, "object": 2, "by": [1], "place": 4, "for": 0.667}
+{"t": 139.55, "type": "pos", "slot": 6, "from": 11, "to": 12}
+{"t": 139.55, "type": "pos", "slot": 8, "from": 12, "to": 11}
+{"t": 139.583, "type": "hit", "slot": 5, "damage": 2, "object": 7, "by": [10], "place": 9, "for": 0.4}
+{"t": 139.95, "type": "use", "slot": 3, "item": 18}
+{"t": 139.983, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 139.983, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 140.05, "type": "use", "slot": 1, "item": 3}
+{"t": 141.25, "type": "pos", "slot": 0, "from": 2, "to": 1}
+{"t": 141.25, "type": "pos", "slot": 10, "from": 1, "to": 2}
+{"t": 142.983, "type": "pos", "slot": 5, "from": 10, "to": 9}
+{"t": 142.983, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 143.25, "type": "hit", "slot": 4, "damage": 2, "object": 7, "by": [1], "place": 8, "for": 1.7}
+{"t": 143.583, "type": "pos", "slot": 0, "from": 1, "to": 2}
+{"t": 143.583, "type": "pos", "slot": 10, "from": 2, "to": 1}
+{"t": 143.717, "type": "hit", "slot": 0, "damage": 7, "object": 5, "by": [4], "place": 2, "for": 1.3, "caught": true}
+{"t": 143.75, "type": "lost", "slot": 0, "item": 5, "damage": 7}
+{"t": 143.817, "type": "box", "slot": 10, "item": 3}
+{"t": 143.817, "type": "hit", "slot": 1, "damage": 7, "object": 5, "by": [4], "place": 3, "for": 1.6, "caught": true}
+{"t": 143.883, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 143.883, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 143.883, "type": "hit", "slot": 10, "damage": 7, "object": 5, "by": [4], "place": 1, "for": 1.233}
+{"t": 144.217, "type": "hit", "slot": 9, "damage": 0, "object": 2, "by": [2], "place": 7, "for": 0.667}
+{"t": 144.95, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 144.95, "type": "pos", "slot": 3, "from": 4, "to": 3}
+{"t": 145.017, "type": "pos", "slot": 0, "from": 2, "to": 3}
+{"t": 145.017, "type": "pos", "slot": 3, "from": 3, "to": 2}
+{"t": 145.117, "type": "pos", "slot": 2, "from": 6, "to": 5}
+{"t": 145.117, "type": "pos", "slot": 11, "from": 5, "to": 6}
+{"t": 145.183, "type": "pos", "slot": 3, "from": 2, "to": 1}
+{"t": 145.183, "type": "pos", "slot": 10, "from": 1, "to": 2}
+{"t": 145.183, "type": "hit", "slot": 10, "damage": 0, "object": 2, "by": [3], "place": 2, "for": 0.667}
+{"t": 145.517, "type": "pos", "slot": 1, "from": 4, "to": 5}
+{"t": 145.517, "type": "pos", "slot": 2, "from": 5, "to": 4}
+{"t": 145.617, "type": "pos", "slot": 0, "from": 3, "to": 4}
+{"t": 145.617, "type": "pos", "slot": 2, "from": 4, "to": 3}
+{"t": 145.683, "type": "pos", "slot": 1, "from": 5, "to": 6}
+{"t": 145.683, "type": "pos", "slot": 4, "from": 8, "to": 9}
+{"t": 145.683, "type": "pos", "slot": 7, "from": 9, "to": 8}
+{"t": 145.683, "type": "pos", "slot": 11, "from": 6, "to": 5}
+{"t": 145.85, "type": "pos", "slot": 0, "from": 4, "to": 5}
+{"t": 145.85, "type": "pos", "slot": 2, "from": 3, "to": 2}
+{"t": 145.85, "type": "pos", "slot": 10, "from": 2, "to": 3}
+{"t": 145.85, "type": "pos", "slot": 11, "from": 5, "to": 4}
+{"t": 146.15, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 146.15, "type": "pos", "slot": 11, "from": 4, "to": 3}
+{"t": 146.383, "type": "box", "slot": 1, "item": 17}
+{"t": 146.383, "type": "use", "slot": 8, "item": 10}
+{"t": 146.683, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 146.683, "type": "pos", "slot": 8, "from": 11, "to": 10}
+{"t": 146.717, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 146.717, "type": "pos", "slot": 8, "from": 10, "to": 11}
+{"t": 146.783, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 146.783, "type": "pos", "slot": 8, "from": 11, "to": 10}
+{"t": 146.85, "type": "pos", "slot": 4, "from": 9, "to": 10}
+{"t": 146.85, "type": "pos", "slot": 8, "from": 10, "to": 9}
+{"t": 147.517, "type": "box", "slot": 9, "item": 13}
+{"t": 148.15, "type": "pos", "slot": 4, "from": 10, "to": 11}
+{"t": 148.15, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 148.483, "type": "pos", "slot": 5, "from": 10, "to": 9}
+{"t": 148.483, "type": "pos", "slot": 8, "from": 9, "to": 10}
+{"t": 148.65, "type": "hold", "slot": 9, "item": 13}
+{"t": 149.283, "type": "box", "slot": 7, "item": 7}
+{"t": 149.95, "type": "hold", "slot": 1, "item": 17}
+{"t": 150.117, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 150.117, "type": "pos", "slot": 8, "from": 10, "to": 9}
+{"t": 150.417, "type": "hold", "slot": 7, "item": 7}
+{"t": 150.583, "type": "box", "slot": 4, "item": 10}
+{"t": 150.65, "type": "use", "slot": 9, "item": 13}
+{"t": 150.917, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 150.917, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 151.717, "type": "use", "slot": 1, "item": 17}
+{"t": 151.717, "type": "hold", "slot": 4, "item": 10}
+{"t": 151.717, "type": "box", "slot": 6, "item": 10}
+{"t": 152.05, "type": "pos", "slot": 0, "from": 5, "to": 4}
+{"t": 152.05, "type": "pos", "slot": 11, "from": 4, "to": 5}
+{"t": 152.517, "type": "hit", "slot": 0, "damage": 11, "object": null, "by": [9], "place": 4, "guess": true, "for": 0.667}
+{"t": 152.517, "type": "hit", "slot": 1, "damage": 11, "object": null, "by": [9], "place": 6, "guess": true, "for": 1.767}
+{"t": 152.517, "type": "hit", "slot": 2, "damage": 11, "object": null, "by": [9], "place": 2, "guess": true, "for": 1.767}
+{"t": 152.517, "type": "hit", "slot": 3, "damage": 11, "object": null, "by": [9], "place": 1, "guess": true, "for": 0.633}
+{"t": 152.517, "type": "hit", "slot": 10, "damage": 11, "object": null, "by": [9], "place": 3, "guess": true, "for": 0.667}
+{"t": 152.517, "type": "hit", "slot": 11, "damage": 11, "object": null, "by": [9], "place": 5, "guess": true, "for": 1.767}
+{"t": 152.583, "type": "use", "slot": 2, "item": 3}
+{"t": 152.583, "type": "use", "slot": 7, "item": 7}
+{"t": 152.85, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 152.85, "type": "hold", "slot": 6, "item": 10}
+{"t": 152.85, "type": "pos", "slot": 11, "from": 5, "to": 6}
+{"t": 153.417, "type": "pos", "slot": 0, "from": 4, "to": 3}
+{"t": 153.417, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 154.217, "type": "pos", "slot": 9, "from": 7, "to": 6}
+{"t": 154.217, "type": "pos", "slot": 11, "from": 6, "to": 7}
+{"t": 154.45, "type": "pos", "slot": 1, "from": 5, "to": 6}
+{"t": 154.45, "type": "pos", "slot": 9, "from": 6, "to": 5}
+{"t": 155.017, "type": "pos", "slot": 0, "from": 3, "to": 2}
+{"t": 155.017, "type": "pos", "slot": 2, "from": 2, "to": 3}
+{"t": 155.25, "type": "pos", "slot": 4, "from": 11, "to": 10}
+{"t": 155.25, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 155.417, "type": "pos", "slot": 2, "from": 3, "to": 4}
+{"t": 155.417, "type": "pos", "slot": 10, "from": 4, "to": 3}
+{"t": 155.75, "type": "pos", "slot": 4, "from": 10, "to": 9}
+{"t": 155.75, "type": "pos", "slot": 8, "from": 9, "to": 10}
+{"t": 155.817, "type": "pos", "slot": 1, "from": 6, "to": 7}
+{"t": 155.817, "type": "pos", "slot": 11, "from": 7, "to": 6}
+{"t": 156.383, "type": "pos", "slot": 1, "from": 7, "to": 8}
+{"t": 156.383, "type": "pos", "slot": 7, "from": 8, "to": 7}
+{"t": 157.217, "type": "pos", "slot": 5, "from": 11, "to": 12}
+{"t": 157.217, "type": "pos", "slot": 6, "from": 12, "to": 11}
+{"t": 157.383, "type": "hit", "slot": 3, "damage": 7, "object": 5, "by": [7], "place": 1, "for": 2.0}
+{"t": 157.55, "type": "pos", "slot": 1, "from": 8, "to": 7}
+{"t": 157.55, "type": "pos", "slot": 7, "from": 7, "to": 8}
+{"t": 157.85, "type": "pos", "slot": 4, "from": 9, "to": 8}
+{"t": 157.85, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 157.917, "type": "pos", "slot": 1, "from": 7, "to": 6}
+{"t": 157.917, "type": "pos", "slot": 11, "from": 6, "to": 7}
+{"t": 158.15, "type": "hit", "slot": 4, "damage": 0, "object": 2, "by": [9], "place": 8, "for": 0.667}
+{"t": 158.317, "type": "pos", "slot": 6, "from": 11, "to": 10}
+{"t": 158.317, "type": "pos", "slot": 8, "from": 10, "to": 11}
+{"t": 158.65, "type": "pos", "slot": 6, "from": 10, "to": 9}
+{"t": 158.65, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 158.683, "type": "hit", "slot": 5, "damage": 0, "object": 2, "by": [2], "place": 12, "for": 0.7}
+{"t": 158.883, "type": "pos", "slot": 0, "from": 2, "to": 1}
+{"t": 158.883, "type": "pos", "slot": 3, "from": 1, "to": 2}
+{"t": 158.883, "type": "pos", "slot": 7, "from": 10, "to": 11}
+{"t": 158.883, "type": "pos", "slot": 8, "from": 11, "to": 10}
+{"t": 159.483, "type": "pos", "slot": 2, "from": 4, "to": 3}
+{"t": 159.483, "type": "pos", "slot": 3, "from": 2, "to": 4}
+{"t": 159.483, "type": "pos", "slot": 10, "from": 3, "to": 2}
+{"t": 160.283, "type": "pos", "slot": 3, "from": 4, "to": 5}
+{"t": 160.283, "type": "pos", "slot": 9, "from": 5, "to": 4}
+{"t": 160.45, "type": "pos", "slot": 4, "from": 8, "to": 7}
+{"t": 160.45, "type": "pos", "slot": 11, "from": 7, "to": 8}
+{"t": 161.25, "type": "pos", "slot": 2, "from": 3, "to": 4}
+{"t": 161.25, "type": "pos", "slot": 9, "from": 4, "to": 3}
+{"t": 161.35, "type": "use", "slot": 4, "item": 10}
+{"t": 161.583, "type": "pos", "slot": 1, "from": 6, "to": 5}
+{"t": 161.583, "type": "pos", "slot": 3, "from": 5, "to": 6}
+{"t": 161.65, "type": "use", "slot": 6, "item": 10}
+{"t": 161.817, "type": "pos", "slot": 1, "from": 5, "to": 4}
+{"t": 161.817, "type": "pos", "slot": 2, "from": 4, "to": 5}
+{"t": 162.083, "type": "pos", "slot": 2, "from": 5, "to": 6}
+{"t": 162.083, "type": "pos", "slot": 3, "from": 6, "to": 7}
+{"t": 162.083, "type": "pos", "slot": 4, "from": 7, "to": 5}
+{"t": 162.15, "type": "pos", "slot": 2, "from": 6, "to": 7}
+{"t": 162.15, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 162.717, "type": "pos", "slot": 2, "from": 7, "to": 8}
+{"t": 162.717, "type": "pos", "slot": 11, "from": 8, "to": 7}
+{"t": 162.883, "type": "pos", "slot": 2, "from": 8, "to": 12}
+{"t": 162.883, "type": "pos", "slot": 5, "from": 12, "to": 11}
+{"t": 162.883, "type": "pos", "slot": 6, "from": 9, "to": 8}
+{"t": 162.883, "type": "pos", "slot": 7, "from": 11, "to": 10}
+{"t": 162.883, "type": "pos", "slot": 8, "from": 10, "to": 9}
+{"t": 163.517, "type": "box", "slot": 10, "item": 1}
+{"t": 163.95, "type": "pos", "slot": 3, "from": 6, "to": 7}
+{"t": 163.95, "type": "pos", "slot": 11, "from": 7, "to": 6}
+{"t": 164.35, "type": "pos", "slot": 4, "from": 5, "to": 6}
+{"t": 164.35, "type": "pos", "slot": 11, "from": 6, "to": 5}
+{"t": 164.683, "type": "hold", "slot": 10, "item": 1}
+{"t": 165.217, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 165.217, "type": "pos", "slot": 9, "from": 3, "to": 4}
+{"t": 165.317, "type": "box", "slot": 1, "item": 3}
+{"t": 165.383, "type": "use", "slot": 10, "item": 1}
+{"t": 166.05, "type": "pos", "slot": 3, "from": 7, "to": 5}
+{"t": 166.05, "type": "pos", "slot": 11, "from": 5, "to": 7}
+{"t": 166.167, "type": "box", "slot": 3, "item": 11}
+{"t": 166.683, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 166.683, "type": "pos", "slot": 9, "from": 4, "to": 3}
+{"t": 166.75, "type": "pos", "slot": 7, "from": 10, "to": 9}
+{"t": 166.75, "type": "pos", "slot": 8, "from": 9, "to": 10}
+{"t": 166.917, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 166.917, "type": "pos", "slot": 9, "from": 3, "to": 4}
+{"t": 166.983, "type": "pos", "slot": 6, "from": 8, "to": 9}
+{"t": 166.983, "type": "pos", "slot": 7, "from": 9, "to": 8}
+{"t": 167.217, "type": "pos", "slot": 5, "from": 11, "to": 10}
+{"t": 167.217, "type": "pos", "slot": 8, "from": 10, "to": 11}
+{"t": 167.383, "type": "pos", "slot": 5, "from": 10, "to": 9}
+{"t": 167.383, "type": "pos", "slot": 6, "from": 9, "to": 10}
+{"t": 167.883, "type": "pos", "slot": 3, "from": 5, "to": 6}
+{"t": 167.883, "type": "pos", "slot": 4, "from": 6, "to": 5}
+{"t": 167.95, "type": "hit", "slot": 0, "damage": 0, "object": 2, "by": [10], "place": 1, "for": 0.667}
+{"t": 168.0, "type": "pos", "slot": 3, "from": 6, "to": 7}
+{"t": 168.0, "type": "pos", "slot": 11, "from": 7, "to": 6}
+{"t": 168.117, "type": "pos", "slot": 4, "from": 5, "to": 6}
+{"t": 168.117, "type": "pos", "slot": 11, "from": 6, "to": 5}
+{"t": 168.45, "type": "pos", "slot": 3, "from": 7, "to": 6}
+{"t": 168.45, "type": "pos", "slot": 4, "from": 6, "to": 7}
+{"t": 168.517, "type": "hit", "slot": 10, "damage": 0, "object": 2, "by": [1], "place": 2, "for": 0.667}
+{"t": 168.733, "type": "hit", "slot": 0, "damage": 2, "object": 1, "by": [10], "place": 1, "for": 1.717}
+{"t": 168.85, "type": "hold", "slot": 1, "item": 3}
+{"t": 169.683, "type": "hold", "slot": 3, "item": 11}
+{"t": 169.917, "type": "box", "slot": 5, "item": 9}
+{"t": 170.217, "type": "use", "slot": 3, "item": 11}
+{"t": 170.383, "type": "pos", "slot": 3, "from": 6, "to": 5}
+{"t": 170.383, "type": "pos", "slot": 11, "from": 5, "to": 6}
+{"t": 170.717, "type": "use", "slot": 1, "item": 3}
+{"t": 170.817, "type": "hit", "slot": 9, "damage": 2, "object": 7, "by": [1], "place": 4, "for": 1.667}
+{"t": 171.017, "type": "hold", "slot": 5, "item": 9}
+{"t": 171.4, "type": "use", "slot": 5, "item": 9}
+{"t": 171.583, "type": "pos", "slot": 2, "from": 12, "to": 11}
+{"t": 171.583, "type": "pos", "slot": 8, "from": 11, "to": 12}
+{"t": 171.85, "type": "pos", "slot": 0, "from": 1, "to": 2}
+{"t": 171.85, "type": "pos", "slot": 10, "from": 2, "to": 1}
+{"t": 171.917, "type": "pos", "slot": 0, "from": 2, "to": 3}
+{"t": 171.917, "type": "pos", "slot": 1, "from": 3, "to": 2}
+{"t": 172.183, "type": "pos", "slot": 3, "from": 5, "to": 4}
+{"t": 172.183, "type": "pos", "slot": 9, "from": 4, "to": 5}
+{"t": 172.65, "type": "box", "slot": 6, "item": 5}
+{"t": 172.817, "type": "pos", "slot": 9, "from": 5, "to": 6}
+{"t": 172.817, "type": "pos", "slot": 11, "from": 6, "to": 5}
+{"t": 173.15, "type": "hit", "slot": 0, "damage": 13, "object": null, "by": [3], "place": 3, "guess": true, "for": 0.4}
+{"t": 173.217, "type": "pos", "slot": 0, "from": 3, "to": 4}
+{"t": 173.217, "type": "pos", "slot": 3, "from": 4, "to": 3}
+{"t": 173.45, "type": "hit", "slot": 1, "damage": 13, "object": null, "by": [3], "place": 2, "guess": true, "for": 0.4}
+{"t": 173.55, "type": "pos", "slot": 1, "from": 2, "to": 3}
+{"t": 173.55, "type": "pos", "slot": 3, "from": 3, "to": 2}
+{"t": 173.783, "type": "hold", "slot": 6, "item": 5}
+{"t": 174.05, "type": "pos", "slot": 0, "from": 4, "to": 5}
+{"t": 174.05, "type": "pos", "slot": 11, "from": 5, "to": 4}
+{"t": 174.383, "type": "pos", "slot": 5, "from": 9, "to": 8}
+{"t": 174.383, "type": "pos", "slot": 7, "from": 8, "to": 9}
+{"t": 174.517, "type": "box", "slot": 2, "item": 9}
+{"t": 174.75, "type": "pos", "slot": 1, "from": 3, "to": 4}
+{"t": 174.75, "type": "pos", "slot": 11, "from": 4, "to": 3}
+{"t": 175.917, "type": "pos", "slot": 0, "from": 5, "to": 6}
+{"t": 175.917, "type": "pos", "slot": 9, "from": 6, "to": 5}
+{"t": 177.217, "type": "hit", "slot": 10, "damage": 13, "object": null, "by": [3], "place": 1, "guess": true, "for": 0.367}
+{"t": 177.35, "type": "pos", "slot": 3, "from": 2, "to": 1}
+{"t": 177.35, "type": "pos", "slot": 10, "from": 1, "to": 2}
+{"t": 177.683, "type": "box", "slot": 3, "item": 2}
+{"t": 177.75, "type": "pos", "slot": 1, "from": 4, "to": 5}
+{"t": 177.75, "type": "pos", "slot": 9, "from": 5, "to": 4}
+{"t": 177.85, "type": "pos", "slot": 0, "from": 6, "to": 7}
+{"t": 177.85, "type": "pos", "slot": 4, "from": 7, "to": 6}
+{"t": 178.083, "type": "hold", "slot": 2, "item": 9}
+{"t": 178.817, "type": "use", "slot": 2, "item": 9}
+{"t": 179.55, "type": "box", "slot": 11, "item": 3}
+{"t": 179.783, "type": "use", "slot": 6, "item": 5}
+{"t": 180.75, "type": "hold", "slot": 11, "item": 3}
+{"t": 181.183, "type": "hold", "slot": 3, "item": 2}
+{"t": 181.917, "type": "box", "slot": 0, "item": 11}
+{"t": 182.05, "type": "pos", "slot": 6, "from": 10, "to": 9}
+{"t": 182.05, "type": "pos", "slot": 7, "from": 9, "to": 10}
+{"t": 182.317, "type": "pos", "slot": 10, "from": 2, "to": 3}
+{"t": 182.317, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 182.617, "type": "pos", "slot": 9, "from": 4, "to": 3}
+{"t": 182.617, "type": "pos", "slot": 10, "from": 3, "to": 4}
+{"t": 182.65, "type": "box", "slot": 5, "item": 7}
+{"t": 182.783, "type": "pos", "slot": 0, "from": 7, "to": 6}
+{"t": 182.783, "type": "pos", "slot": 4, "from": 6, "to": 7}
+{"t": 182.95, "type": "use", "slot": 3, "item": 2}
+{"t": 182.95, "type": "use", "slot": 11, "item": 3}
+{"t": 183.217, "type": "pos", "slot": 9, "from": 3, "to": 2}
+{"t": 183.217, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 183.583, "type": "pos", "slot": 9, "from": 2, "to": 3}
+{"t": 183.583, "type": "pos", "slot": 11, "from": 3, "to": 2}
+{"t": 183.683, "type": "hold", "slot": 5, "item": 7}
+{"t": 183.683, "type": "pos", "slot": 9, "from": 3, "to": 2}
+{"t": 183.683, "type": "pos", "slot": 11, "from": 2, "to": 3}
+{"t": 185.05, "type": "pos", "slot": 1, "from": 5, "to": 4}
+{"t": 185.05, "type": "pos", "slot": 10, "from": 4, "to": 5}
+{"t": 185.517, "type": "hold", "slot": 0, "item": 11}
+{"t": 185.617, "type": "box", "slot": 2, "item": 10}
+{"t": 185.617, "type": "use", "slot": 5, "item": 7}
+{"t": 185.75, "type": "box", "slot": 1, "item": 11}
+{"t": 186.017, "type": "use", "slot": 0, "item": 11}
+{"t": 186.15, "type": "pos", "slot": 2, "from": 11, "to": 10}
+{"t": 186.15, "type": "pos", "slot": 7, "from": 10, "to": 11}
+{"t": 187.117, "type": "hit", "slot": 10, "damage": 13, "object": null, "by": [0], "place": 5, "guess": true, "for": 0.367}
+{"t": 187.15, "type": "pos", "slot": 0, "from": 6, "to": 5}
+{"t": 187.15, "type": "pos", "slot": 10, "from": 5, "to": 6}
+{"t": 187.283, "type": "hit", "slot": 5, "damage": 2, "object": 7, "by": [11], "place": 8, "for": 1.667}
+{"t": 187.528, "type": "finish", "slot": 3, "position": 1, "time": 187.528}
+{"t": 188.283, "type": "box", "slot": 8, "item": 15}
+{"t": 189.083, "type": "pos", "slot": 5, "from": 8, "to": 9}
+{"t": 189.083, "type": "pos", "slot": 6, "from": 9, "to": 8}
+{"t": 189.183, "type": "pos", "slot": 2, "from": 10, "to": 9}
+{"t": 189.183, "type": "hold", "slot": 2, "item": 10}
+{"t": 189.183, "type": "pos", "slot": 5, "from": 9, "to": 10}
+{"t": 189.25, "type": "hit", "slot": 9, "damage": 0, "object": 2, "by": [3], "place": 2, "for": 0.633}
+{"t": 189.35, "type": "hold", "slot": 1, "item": 11}
+{"t": 189.417, "type": "pos", "slot": 1, "from": 4, "to": 3}
+{"t": 189.417, "type": "pos", "slot": 11, "from": 3, "to": 4}
+{"t": 189.467, "type": "hold", "slot": 8, "item": 15}
+{"t": 189.517, "type": "use", "slot": 1, "item": 11}
+{"t": 189.65, "type": "use", "slot": 8, "item": 15}
+{"t": 189.658, "type": "finish", "slot": 9, "position": 2, "time": 189.658}
+{"t": 189.983, "type": "hit", "slot": 11, "damage": 13, "object": null, "by": [0], "place": 4, "guess": true, "for": 0.4}
+{"t": 189.983, "type": "hit", "slot": 9, "damage": 7, "object": 5, "by": [5], "place": 2, "after": true, "for": 1.433}
+{"t": 190.05, "type": "pos", "slot": 0, "from": 5, "to": 4}
+{"t": 190.05, "type": "pos", "slot": 11, "from": 4, "to": 5}
+{"t": 190.283, "type": "pos", "slot": 2, "from": 9, "to": 8}
+{"t": 190.283, "type": "pos", "slot": 6, "from": 8, "to": 9}
+{"t": 190.514, "type": "finish", "slot": 1, "position": 3, "time": 190.514}
+{"t": 190.783, "type": "pos", "slot": 7, "from": 11, "to": 12}
+{"t": 190.783, "type": "pos", "slot": 8, "from": 12, "to": 11}
+{"t": 190.902, "type": "finish", "slot": 0, "position": 4, "time": 190.902}
+{"t": 191.65, "type": "pos", "slot": 4, "from": 7, "to": 6}
+{"t": 191.65, "type": "pos", "slot": 10, "from": 6, "to": 7}
+{"t": 191.817, "type": "pos", "slot": 5, "from": 10, "to": 11}
+{"t": 191.817, "type": "pos", "slot": 8, "from": 11, "to": 10}
+{"t": 192.796, "type": "finish", "slot": 11, "position": 5, "time": 192.796}
+{"t": 192.983, "type": "pos", "slot": 6, "from": 9, "to": 10}
+{"t": 192.983, "type": "pos", "slot": 8, "from": 10, "to": 9}
+{"t": 193.317, "type": "pos", "slot": 2, "from": 8, "to": 7}
+{"t": 193.317, "type": "pos", "slot": 10, "from": 7, "to": 8}
+{"t": 193.383, "type": "pos", "slot": 2, "from": 7, "to": 6}
+{"t": 193.383, "type": "pos", "slot": 4, "from": 6, "to": 7}
+{"t": 193.617, "type": "use", "slot": 2, "item": 10}
+{"t": 193.76, "type": "finish", "slot": 2, "position": 6, "time": 193.76}
+{"type": "progress", "hz": 5, "t0": 0.033, "completion": {"0": [0.9865, 0.9873, 0.9892, 0.992, 0.9949, 0.9974, 0.9999, 1.0022, 1.0046, 1.0069, 1.0093, 1.0117, 1.014, 1.0162, 1.019, 1.0217, 1.0244, 1.0268, 1.0291, 1.0314, 1.0336, 1.036, 1.0379, 1.0396, 1.0411, 1.0423, 1.0435, 1.0449, 1.0467, 1.0485, 1.0504, 1.0521, 1.0538, 1.0565, 1.0594, 1.062, 1.0645, 1.067, 1.0698, 1.0729, 1.0756, 1.0783, 1.0811, 1.0839, 1.087, 1.0909, 1.094, 1.0972, 1.1071, 1.1203, 1.1317, 1.1443, 1.1555, 1.1666, 1.1774, 1.1882, 1.1987, 1.2109, 1.224, 1.2379, 1.2448, 1.248, 1.2505, 1.253, 1.2557, 1.2587, 1.2617, 1.2646, 1.2674, 1.2702, 1.2736, 1.2773, 1.281, 1.2843, 1.288, 1.2919, 1.2956, 1.299, 1.3026, 1.3062, 1.3105, 1.3152, 1.3199, 1.3244, 1.329, 1.3327, 1.3365, 1.3404, 1.3452, 1.3496, 1.3538, 1.3577, 1.3618, 1.3652, 1.3685, 1.3717, 1.3749, 1.3782, 1.3815, 1.3852, 1.3891, 1.3929, 1.3962, 1.4013, 1.4084, 1.4158, 1.4244, 1.4334, 1.4431, 1.4508, 1.4572, 1.4617, 1.466, 1.4697, 1.4734, 1.4766, 1.4795, 1.4821, 1.4846, 1.487, 1.4895, 1.4919, 1.4943, 1.498, 1.502, 1.506, 1.5106, 1.5154, 1.5201, 1.5245, 1.5291, 1.5337, 1.5383, 1.543, 1.5481, 1.5527, 1.5562, 1.5601, 1.5655, 1.5708, 1.5746, 1.5752, 1.5757, 1.5762, 1.5774, 1.5787, 1.5791, 1.5795, 1.5798, 1.5802, 1.5802, 1.5802, 1.5802, 1.5802, 1.5816, 1.5825, 1.5833, 1.5836, 1.5837, 1.5836, 1.5836, 1.5836, 1.5837, 1.5839, 1.5842, 1.5848, 1.5855, 1.5865, 1.5876, 1.5888, 1.5901, 1.5915, 1.5929, 1.5947, 1.5964, 1.5982, 1.6001, 1.6033, 1.6068, 1.6104, 1.6143, 1.6188, 1.622, 1.6251, 1.6282, 1.6314, 1.6356, 1.6395, 1.6433, 1.6469, 1.6506, 1.6544, 1.6588, 1.6632, 1.6665, 1.6694, 1.6725, 1.6754, 1.6785, 1.6815, 1.6845, 1.6872, 1.691, 1.696, 1.7009, 1.7055, 1.7108, 1.7155, 1.719, 1.7215, 1.7238, 1.7262, 1.7282, 1.7295, 1.7309, 1.7322, 1.7334, 1.7354, 1.7376, 1.7402, 1.7432, 1.7464, 1.7501, 1.7537, 1.7572, 1.7601, 1.7628, 1.7654, 1.7683, 1.7711, 1.7737, 1.7762, 1.7786, 1.7808, 1.783, 1.7856, 1.7882, 1.7909, 1.7938, 1.7966, 1.7994, 1.802, 1.8046, 1.8072, 1.8099, 1.8128, 1.8157, 1.8187, 1.8219, 1.825, 1.8281, 1.8312, 1.8344, 1.8376, 1.84, 1.8423, 1.8447, 1.847, 1.8491, 1.851, 1.853, 1.8549, 1.8575, 1.8599, 1.8622, 1.8645, 1.8665, 1.8687, 1.8711, 1.8744, 1.8785, 1.8824, 1.8861, 1.89, 1.8935, 1.8968, 1.9001, 1.9037, 1.9082, 1.9123, 1.9164, 1.9204, 1.9243, 1.928, 1.9311, 1.9339, 1.9367, 1.9394, 1.9425, 1.9452, 1.9478, 1.9502, 1.9521, 1.9541, 1.956, 1.9579, 1.9598, 1.9617, 1.9635, 1.9651, 1.967, 1.9692, 1.9719, 1.9745, 1.9768, 1.979, 1.9814, 1.9838, 1.9863, 1.9888, 1.9913, 1.9937, 1.996, 1.9984, 2.0003, 2.0017, 2.0027, 2.0036, 2.0042, 2.0048, 2.0053, 2.0059, 2.0067, 2.0076, 2.0086, 2.0097, 2.0109, 2.0123, 2.0138, 2.0153, 2.0167, 2.0183, 2.0201, 2.0218, 2.0236, 2.0253, 2.0269, 2.0285, 2.0301, 2.0317, 2.0334, 2.0351, 2.0367, 2.0379, 2.0391, 2.0403, 2.0414, 2.0425, 2.0435, 2.0446, 2.0457, 2.0467, 2.0481, 2.0494, 2.0507, 2.052, 2.0533, 2.0546, 2.0574, 2.0594, 2.0615, 2.0633, 2.0651, 2.0671, 2.0691, 2.0712, 2.0735, 2.0758, 2.0781, 2.0808, 2.0836, 2.0868, 2.0908, 2.0937, 2.097, 2.1054, 2.1192, 2.1314, 2.1429, 2.1538, 2.1653, 2.1755, 2.1872, 2.1975, 2.2095, 2.2213, 2.2366, 2.2444, 2.2478, 2.2503, 2.2528, 2.2555, 2.2585, 2.2614, 2.2642, 2.2669, 2.2696, 2.2721, 2.2753, 2.2791, 2.2829, 2.2868, 2.291, 2.2949, 2.2987, 2.3026, 2.3064, 2.3105, 2.316, 2.3203, 2.3246, 2.329, 2.3325, 2.3357, 2.3395, 2.3434, 2.3476, 2.3515, 2.3556, 2.3597, 2.3634, 2.3667, 2.3699, 2.3732, 2.3764, 2.3797, 2.3828, 2.3871, 2.3909, 2.3947, 2.3986, 2.4038, 2.4103, 2.4177, 2.4255, 2.4338, 2.4434, 2.452, 2.4593, 2.465, 2.471, 2.4762, 2.4812, 2.4862, 2.4905, 2.4946, 2.4987, 2.5033, 2.5081, 2.5129, 2.5176, 2.5224, 2.5272, 2.5323, 2.5375, 2.5425, 2.5472, 2.5523, 2.557, 2.5615, 2.5658, 2.5701, 2.5742, 2.5787, 2.5826, 2.5854, 2.588, 2.5906, 2.5932, 2.5958, 2.5986, 2.6026, 2.607, 2.6119, 2.6169, 2.6206, 2.6236, 2.6266, 2.6294, 2.633, 2.6374, 2.6412, 2.645, 2.6488, 2.6527, 2.6569, 2.6612, 2.6655, 2.6685, 2.6717, 2.6746, 2.6776, 2.6804, 2.6833, 2.6861, 2.6888, 2.6937, 2.6989, 2.7028, 2.7059, 2.7087, 2.7129, 2.7158, 2.7177, 2.7194, 2.7211, 2.7227, 2.7244, 2.7263, 2.729, 2.7315, 2.7343, 2.7371, 2.7396, 2.742, 2.7445, 2.7473, 2.7501, 2.7529, 2.7558, 2.7587, 2.7615, 2.764, 2.7668, 2.7694, 2.772, 2.7746, 2.7771, 2.7797, 2.7822, 2.7851, 2.7879, 2.7909, 2.7938, 2.7966, 2.7995, 2.8021, 2.8047, 2.8074, 2.8102, 2.8131, 2.8161, 2.8191, 2.8223, 2.8255, 2.8287, 2.8318, 2.8353, 2.8381, 2.8404, 2.8425, 2.8451, 2.8474, 2.8495, 2.8515, 2.8535, 2.8557, 2.8581, 2.8605, 2.8629, 2.8653, 2.8677, 2.87, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.8719, 2.872, 2.8723, 2.8726, 2.8733, 2.8744, 2.8756, 2.877, 2.8786, 2.8803, 2.8821, 2.884, 2.8857, 2.8878, 2.8896, 2.8919, 2.894, 2.8962, 2.8983, 2.9006, 2.9045, 2.9092, 2.9127, 2.9163, 2.9192, 2.9221, 2.9249, 2.9276, 2.9299, 2.9322, 2.935, 2.9376, 2.9401, 2.9426, 2.9449, 2.9473, 2.9497, 2.9519, 2.9538, 2.9563, 2.9588, 2.9602, 2.961, 2.9629, 2.9646, 2.9662, 2.9678, 2.9694, 2.9709, 2.9724, 2.9738, 2.9753, 2.977, 2.9787, 2.9805, 2.9823, 2.9845, 2.9867, 2.989, 2.9913, 2.9936, 2.9959, 2.998, 3.0004, 3.0026, 3.0047, 3.0069, 3.0091, 3.0111, 3.0133, 3.0153, 3.0173, 3.0194, 3.0218, 3.0239, 3.0257, 3.0279, 3.0302, 3.0324, 3.0349, 3.0369, 3.0386, 3.0403, 3.0421, 3.0442, 3.0462, 3.0481, 3.05, 3.0518, 3.0537, 3.0553, 3.0576, 3.061, 3.0671, 3.0765, 3.0851, 3.0924, 3.0966, 3.1066, 3.1201, 3.1323, 3.1441, 3.1554, 3.1664, 3.1772, 3.1881, 3.1981, 3.2107, 3.2238, 3.2371, 3.2448, 3.248, 3.2505, 3.253, 3.2557, 3.2587, 3.2616, 3.2644, 3.2672, 3.2699, 3.2726, 3.2761, 3.2795, 3.2828, 3.2862, 3.2904, 3.2942, 3.2978, 3.3014, 3.3049, 3.3086, 3.3134, 3.3179, 3.3224, 3.3287, 3.3335, 3.3382, 3.3434, 3.3476, 3.3509, 3.3542, 3.3571, 3.3596, 3.3616, 3.3631, 3.3646, 3.3664, 3.3664, 3.3664, 3.3664, 3.3664, 3.3664, 3.3664, 3.3663, 3.3664, 3.3665, 3.3672, 3.3682, 3.3691, 3.3701, 3.3712, 3.3725, 3.374, 3.3757, 3.3775, 3.3794, 3.3815, 3.3839, 3.3865, 3.3894, 3.3924, 3.3954, 3.3987, 3.4035, 3.4099, 3.4173, 3.4261, 3.435, 3.4434, 3.4517, 3.4592, 3.4657, 3.4723, 3.4769, 3.4812, 3.4857, 3.4909, 3.496, 3.5004, 3.5046, 3.5085, 3.513, 3.5172, 3.5213, 3.5254, 3.5297, 3.5341, 3.5385, 3.5429, 3.5478, 3.5532, 3.5587, 3.5642, 3.5695, 3.5748, 3.5801, 3.5838, 3.587, 3.5898, 3.5928, 3.596, 3.599, 3.6043, 3.6095, 3.6148, 3.6195, 3.6228, 3.6259, 3.629, 3.6321, 3.636, 3.6398, 3.6434, 3.6471, 3.6507, 3.6544, 3.6587, 3.6632, 3.6666, 3.6698, 3.6728, 3.6758, 3.6786, 3.6815, 3.6844, 3.6871, 3.6907, 3.6964, 3.701, 3.7061, 3.7128, 3.7183, 3.7226, 3.7263, 3.7289, 3.731, 3.7332, 3.7357, 3.7386, 3.7415, 3.7439, 3.7467, 3.7492, 3.7521, 3.7547, 3.757, 3.7595, 3.7618, 3.7643, 3.7668, 3.7693, 3.7718, 3.7743, 3.7768, 3.7798, 3.7843, 3.7887, 3.7928, 3.7962, 3.7985, 3.8003, 3.8018, 3.8028, 3.8034, 3.8037, 3.804, 3.8042, 3.8044, 3.8044, 3.8045, 3.8047, 3.805, 3.8056, 3.8062, 3.807, 3.8079, 3.8087, 3.8095, 3.8105, 3.8116, 3.8129, 3.8143, 3.8158, 3.8169, 3.8169, 3.817, 3.8172, 3.8177, 3.8181, 3.8187, 3.8194, 3.8202, 3.8211, 3.8222, 3.8234, 3.8248, 3.8264, 3.828, 3.83, 3.832, 3.8342, 3.8373, 3.8397, 3.8422, 3.8444, 3.8468, 3.8487, 3.8502, 3.8516, 3.8531, 3.8546, 3.8561, 3.8576, 3.8589, 3.8604, 3.8617, 3.863, 3.8643, 3.8655, 3.8667, 3.8679, 3.8691, 3.8703, 3.8715, 3.8727, 3.8754, 3.8781, 3.8808, 3.8836, 3.8865, 3.8895, 3.8926, 3.8957, 3.899, 3.9022, 3.9054, 3.9086, 3.9118, 3.9151, 3.9178, 3.9208, 3.9236, 3.9264, 3.9288, 3.931, 3.9333, 3.936, 3.9388, 3.9419, 3.9448, 3.9476, 3.9503, 3.953, 3.9557, 3.9584, 3.9612, 3.9639, 3.9659, 3.9679, 3.9699, 3.9719, 3.9738, 3.9758, 3.9783, 3.9809, 3.984, 3.9872, 3.9901, 3.993, 3.9959, 3.9989, 4.0017, 4.0044, 4.0071, 4.0099, 4.0126, 4.0154, 4.0182, 4.0213, 4.0243, 4.027, 4.0295, 4.032, 4.0347, 4.0372, 4.039, 4.0404, 4.0417, 4.0431, 4.0444, 4.0458, 4.0473, 4.0486, 4.0502, 4.0517, 4.0532, 4.0549, 4.0578, 4.0602, 4.0623, 4.0645, 4.0667, 4.069, 4.0711, 4.074, 4.0764, 4.0786, 4.081, 4.0832, 4.0856, 4.0887, 4.0921, 4.0948, 4.0976, 4.1069, 4.1201, 4.1322, 4.1441, 4.1553, 4.1664, 4.1772, 4.1881, 4.199, 4.2107, 4.2228, 4.2373, 4.2448, 4.248, 4.2505, 4.253, 4.2557, 4.2587, 4.2616, 4.264, 4.2662, 4.2685, 4.2707, 4.273], "1": [0.9875, 0.9882, 0.9901, 0.9929, 0.9955, 0.998, 1.0004, 1.0026, 1.0048, 1.0069, 1.0089, 1.011, 1.0131, 1.0153, 1.0174, 1.0198, 1.0223, 1.0246, 1.0268, 1.0291, 1.0314, 1.0337, 1.0349, 1.036, 1.0369, 1.0377, 1.0384, 1.0393, 1.0401, 1.041, 1.042, 1.0431, 1.0442, 1.0455, 1.0469, 1.0486, 1.0504, 1.0521, 1.0538, 1.0564, 1.0591, 1.0615, 1.0641, 1.0666, 1.0691, 1.072, 1.0749, 1.0774, 1.0798, 1.0824, 1.0853, 1.0895, 1.0935, 1.0969, 1.1038, 1.1181, 1.1298, 1.1421, 1.1535, 1.1646, 1.1754, 1.1863, 1.1972, 1.2088, 1.2213, 1.2359, 1.244, 1.2476, 1.2501, 1.2525, 1.2554, 1.2584, 1.2614, 1.2639, 1.2662, 1.2686, 1.2721, 1.2767, 1.2814, 1.2855, 1.2894, 1.2934, 1.2977, 1.3017, 1.3058, 1.3108, 1.3178, 1.325, 1.3315, 1.3363, 1.3403, 1.3442, 1.3488, 1.3528, 1.3556, 1.3587, 1.362, 1.3645, 1.3666, 1.3689, 1.3717, 1.3754, 1.3794, 1.3842, 1.3892, 1.394, 1.3988, 1.4057, 1.4139, 1.4244, 1.4366, 1.4466, 1.4559, 1.463, 1.4702, 1.4756, 1.4796, 1.4838, 1.4879, 1.4916, 1.4959, 1.4951, 1.4931, 1.4917, 1.4908, 1.4906, 1.4909, 1.4914, 1.4921, 1.493, 1.4941, 1.4953, 1.4964, 1.4947, 1.4919, 1.4904, 1.4902, 1.4903, 1.4907, 1.4914, 1.4924, 1.4936, 1.4949, 1.4964, 1.498, 1.5, 1.5023, 1.5046, 1.5072, 1.51, 1.5129, 1.5159, 1.5191, 1.5222, 1.5259, 1.5296, 1.5336, 1.5376, 1.5413, 1.5458, 1.5507, 1.5556, 1.5605, 1.5653, 1.5698, 1.5744, 1.579, 1.5829, 1.5859, 1.5886, 1.5912, 1.594, 1.5968, 1.6004, 1.606, 1.6116, 1.6176, 1.6217, 1.6253, 1.6288, 1.6324, 1.6364, 1.6398, 1.6435, 1.6474, 1.6513, 1.6552, 1.6598, 1.6641, 1.6673, 1.6702, 1.673, 1.6757, 1.6782, 1.6807, 1.6832, 1.6856, 1.6878, 1.6913, 1.6975, 1.7025, 1.7067, 1.7118, 1.7161, 1.7192, 1.7214, 1.7236, 1.726, 1.728, 1.7293, 1.7307, 1.7319, 1.7331, 1.7348, 1.7366, 1.7387, 1.7414, 1.7447, 1.7482, 1.752, 1.7556, 1.7584, 1.7609, 1.7634, 1.7659, 1.7684, 1.7709, 1.7733, 1.776, 1.7787, 1.7813, 1.7841, 1.7871, 1.79, 1.7927, 1.7959, 1.799, 1.8021, 1.8055, 1.8092, 1.8127, 1.8154, 1.8171, 1.8191, 1.8201, 1.8201, 1.82, 1.8201, 1.8204, 1.8209, 1.8216, 1.8224, 1.8233, 1.8244, 1.8257, 1.8271, 1.8286, 1.8303, 1.8322, 1.8344, 1.8376, 1.8399, 1.8423, 1.8447, 1.847, 1.8492, 1.8512, 1.8531, 1.8553, 1.8581, 1.8606, 1.863, 1.8654, 1.8677, 1.87, 1.8724, 1.8768, 1.8805, 1.8841, 1.8878, 1.8915, 1.8949, 1.8983, 1.9017, 1.9054, 1.909, 1.912, 1.9149, 1.9177, 1.9205, 1.9233, 1.9261, 1.9288, 1.9317, 1.9347, 1.9376, 1.9402, 1.9424, 1.9446, 1.9468, 1.9491, 1.9513, 1.9535, 1.9557, 1.9579, 1.9601, 1.9631, 1.9654, 1.9676, 1.9698, 1.9719, 1.974, 1.9759, 1.9777, 1.9791, 1.9802, 1.9812, 1.9819, 1.9826, 1.9832, 1.9837, 1.9844, 1.9852, 1.9861, 1.9871, 1.9883, 1.9895, 1.991, 1.9925, 1.9941, 1.9956, 1.9973, 1.9989, 2.0004, 2.0019, 2.0034, 2.0049, 2.0064, 2.0079, 2.0094, 2.011, 2.0125, 2.0141, 2.0156, 2.0172, 2.0188, 2.0206, 2.0224, 2.024, 2.0257, 2.0273, 2.0288, 2.0305, 2.0321, 2.0338, 2.0355, 2.037, 2.0381, 2.0392, 2.0402, 2.0414, 2.0426, 2.0437, 2.045, 2.0465, 2.048, 2.0495, 2.0509, 2.0523, 2.0537, 2.0555, 2.0578, 2.0599, 2.0619, 2.064, 2.0663, 2.0688, 2.0716, 2.0745, 2.077, 2.0797, 2.0822, 2.0853, 2.0884, 2.092, 2.0949, 2.0984, 2.1119, 2.1243, 2.1362, 2.1479, 2.1591, 2.17, 2.1806, 2.1917, 2.2025, 2.2146, 2.2289, 2.2408, 2.2461, 2.2489, 2.2514, 2.254, 2.2569, 2.2599, 2.2627, 2.2651, 2.2672, 2.2713, 2.2764, 2.2809, 2.284, 2.2864, 2.2881, 2.2902, 2.2934, 2.2979, 2.3022, 2.3063, 2.3112, 2.316, 2.3205, 2.3257, 2.3311, 2.3365, 2.3428, 2.3483, 2.3537, 2.3585, 2.3631, 2.3675, 2.372, 2.3762, 2.3811, 2.3864, 2.3912, 2.3948, 2.3984, 2.4034, 2.4099, 2.4169, 2.424, 2.4307, 2.4376, 2.4437, 2.4493, 2.4551, 2.4604, 2.467, 2.4745, 2.4798, 2.4842, 2.4882, 2.4922, 2.4962, 2.5002, 2.5041, 2.5077, 2.5114, 2.5149, 2.5186, 2.5221, 2.5254, 2.5286, 2.5319, 2.5353, 2.5388, 2.5422, 2.5458, 2.5498, 2.5541, 2.5587, 2.5632, 2.5683, 2.5731, 2.5775, 2.5815, 2.5843, 2.5869, 2.5895, 2.5921, 2.5948, 2.5975, 2.6008, 2.6064, 2.6121, 2.6179, 2.6218, 2.6252, 2.6286, 2.632, 2.6365, 2.6404, 2.6441, 2.6478, 2.6514, 2.6554, 2.66, 2.6643, 2.6676, 2.6706, 2.6734, 2.676, 2.6786, 2.6813, 2.6839, 2.6863, 2.6887, 2.6922, 2.6984, 2.7039, 2.7086, 2.7142, 2.7181, 2.7213, 2.724, 2.7268, 2.7286, 2.7301, 2.7315, 2.733, 2.7333, 2.7333, 2.7373, 2.7392, 2.7414, 2.744, 2.747, 2.7504, 2.7541, 2.7578, 2.7608, 2.7635, 2.7661, 2.7686, 2.7712, 2.7737, 2.7763, 2.7789, 2.7815, 2.7844, 2.7873, 2.7902, 2.7931, 2.796, 2.7988, 2.8015, 2.8041, 2.8067, 2.8094, 2.812, 2.8151, 2.8179, 2.8198, 2.8216, 2.8236, 2.8258, 2.8281, 2.8305, 2.8332, 2.8367, 2.8391, 2.8415, 2.8439, 2.8462, 2.8484, 2.8506, 2.8526, 2.8547, 2.8573, 2.8598, 2.8623, 2.8647, 2.8671, 2.8692, 2.8718, 2.8757, 2.8803, 2.8844, 2.8882, 2.8918, 2.8951, 2.8986, 2.9022, 2.9057, 2.909, 2.9121, 2.9147, 2.9185, 2.9221, 2.9256, 2.9287, 2.931, 2.9333, 2.9355, 2.9376, 2.9397, 2.9419, 2.944, 2.9461, 2.9483, 2.9505, 2.9527, 2.9548, 2.957, 2.9592, 2.9614, 2.9634, 2.9648, 2.9661, 2.9673, 2.9683, 2.9696, 2.971, 2.9726, 2.9742, 2.9761, 2.978, 2.9799, 2.982, 2.9843, 2.9868, 2.9897, 2.9926, 2.9953, 2.9984, 3.0012, 3.0039, 3.0066, 3.0084, 3.0094, 3.0105, 3.0117, 3.013, 3.0143, 3.0157, 3.0173, 3.0191, 3.021, 3.0229, 3.0248, 3.0267, 3.0288, 3.0308, 3.033, 3.0351, 3.0371, 3.0387, 3.0401, 3.0411, 3.0422, 3.0434, 3.0449, 3.0467, 3.0485, 3.0503, 3.052, 3.0537, 3.0562, 3.0592, 3.0618, 3.0643, 3.067, 3.0697, 3.0728, 3.0757, 3.0783, 3.0809, 3.0836, 3.0866, 3.0903, 3.0935, 3.0969, 3.1053, 3.1192, 3.1314, 3.1432, 3.1545, 3.1656, 3.1755, 3.1873, 3.1982, 3.2091, 3.2226, 3.237, 3.2445, 3.2478, 3.2504, 3.2529, 3.2556, 3.2587, 3.2617, 3.2643, 3.267, 3.2696, 3.2724, 3.2755, 3.2785, 3.2817, 3.2849, 3.2882, 3.2919, 3.2956, 3.2993, 3.303, 3.3068, 3.3113, 3.3166, 3.3212, 3.3259, 3.3302, 3.334, 3.3377, 3.3417, 3.3463, 3.3503, 3.3545, 3.3587, 3.3622, 3.365, 3.365, 3.365, 3.365, 3.365, 3.365, 3.3649, 3.3649, 3.365, 3.3651, 3.3655, 3.3661, 3.3669, 3.3678, 3.3688, 3.37, 3.3712, 3.3726, 3.3741, 3.3758, 3.3777, 3.3797, 3.3817, 3.3843, 3.3869, 3.3896, 3.3927, 3.396, 3.3995, 3.4057, 3.4131, 3.4215, 3.4287, 3.4376, 3.4452, 3.4527, 3.4599, 3.4666, 3.4732, 3.478, 3.4834, 3.4885, 3.4929, 3.4972, 3.501, 3.5056, 3.5101, 3.5136, 3.5158, 3.5171, 3.5179, 3.5184, 3.5187, 3.5191, 3.5198, 3.5206, 3.5216, 3.5227, 3.5241, 3.5256, 3.5273, 3.5293, 3.5314, 3.5337, 3.5363, 3.5389, 3.5437, 3.5502, 3.5567, 3.5633, 3.5702, 3.5771, 3.5832, 3.5871, 3.5903, 3.5932, 3.5962, 3.5991, 3.6037, 3.6088, 3.6141, 3.6193, 3.6228, 3.6262, 3.6299, 3.6343, 3.6383, 3.6421, 3.646, 3.6498, 3.6537, 3.6583, 3.6627, 3.6666, 3.6697, 3.6726, 3.6754, 3.6781, 3.6808, 3.6836, 3.6861, 3.6888, 3.6944, 3.6998, 3.7042, 3.7092, 3.7148, 3.7195, 3.7231, 3.7267, 3.7291, 3.7311, 3.7331, 3.7334, 3.7334, 3.7334, 3.7406, 3.7427, 3.7448, 3.7483, 3.752, 3.7558, 3.7595, 3.7628, 3.7654, 3.768, 3.7705, 3.7731, 3.7756, 3.778, 3.7805, 3.7832, 3.786, 3.7889, 3.7917, 3.7947, 3.7975, 3.8003, 3.8028, 3.8055, 3.808, 3.8107, 3.8134, 3.8161, 3.8188, 3.8207, 3.8211, 3.8216, 3.8223, 3.8225, 3.8225, 3.8227, 3.8231, 3.8236, 3.8243, 3.8251, 3.8261, 3.8272, 3.8285, 3.8299, 3.8315, 3.8331, 3.8364, 3.8388, 3.8411, 3.8435, 3.8457, 3.8481, 3.8499, 3.8514, 3.853, 3.855, 3.8569, 3.8586, 3.8604, 3.8621, 3.8638, 3.8654, 3.867, 3.8683, 3.8696, 3.8708, 3.8721, 3.874, 3.8766, 3.8794, 3.8822, 3.8849, 3.8876, 3.8905, 3.8929, 3.8953, 3.898, 3.9005, 3.903, 3.907, 3.9108, 3.9144, 3.9178, 3.9206, 3.923, 3.9256, 3.9283, 3.9304, 3.9328, 3.935, 3.9373, 3.9395, 3.9417, 3.9439, 3.946, 3.9482, 3.9505, 3.9527, 3.955, 3.9572, 3.9595, 3.9624, 3.9649, 3.967, 3.9692, 3.9713, 3.9734, 3.9753, 3.9771, 3.9789, 3.9807, 3.9829, 3.9855, 3.9886, 3.9919, 3.9952, 3.9985, 4.0016, 4.0044, 4.0071, 4.0099, 4.0126, 4.0153, 4.0181, 4.021, 4.0238, 4.0264, 4.0289, 4.0313, 4.0339, 4.0365, 4.0386, 4.0407, 4.0427, 4.0447, 4.0466, 4.0487, 4.0508, 4.0531, 4.0559, 4.0594, 4.0627, 4.0646, 4.0674, 4.0707, 4.0743, 4.0775, 4.0805, 4.0836, 4.087, 4.0911, 4.0932, 4.0956, 4.0977, 4.1014, 4.1159, 4.1279, 4.1391, 4.1512, 4.1627, 4.1735, 4.1844, 4.1953, 4.2067, 4.2188, 4.2337, 4.2431, 4.2471, 4.2497, 4.2523, 4.2549, 4.2579, 4.2608, 4.2634, 4.2657, 4.2679, 4.2701, 4.2723, 4.2753, 4.2783, 4.2815, 4.2847, 4.2879, 4.2912, 4.2943, 4.2974], "2": [0.9884, 0.9891, 0.9909, 0.9933, 0.9959, 0.9986, 1.0012, 1.0037, 1.0062, 1.0088, 1.0114, 1.014, 1.0166, 1.0193, 1.022, 1.0242, 1.0264, 1.0286, 1.0308, 1.033, 1.0353, 1.0373, 1.0391, 1.0407, 1.0423, 1.0439, 1.0456, 1.0476, 1.0498, 1.0519, 1.0537, 1.0564, 1.0593, 1.0618, 1.0641, 1.0663, 1.0686, 1.0711, 1.0736, 1.0759, 1.0782, 1.081, 1.0838, 1.0873, 1.0914, 1.0942, 1.0971, 1.1066, 1.1201, 1.1323, 1.1441, 1.1554, 1.1664, 1.1772, 1.1881, 1.1991, 1.2103, 1.2238, 1.2378, 1.2448, 1.2479, 1.2505, 1.253, 1.2556, 1.2586, 1.2615, 1.2637, 1.2658, 1.2692, 1.2734, 1.2791, 1.2839, 1.2884, 1.2929, 1.2974, 1.3018, 1.3063, 1.3115, 1.3179, 1.3251, 1.3323, 1.3381, 1.3442, 1.3493, 1.3542, 1.3587, 1.363, 1.3671, 1.3712, 1.3752, 1.3771, 1.3793, 1.3821, 1.387, 1.3923, 1.3964, 1.4005, 1.4067, 1.4131, 1.4202, 1.4275, 1.4359, 1.4441, 1.4526, 1.4596, 1.4651, 1.4703, 1.4749, 1.4791, 1.4834, 1.4877, 1.4919, 1.4966, 1.5008, 1.5048, 1.5087, 1.5122, 1.5157, 1.5191, 1.5225, 1.5259, 1.5295, 1.5332, 1.5368, 1.5405, 1.5441, 1.5483, 1.5526, 1.5575, 1.5626, 1.5675, 1.5723, 1.5772, 1.5818, 1.5849, 1.5879, 1.5909, 1.594, 1.5971, 1.6005, 1.6065, 1.6123, 1.6181, 1.6215, 1.6244, 1.6275, 1.6306, 1.6342, 1.6382, 1.6416, 1.6449, 1.6481, 1.6513, 1.6548, 1.6594, 1.6633, 1.6664, 1.6694, 1.6722, 1.6753, 1.6782, 1.6811, 1.684, 1.6867, 1.6893, 1.6927, 1.697, 1.7021, 1.7064, 1.7117, 1.7167, 1.7205, 1.7233, 1.7265, 1.7286, 1.7302, 1.7318, 1.7332, 1.7333, 1.7333, 1.739, 1.7416, 1.7437, 1.7449, 1.7462, 1.7476, 1.7489, 1.7502, 1.7515, 1.7527, 1.754, 1.7551, 1.7567, 1.7594, 1.7622, 1.765, 1.7677, 1.7705, 1.7734, 1.7763, 1.779, 1.7817, 1.7847, 1.7876, 1.7904, 1.7925, 1.7943, 1.7957, 1.797, 1.7984, 1.7999, 1.8016, 1.8034, 1.8054, 1.8076, 1.81, 1.8127, 1.8154, 1.8182, 1.8211, 1.824, 1.8269, 1.8299, 1.8329, 1.8363, 1.8383, 1.8398, 1.8409, 1.8421, 1.8431, 1.8442, 1.8445, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8501, 1.8506, 1.8519, 1.8541, 1.8561, 1.858, 1.86, 1.8617, 1.8636, 1.8653, 1.867, 1.8688, 1.8705, 1.8723, 1.8758, 1.8799, 1.8838, 1.8877, 1.8914, 1.8948, 1.8981, 1.9015, 1.9048, 1.9081, 1.911, 1.9137, 1.9164, 1.9191, 1.9217, 1.9244, 1.927, 1.929, 1.9312, 1.9338, 1.9369, 1.9399, 1.9428, 1.9451, 1.9473, 1.9495, 1.9517, 1.9539, 1.9565, 1.9596, 1.963, 1.9659, 1.9686, 1.9712, 1.974, 1.9768, 1.9791, 1.9811, 1.9834, 1.9858, 1.9882, 1.9906, 1.9929, 1.9952, 1.9975, 1.9998, 2.0017, 2.003, 2.0041, 2.0049, 2.0056, 2.0061, 2.0067, 2.0074, 2.0083, 2.0093, 2.0104, 2.0117, 2.0131, 2.0146, 2.0161, 2.0177, 2.0193, 2.0211, 2.0228, 2.0245, 2.0261, 2.0278, 2.0294, 2.031, 2.0326, 2.0343, 2.036, 2.0373, 2.0386, 2.0398, 2.0411, 2.0423, 2.0435, 2.0447, 2.0458, 2.047, 2.0483, 2.0495, 2.0507, 2.0519, 2.0532, 2.0544, 2.0563, 2.058, 2.06, 2.0617, 2.0636, 2.0654, 2.0671, 2.069, 2.0711, 2.0734, 2.0755, 2.0774, 2.0793, 2.0814, 2.0836, 2.0861, 2.089, 2.0918, 2.0941, 2.0966, 2.0994, 2.114, 2.1261, 2.1375, 2.1495, 2.16, 2.1719, 2.182, 2.1933, 2.2039, 2.2164, 2.2315, 2.2421, 2.2466, 2.2493, 2.2518, 2.2542, 2.2571, 2.2601, 2.2627, 2.265, 2.2672, 2.2695, 2.2718, 2.2746, 2.2778, 2.2815, 2.2856, 2.29, 2.2943, 2.2982, 2.3016, 2.3057, 2.31, 2.3157, 2.3206, 2.3258, 2.3301, 2.3343, 2.3381, 2.3422, 2.3466, 2.3508, 2.355, 2.3591, 2.3627, 2.3659, 2.3691, 2.3721, 2.375, 2.3776, 2.3806, 2.3839, 2.3877, 2.3915, 2.3954, 2.3994, 2.4068, 2.4151, 2.425, 2.4349, 2.4439, 2.4513, 2.4583, 2.4643, 2.4704, 2.4759, 2.4811, 2.4861, 2.4909, 2.495, 2.4991, 2.5032, 2.5073, 2.5113, 2.5151, 2.5192, 2.5232, 2.5272, 2.5314, 2.5355, 2.5395, 2.5434, 2.5474, 2.551, 2.5539, 2.5568, 2.5599, 2.5632, 2.5667, 2.5701, 2.5732, 2.5755, 2.5759, 2.5761, 2.5763, 2.5772, 2.5786, 2.5807, 2.5828, 2.5846, 2.5865, 2.5884, 2.5904, 2.5925, 2.5949, 2.5974, 2.6003, 2.6051, 2.6098, 2.6146, 2.6196, 2.6228, 2.6261, 2.6293, 2.6326, 2.6368, 2.6401, 2.6439, 2.6476, 2.6516, 2.6557, 2.6603, 2.6646, 2.6678, 2.6709, 2.6739, 2.6768, 2.6797, 2.6827, 2.6857, 2.6884, 2.6911, 2.6955, 2.7009, 2.7057, 2.7112, 2.7166, 2.7209, 2.7247, 2.7275, 2.7288, 2.7298, 2.7317, 2.7338, 2.7345, 2.7345, 2.7371, 2.7411, 2.7427, 2.7444, 2.7465, 2.7492, 2.7518, 2.7544, 2.7569, 2.7596, 2.7622, 2.7648, 2.7673, 2.7699, 2.7724, 2.7749, 2.7773, 2.7797, 2.7821, 2.7847, 2.7874, 2.7902, 2.7929, 2.7957, 2.7983, 2.8008, 2.8033, 2.8056, 2.8084, 2.8111, 2.8139, 2.8167, 2.8195, 2.8226, 2.8257, 2.8287, 2.8318, 2.8351, 2.8381, 2.8407, 2.8433, 2.8458, 2.8482, 2.8506, 2.8528, 2.8546, 2.8557, 2.8563, 2.8566, 2.8568, 2.857, 2.857, 2.8571, 2.8571, 2.8573, 2.8576, 2.858, 2.8585, 2.8591, 2.8598, 2.8606, 2.8616, 2.8626, 2.8638, 2.8649, 2.8664, 2.8678, 2.8693, 2.8708, 2.8723, 2.8752, 2.8787, 2.882, 2.8854, 2.889, 2.8925, 2.8958, 2.8992, 2.9028, 2.9063, 2.9096, 2.9124, 2.9154, 2.9191, 2.9228, 2.9265, 2.9294, 2.9317, 2.9338, 2.9363, 2.9387, 2.9411, 2.9436, 2.9462, 2.9485, 2.9508, 2.953, 2.9553, 2.9576, 2.9599, 2.9623, 2.9642, 2.966, 2.9677, 2.9694, 2.9714, 2.9735, 2.976, 2.9786, 2.9808, 2.9831, 2.9856, 2.9879, 2.9904, 2.9929, 2.9954, 2.9978, 3.0002, 3.0025, 3.0049, 3.0073, 3.0097, 3.012, 3.0144, 3.0167, 3.0193, 3.022, 3.0245, 3.0267, 3.029, 3.0313, 3.0336, 3.036, 3.0379, 3.0396, 3.0413, 3.043, 3.0446, 3.0462, 3.048, 3.0498, 3.0516, 3.0534, 3.0557, 3.0585, 3.061, 3.0635, 3.066, 3.0686, 3.0716, 3.0747, 3.0776, 3.0804, 3.0833, 3.0864, 3.0902, 3.0934, 3.0967, 3.0995, 3.1075, 3.1211, 3.1332, 3.145, 3.1562, 3.1672, 3.178, 3.189, 3.2, 3.2117, 3.2251, 3.2387, 3.2452, 3.2482, 3.2507, 3.2531, 3.256, 3.259, 3.2619, 3.2642, 3.2664, 3.2687, 3.2709, 3.2737, 3.277, 3.2801, 3.2837, 3.2876, 3.2916, 3.2955, 3.2992, 3.3027, 3.3062, 3.3104, 3.3153, 3.3197, 3.3246, 3.3296, 3.3338, 3.3383, 3.3437, 3.3484, 3.3525, 3.3564, 3.3604, 3.3638, 3.3669, 3.37, 3.3731, 3.3763, 3.3794, 3.3825, 3.3862, 3.3899, 3.3936, 3.3974, 3.4025, 3.41, 3.4184, 3.4271, 3.4371, 3.4457, 3.4537, 3.4608, 3.4674, 3.4737, 3.4784, 3.4837, 3.4887, 3.4932, 3.4979, 3.5022, 3.5065, 3.5107, 3.5148, 3.5188, 3.5224, 3.526, 3.5297, 3.5334, 3.5373, 3.5407, 3.5449, 3.5496, 3.5536, 3.5561, 3.5576, 3.5585, 3.5591, 3.5594, 3.5599, 3.5608, 3.562, 3.5636, 3.5654, 3.5675, 3.5699, 3.5726, 3.5756, 3.5789, 3.5821, 3.5847, 3.5871, 3.59, 3.5928, 3.5958, 3.5989, 3.6044, 3.6103, 3.6165, 3.6208, 3.6244, 3.6278, 3.6312, 3.6352, 3.6393, 3.6427, 3.6449, 3.6469, 3.649, 3.6511, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6529, 3.6352, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5819, 3.5818, 3.582, 3.5824, 3.583, 3.5839, 3.5848, 3.5859, 3.5872, 3.5886, 3.5903, 3.592, 3.5941, 3.5961, 3.5983, 3.6011, 3.6053, 3.6097, 3.6143, 3.6191, 3.6225, 3.6257, 3.6289, 3.6322, 3.6368, 3.6403, 3.6439, 3.6472, 3.6508, 3.6544, 3.6589, 3.6632, 3.6664, 3.6694, 3.6725, 3.6755, 3.6784, 3.6813, 3.6842, 3.6868, 3.6893, 3.6925, 3.6963, 3.7016, 3.7066, 3.7123, 3.7168, 3.7202, 3.723, 3.7256, 3.7279, 3.7294, 3.7309, 3.7323, 3.7334, 3.7334, 3.7365, 3.738, 3.7395, 3.7414, 3.7447, 3.7481, 3.7519, 3.7555, 3.7584, 3.7611, 3.7638, 3.7666, 3.7693, 3.7727, 3.7762, 3.78, 3.7838, 3.7878, 3.7918, 3.7958, 3.7997, 3.8034, 3.807, 3.8107, 3.8146, 3.8184, 3.8227, 3.8266, 3.8306, 3.8349, 3.838, 3.8404, 3.8428, 3.8452, 3.8477, 3.8501, 3.8525, 3.8548, 3.8569, 3.8592, 3.8615, 3.864, 3.8664, 3.8687, 3.871, 3.8742, 3.8795, 3.8847, 3.8898, 3.8943, 3.8982, 3.9016, 3.9049, 3.9082, 3.911, 3.9138, 3.9165, 3.9192, 3.9218, 3.9244, 3.927, 3.9291, 3.9312, 3.9334, 3.9356, 3.9378, 3.9401, 3.9423, 3.9444, 3.947, 3.9502, 3.9534, 3.9565, 3.9598, 3.9631, 3.9661, 3.9689, 3.9717, 3.9746, 3.9774, 3.9803, 3.9835, 3.9871, 3.9906, 3.9941, 3.9977, 4.0011, 4.0044, 4.0078, 4.0111, 4.0143, 4.0177, 4.0214, 4.0244, 4.0268, 4.0289, 4.031, 4.033, 4.0349, 4.0367, 4.0381, 4.0396, 4.0409, 4.0423, 4.0435, 4.0449, 4.0463, 4.0477, 4.0492, 4.0506, 4.052, 4.0537, 4.0559, 4.0588, 4.0613, 4.0635, 4.0658, 4.068, 4.0705, 4.0732, 4.0756, 4.0779, 4.0801, 4.0823, 4.0846, 4.0871, 4.0904, 4.0934, 4.096, 4.0984, 4.1095, 4.1222, 4.1343, 4.146, 4.1572, 4.1682, 4.179, 4.1897, 4.2002], "3": [0.9903, 0.9911, 0.993, 0.9957, 0.9985, 1.0013, 1.004, 1.0067, 1.0094, 1.0121, 1.0148, 1.0175, 1.02, 1.0222, 1.0241, 1.0259, 1.0278, 1.0298, 1.0318, 1.0339, 1.0359, 1.0378, 1.0395, 1.0409, 1.0424, 1.0438, 1.0455, 1.0474, 1.0493, 1.0512, 1.0531, 1.0553, 1.0582, 1.0609, 1.0635, 1.0659, 1.0682, 1.0703, 1.0722, 1.0737, 1.0749, 1.076, 1.0774, 1.079, 1.0807, 1.0827, 1.0847, 1.0872, 1.0904, 1.0928, 1.095, 1.0972, 1.1036, 1.1181, 1.1303, 1.1422, 1.1531, 1.1646, 1.1754, 1.1863, 1.1972, 1.2088, 1.2213, 1.2359, 1.244, 1.2475, 1.2501, 1.2526, 1.2551, 1.2579, 1.2612, 1.2634, 1.2656, 1.2676, 1.2697, 1.2719, 1.2745, 1.277, 1.2777, 1.278, 1.2782, 1.2782, 1.2783, 1.2784, 1.2785, 1.2785, 1.2787, 1.2791, 1.2798, 1.2806, 1.2816, 1.2828, 1.2844, 1.2861, 1.2881, 1.2905, 1.293, 1.2955, 1.2979, 1.3007, 1.3036, 1.3068, 1.3106, 1.3158, 1.3207, 1.3264, 1.3314, 1.3361, 1.341, 1.3461, 1.3496, 1.3531, 1.3574, 1.3615, 1.3653, 1.3685, 1.3717, 1.3748, 1.3779, 1.3803, 1.3823, 1.384, 1.3858, 1.3878, 1.39, 1.3924, 1.395, 1.3975, 1.4006, 1.4056, 1.4115, 1.4187, 1.4266, 1.4351, 1.4437, 1.4515, 1.4591, 1.4664, 1.4743, 1.4792, 1.4836, 1.4874, 1.4911, 1.4952, 1.4991, 1.5036, 1.508, 1.5116, 1.5138, 1.5151, 1.5159, 1.5164, 1.5167, 1.5169, 1.517, 1.5171, 1.5175, 1.5182, 1.519, 1.5204, 1.5218, 1.5235, 1.5255, 1.5278, 1.5304, 1.5333, 1.5364, 1.5397, 1.5432, 1.5474, 1.5521, 1.5569, 1.5613, 1.5663, 1.5709, 1.5755, 1.5801, 1.5836, 1.5864, 1.5891, 1.5918, 1.5947, 1.5976, 1.601, 1.6057, 1.6101, 1.6146, 1.619, 1.6222, 1.6256, 1.6293, 1.6333, 1.6377, 1.6415, 1.6451, 1.6488, 1.6524, 1.6563, 1.661, 1.6652, 1.6683, 1.6714, 1.6743, 1.677, 1.6796, 1.6821, 1.6846, 1.687, 1.6899, 1.6956, 1.7005, 1.7046, 1.709, 1.7149, 1.7186, 1.7216, 1.7241, 1.7269, 1.7287, 1.7302, 1.7317, 1.7331, 1.735, 1.7373, 1.7399, 1.7426, 1.7455, 1.7489, 1.7527, 1.7564, 1.7595, 1.7623, 1.7652, 1.7681, 1.7709, 1.7738, 1.7766, 1.7794, 1.7822, 1.7851, 1.7874, 1.7893, 1.7907, 1.7922, 1.7939, 1.7958, 1.7978, 1.7999, 1.8021, 1.8044, 1.8068, 1.8094, 1.8121, 1.8149, 1.8177, 1.8207, 1.8237, 1.8265, 1.8287, 1.8311, 1.8338, 1.837, 1.8394, 1.8417, 1.8441, 1.8464, 1.8485, 1.8504, 1.8524, 1.8544, 1.8567, 1.8591, 1.8613, 1.8637, 1.866, 1.8683, 1.8706, 1.8733, 1.8777, 1.8813, 1.8848, 1.8883, 1.8919, 1.8951, 1.8985, 1.9019, 1.9055, 1.9089, 1.9116, 1.9143, 1.9171, 1.9206, 1.9242, 1.9276, 1.9304, 1.9327, 1.935, 1.9373, 1.9396, 1.9423, 1.945, 1.9478, 1.9507, 1.9531, 1.9554, 1.9575, 1.9598, 1.9619, 1.9638, 1.9653, 1.9669, 1.9685, 1.9704, 1.9724, 1.9741, 1.9754, 1.9765, 1.9774, 1.9781, 1.9786, 1.9791, 1.9798, 1.9806, 1.9816, 1.9828, 1.9842, 1.9857, 1.9874, 1.9891, 1.9908, 1.9925, 1.9943, 1.9961, 1.9979, 1.9996, 2.0013, 2.003, 2.0046, 2.0062, 2.0077, 2.0092, 2.0108, 2.0125, 2.0142, 2.0158, 2.0175, 2.0192, 2.021, 2.0227, 2.0243, 2.026, 2.0276, 2.0292, 2.031, 2.0329, 2.0349, 2.0368, 2.0384, 2.0403, 2.0421, 2.0444, 2.0465, 2.0482, 2.0501, 2.0519, 2.0537, 2.0561, 2.0588, 2.0611, 2.0637, 2.066, 2.0684, 2.0709, 2.0737, 2.0764, 2.0792, 2.0824, 2.0866, 2.0915, 2.0946, 2.0973, 2.1021, 2.1181, 2.1296, 2.1418, 2.1526, 2.1643, 2.1754, 2.1863, 2.1972, 2.2088, 2.2213, 2.2359, 2.2439, 2.2475, 2.25, 2.2526, 2.2552, 2.2582, 2.2612, 2.2639, 2.2665, 2.2692, 2.2718, 2.2749, 2.2781, 2.2811, 2.2838, 2.2872, 2.2907, 2.2943, 2.2977, 2.3011, 2.3044, 2.3081, 2.3129, 2.3175, 2.3224, 2.328, 2.3324, 2.337, 2.342, 2.3471, 2.3513, 2.3555, 2.3597, 2.3628, 2.366, 2.3691, 2.3722, 2.3753, 2.3783, 2.3814, 2.3847, 2.3881, 2.3916, 2.3951, 2.3984, 2.403, 2.4091, 2.4154, 2.4216, 2.4261, 2.4303, 2.435, 2.4404, 2.4458, 2.4529, 2.4594, 2.4643, 2.4682, 2.4719, 2.4757, 2.4792, 2.4833, 2.4872, 2.4911, 2.4949, 2.4987, 2.5025, 2.5064, 2.5103, 2.5139, 2.5177, 2.5215, 2.5252, 2.529, 2.5329, 2.5366, 2.5405, 2.5445, 2.5485, 2.552, 2.5556, 2.5591, 2.5628, 2.5671, 2.5717, 2.574, 2.574, 2.5741, 2.5743, 2.5745, 2.5747, 2.5751, 2.5759, 2.5772, 2.5791, 2.5813, 2.5832, 2.585, 2.5869, 2.5889, 2.5911, 2.5934, 2.5959, 2.5985, 2.6019, 2.6059, 2.6096, 2.6133, 2.6174, 2.6206, 2.6234, 2.6261, 2.6291, 2.6328, 2.637, 2.6407, 2.6445, 2.6482, 2.652, 2.6561, 2.6606, 2.6647, 2.6679, 2.671, 2.6741, 2.677, 2.6799, 2.6828, 2.6856, 2.6879, 2.6927, 2.6989, 2.7037, 2.7077, 2.713, 2.717, 2.7202, 2.7225, 2.7248, 2.7275, 2.7289, 2.7303, 2.7317, 2.7331, 2.7345, 2.7364, 2.7385, 2.7409, 2.7438, 2.7471, 2.7507, 2.7544, 2.7579, 2.7608, 2.7636, 2.7664, 2.7697, 2.7734, 2.7776, 2.7816, 2.7859, 2.7901, 2.7933, 2.7958, 2.7977, 2.7995, 2.8027, 2.8066, 2.8107, 2.815, 2.8194, 2.8238, 2.8281, 2.8328, 2.837, 2.8399, 2.8429, 2.8459, 2.8488, 2.8517, 2.8545, 2.8571, 2.8601, 2.8625, 2.8652, 2.8679, 2.8704, 2.8733, 2.879, 2.8846, 2.8903, 2.8949, 2.899, 2.9041, 2.9085, 2.9128, 2.9167, 2.9205, 2.9242, 2.9278, 2.9305, 2.933, 2.9352, 2.9376, 2.9398, 2.9421, 2.9443, 2.9465, 2.9487, 2.9509, 2.9531, 2.9552, 2.9573, 2.9594, 2.9615, 2.9636, 2.9654, 2.9673, 2.969, 2.971, 2.9729, 2.9748, 2.9768, 2.9788, 2.9808, 2.9831, 2.9856, 2.9881, 2.9907, 2.9933, 2.9959, 2.9982, 3.0007, 3.0029, 3.005, 3.0072, 3.0092, 3.0113, 3.0134, 3.0155, 3.0177, 3.0201, 3.0222, 3.0246, 3.0268, 3.0288, 3.0307, 3.0326, 3.0345, 3.0367, 3.0383, 3.0399, 3.0416, 3.0432, 3.0449, 3.0466, 3.0483, 3.0502, 3.0518, 3.0537, 3.0559, 3.0584, 3.0608, 3.0632, 3.0655, 3.0678, 3.0701, 3.0724, 3.0745, 3.0762, 3.0778, 3.0792, 3.0804, 3.0821, 3.084, 3.0862, 3.0891, 3.092, 3.0942, 3.0966, 3.1004, 3.1161, 3.1284, 3.1403, 3.1517, 3.1629, 3.1733, 3.1846, 3.1955, 3.2061, 3.2189, 3.2339, 3.2431, 3.247, 3.2497, 3.2522, 3.2547, 3.2577, 3.2607, 3.2632, 3.2654, 3.2676, 3.2698, 3.2719, 3.2737, 3.2754, 3.2767, 3.2779, 3.2794, 3.281, 3.2829, 3.2848, 3.2869, 3.2895, 3.2924, 3.2957, 3.2989, 3.3022, 3.3058, 3.3096, 3.3147, 3.3192, 3.3241, 3.3293, 3.3336, 3.3381, 3.3434, 3.3482, 3.3524, 3.3566, 3.3606, 3.364, 3.367, 3.3701, 3.3731, 3.3761, 3.3789, 3.382, 3.3854, 3.3889, 3.3923, 3.3957, 3.3993, 3.405, 3.4116, 3.4191, 3.4265, 3.4343, 3.4427, 3.4511, 3.4603, 3.4684, 3.4754, 3.4798, 3.4833, 3.4869, 3.4909, 3.4948, 3.4987, 3.503, 3.5071, 3.511, 3.5148, 3.5186, 3.5224, 3.5259, 3.5299, 3.5338, 3.5377, 3.5417, 3.5454, 3.5507, 3.5558, 3.5607, 3.5655, 3.5701, 3.5748, 3.5794, 3.5834, 3.5864, 3.5894, 3.5922, 3.5952, 3.5982, 3.6019, 3.6063, 3.6104, 3.6146, 3.6189, 3.6218, 3.6253, 3.6289, 3.6332, 3.6375, 3.6403, 3.6403, 3.6403, 3.6403, 3.6403, 3.6403, 3.6403, 3.6403, 3.6402, 3.6402, 3.6402, 3.6397, 3.6395, 3.6398, 3.6405, 3.6412, 3.6421, 3.6432, 3.6444, 3.6457, 3.6472, 3.6488, 3.6505, 3.6524, 3.6545, 3.6572, 3.6598, 3.6624, 3.665, 3.6676, 3.6703, 3.673, 3.6757, 3.6785, 3.6813, 3.6841, 3.6863, 3.6885, 3.6909, 3.6967, 3.7025, 3.7073, 3.7128, 3.7166, 3.7198, 3.7222, 3.7244, 3.7269, 3.7284, 3.7297, 3.7309, 3.7323, 3.7334, 3.7342, 3.7365, 3.7387, 3.7412, 3.7441, 3.7474, 3.7511, 3.7548, 3.7584, 3.7613, 3.7643, 3.767, 3.7702, 3.7734, 3.7767, 3.7799, 3.7832, 3.7867, 3.7901, 3.7936, 3.7972, 3.8006, 3.8038, 3.807, 3.8104, 3.8138, 3.8173, 3.821, 3.8247, 3.8283, 3.8321, 3.8359, 3.8385, 3.8408, 3.8432, 3.8455, 3.8478, 3.8501, 3.8524, 3.8546, 3.8567, 3.8593, 3.8617, 3.864, 3.8663, 3.8685, 3.8709, 3.8736, 3.879, 3.8833, 3.8873, 3.8911, 3.8945, 3.898, 3.9014, 3.9048, 3.908, 3.912, 3.9157, 3.9194, 3.9229, 3.9259, 3.9285, 3.9307, 3.933, 3.9355, 3.9381, 3.9405, 3.9423, 3.944, 3.9459, 3.948, 3.95, 3.9519, 3.9538, 3.9557, 3.9578, 3.9598, 3.9619, 3.9638, 3.9656, 3.9675, 3.9693, 3.9712, 3.9731, 3.975, 3.9769, 3.9787, 3.9806, 3.9827, 3.9849, 3.9871, 3.9894, 3.9917, 3.994, 3.9963, 3.9987, 4.0011, 4.0033, 4.0054, 4.0076, 4.0098, 4.012, 4.0142, 4.0164, 4.0186, 4.0211, 4.0233, 4.0256, 4.0276, 4.0295, 4.0314, 4.0333, 4.0352, 4.037, 4.0384, 4.0398, 4.0412, 4.0426, 4.0439, 4.0453, 4.0468, 4.0482, 4.0497, 4.0512, 4.0527, 4.0542, 4.0569, 4.0595, 4.0618, 4.0639, 4.066, 4.0681, 4.0705, 4.073, 4.0752, 4.0775, 4.0797, 4.0818, 4.0841, 4.0867, 4.0897, 4.0928, 4.0954, 4.0979, 4.1025, 4.1155, 4.129, 4.1412, 4.1522, 4.1636, 4.1742, 4.1844, 4.196, 4.2078, 4.22, 4.2349, 4.2436, 4.2474, 4.2499, 4.2524, 4.255, 4.258, 4.261, 4.2635, 4.2657, 4.2679, 4.2699, 4.2722, 4.2752, 4.2782, 4.2813, 4.2844, 4.2875, 4.2906, 4.2937, 4.2968, 4.2997, 4.3027, 4.3057, 4.3086], "4": [0.9912, 0.9914, 0.9919, 0.9926, 0.9935, 0.9946, 0.996, 0.9975, 0.9992, 1.0011, 1.0031, 1.0052, 1.0073, 1.0095, 1.0117, 1.0139, 1.0161, 1.0184, 1.021, 1.0234, 1.0257, 1.0279, 1.0301, 1.0323, 1.0345, 1.0367, 1.0385, 1.0402, 1.0419, 1.0435, 1.0451, 1.0468, 1.0485, 1.0504, 1.0522, 1.054, 1.0568, 1.0597, 1.0622, 1.0644, 1.0668, 1.0692, 1.0719, 1.0746, 1.0769, 1.0792, 1.0813, 1.0836, 1.0863, 1.0895, 1.0925, 1.095, 1.0977, 1.1031, 1.1171, 1.1294, 1.1407, 1.1526, 1.1637, 1.1745, 1.1854, 1.1964, 1.2079, 1.2202, 1.235, 1.2436, 1.2473, 1.2498, 1.2522, 1.2545, 1.2577, 1.2606, 1.2631, 1.2654, 1.2678, 1.2701, 1.2726, 1.2756, 1.2789, 1.2821, 1.2853, 1.2886, 1.2919, 1.295, 1.2981, 1.3011, 1.3043, 1.3075, 1.3116, 1.3156, 1.3193, 1.323, 1.3277, 1.3313, 1.3346, 1.3378, 1.3409, 1.3443, 1.3475, 1.3503, 1.353, 1.3555, 1.3581, 1.3611, 1.364, 1.3669, 1.3698, 1.3727, 1.3756, 1.3787, 1.3818, 1.3853, 1.3894, 1.3932, 1.3978, 1.4053, 1.4139, 1.423, 1.4307, 1.4391, 1.4464, 1.4538, 1.4607, 1.467, 1.4735, 1.4791, 1.4846, 1.4899, 1.4954, 1.5007, 1.506, 1.5112, 1.5162, 1.5205, 1.5238, 1.527, 1.5307, 1.5348, 1.5395, 1.5448, 1.5513, 1.5578, 1.5642, 1.5702, 1.5758, 1.5819, 1.586, 1.5898, 1.5936, 1.5975, 1.6023, 1.6078, 1.6118, 1.6151, 1.6186, 1.6207, 1.6229, 1.6256, 1.6283, 1.6319, 1.6353, 1.6379, 1.64, 1.6421, 1.6442, 1.6462, 1.6484, 1.6505, 1.6526, 1.6547, 1.6573, 1.6598, 1.662, 1.6647, 1.6671, 1.6695, 1.6718, 1.6742, 1.6764, 1.6787, 1.6809, 1.6831, 1.6852, 1.6874, 1.6897, 1.6948, 1.7007, 1.705, 1.7081, 1.7123, 1.7156, 1.718, 1.7196, 1.7213, 1.7228, 1.7245, 1.7263, 1.7277, 1.7287, 1.7312, 1.7336, 1.7359, 1.7386, 1.7411, 1.7436, 1.7462, 1.749, 1.7517, 1.7544, 1.7572, 1.7599, 1.7627, 1.7656, 1.7684, 1.7711, 1.7731, 1.7747, 1.776, 1.7775, 1.7793, 1.7812, 1.7836, 1.7863, 1.7891, 1.7921, 1.7952, 1.7981, 1.8008, 1.8037, 1.8064, 1.8092, 1.812, 1.8151, 1.8182, 1.8212, 1.8245, 1.8277, 1.8308, 1.8329, 1.8343, 1.8351, 1.8356, 1.8359, 1.8364, 1.8376, 1.8389, 1.8401, 1.8413, 1.8425, 1.8437, 1.8447, 1.8444, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8443, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8494, 1.8497, 1.85, 1.8505, 1.8512, 1.8521, 1.8532, 1.8545, 1.8559, 1.8574, 1.859, 1.8607, 1.8626, 1.8644, 1.8663, 1.8682, 1.8701, 1.8721, 1.8758, 1.88, 1.8839, 1.8877, 1.8911, 1.8944, 1.8977, 1.9009, 1.9041, 1.9079, 1.9114, 1.9142, 1.9169, 1.9195, 1.9221, 1.9254, 1.9291, 1.9324, 1.9356, 1.9388, 1.9419, 1.9452, 1.9481, 1.95, 1.9514, 1.9525, 1.9533, 1.954, 1.9547, 1.9557, 1.9568, 1.9582, 1.9598, 1.9626, 1.9649, 1.9672, 1.9694, 1.9715, 1.9736, 1.9752, 1.9765, 1.9777, 1.9791, 1.9808, 1.9828, 1.9852, 1.9876, 1.9901, 1.9924, 1.9944, 1.9965, 1.9987, 2.0009, 2.0031, 2.0053, 2.0076, 2.01, 2.0125, 2.015, 2.0175, 2.0204, 2.0231, 2.0257, 2.0283, 2.0308, 2.0332, 2.0361, 2.0381, 2.04, 2.0418, 2.0434, 2.0453, 2.047, 2.0488, 2.0507, 2.0525, 2.0544, 2.0578, 2.0608, 2.0636, 2.0664, 2.0691, 2.0722, 2.0754, 2.0784, 2.0814, 2.0845, 2.0881, 2.0921, 2.0955, 2.0995, 2.1132, 2.126, 2.1373, 2.1495, 2.1609, 2.1718, 2.1827, 2.1936, 2.2049, 2.2167, 2.2312, 2.242, 2.2465, 2.2492, 2.2516, 2.2541, 2.2569, 2.2598, 2.2624, 2.2648, 2.2677, 2.2716, 2.2761, 2.2806, 2.2843, 2.2889, 2.2931, 2.2971, 2.3009, 2.3048, 2.3091, 2.3156, 2.3214, 2.3279, 2.333, 2.3376, 2.3418, 2.3456, 2.3498, 2.3538, 2.3579, 2.3614, 2.3645, 2.368, 2.3723, 2.3761, 2.3785, 2.3808, 2.3836, 2.3874, 2.3914, 2.3961, 2.4032, 2.4132, 2.4229, 2.4305, 2.4379, 2.4443, 2.4504, 2.4571, 2.4631, 2.4692, 2.4751, 2.4796, 2.4838, 2.4879, 2.4922, 2.4967, 2.5015, 2.5074, 2.5132, 2.5181, 2.5227, 2.527, 2.5315, 2.5355, 2.5398, 2.5443, 2.5496, 2.555, 2.56, 2.5642, 2.5638, 2.5619, 2.5611, 2.561, 2.5615, 2.5624, 2.5635, 2.5636, 2.5611, 2.5607, 2.5615, 2.5582, 2.5564, 2.5567, 2.5571, 2.5574, 2.5555, 2.5526, 2.5516, 2.5513, 2.5505, 2.5495, 2.5479, 2.5463, 2.5449, 2.5445, 2.5452, 2.5478, 2.5487, 2.5492, 2.5501, 2.5514, 2.5527, 2.5543, 2.556, 2.5578, 2.5599, 2.5622, 2.5646, 2.567, 2.5697, 2.5731, 2.5763, 2.5804, 2.5841, 2.5871, 2.59, 2.5927, 2.5957, 2.5986, 2.6027, 2.6072, 2.6116, 2.6165, 2.6204, 2.6236, 2.6268, 2.63, 2.6343, 2.6378, 2.6405, 2.6433, 2.6461, 2.649, 2.6519, 2.6548, 2.6582, 2.6619, 2.6653, 2.6687, 2.6721, 2.6753, 2.6785, 2.6814, 2.6843, 2.6871, 2.6899, 2.6939, 2.6978, 2.7014, 2.7046, 2.7073, 2.7101, 2.7132, 2.7154, 2.7173, 2.719, 2.7207, 2.7223, 2.7239, 2.7256, 2.7274, 2.7284, 2.7308, 2.7333, 2.7359, 2.7391, 2.7428, 2.7467, 2.7506, 2.7543, 2.7586, 2.7628, 2.7669, 2.7711, 2.7752, 2.7794, 2.7837, 2.7883, 2.7925, 2.7974, 2.8013, 2.8053, 2.8096, 2.814, 2.8185, 2.8233, 2.8281, 2.8328, 2.8371, 2.8399, 2.843, 2.8457, 2.8488, 2.8516, 2.8546, 2.8577, 2.8606, 2.8632, 2.8659, 2.8683, 2.871, 2.8746, 2.8801, 2.8854, 2.8904, 2.8941, 2.8976, 2.901, 2.9045, 2.9092, 2.9131, 2.9168, 2.9201, 2.9229, 2.9257, 2.9282, 2.9313, 2.9343, 2.9373, 2.9407, 2.9441, 2.9468, 2.9495, 2.9521, 2.9546, 2.9571, 2.9596, 2.9621, 2.9643, 2.9665, 2.9689, 2.9717, 2.9744, 2.9771, 2.9799, 2.9829, 2.9862, 2.9891, 2.9915, 2.9938, 2.9962, 2.9984, 3.0007, 3.003, 3.0054, 3.0078, 3.0102, 3.0127, 3.0152, 3.0176, 3.0203, 3.0228, 3.0253, 3.0277, 3.03, 3.0323, 3.0348, 3.0371, 3.0388, 3.0405, 3.0421, 3.0437, 3.0453, 3.0471, 3.0487, 3.0504, 3.0523, 3.054, 3.055, 3.0557, 3.0563, 3.057, 3.058, 3.0593, 3.0601, 3.0611, 3.0623, 3.0636, 3.065, 3.0666, 3.0684, 3.0706, 3.0732, 3.0756, 3.0782, 3.0806, 3.083, 3.086, 3.0894, 3.0926, 3.0952, 3.0978, 3.101, 3.1149, 3.1272, 3.1391, 3.1506, 3.1617, 3.1726, 3.1835, 3.1941, 3.2048, 3.2177, 3.2327, 3.2426, 3.2468, 3.2494, 3.2519, 3.2543, 3.2572, 3.2601, 3.2627, 3.2652, 3.2677, 3.2704, 3.2736, 3.2776, 3.2813, 3.2851, 3.2888, 3.2922, 3.2946, 3.2961, 3.2969, 3.2975, 3.2978, 3.298, 3.298, 3.2981, 3.2982, 3.2987, 3.2994, 3.3005, 3.3019, 3.3036, 3.3056, 3.3078, 3.3106, 3.3138, 3.317, 3.3202, 3.3237, 3.3278, 3.331, 3.3337, 3.3363, 3.3391, 3.3419, 3.345, 3.3474, 3.3496, 3.3521, 3.3548, 3.3578, 3.3608, 3.3637, 3.3669, 3.3699, 3.3729, 3.376, 3.3791, 3.3823, 3.3859, 3.3899, 3.3938, 3.3977, 3.403, 3.4089, 3.4162, 3.4231, 3.4284, 3.4337, 3.4395, 3.4444, 3.451, 3.4589, 3.4656, 3.4722, 3.4784, 3.4845, 3.4904, 3.4962, 3.5021, 3.5078, 3.5134, 3.5191, 3.5242, 3.529, 3.5333, 3.538, 3.5427, 3.549, 3.5564, 3.5636, 3.5704, 3.5771, 3.5817, 3.5842, 3.5861, 3.588, 3.5901, 3.5935, 3.5979, 3.6039, 3.6103, 3.6168, 3.6216, 3.6257, 3.6298, 3.634, 3.6382, 3.6419, 3.6455, 3.6488, 3.6523, 3.6561, 3.6608, 3.6649, 3.6676, 3.6697, 3.6719, 3.674, 3.6762, 3.6784, 3.6805, 3.6827, 3.6849, 3.6868, 3.6895, 3.6947, 3.7003, 3.7044, 3.7079, 3.7132, 3.7167, 3.7193, 3.7214, 3.7234, 3.7255, 3.7276, 3.7289, 3.73, 3.7315, 3.7334, 3.735, 3.7368, 3.7387, 3.7409, 3.7434, 3.7459, 3.7488, 3.7515, 3.7535, 3.7552, 3.757, 3.7588, 3.7606, 3.7624, 3.7644, 3.7663, 3.7682, 3.7702, 3.7722, 3.7741, 3.7762, 3.7782, 3.7803, 3.7824, 3.7848, 3.7872, 3.7897, 3.7922, 3.7946, 3.797, 3.7995, 3.8019, 3.8042, 3.8067, 3.8092, 3.8118, 3.8145, 3.8172, 3.8199, 3.8227, 3.8252, 3.8279, 3.8305, 3.8329, 3.8361, 3.8387, 3.8413, 3.8439, 3.8464, 3.8489, 3.851, 3.8531, 3.855, 3.8564, 3.8576, 3.8588, 3.86, 3.8612, 3.8624, 3.8635, 3.8647, 3.8659, 3.867, 3.8682, 3.8694, 3.8706, 3.8719, 3.8738, 3.8768, 3.8795, 3.8822, 3.8849, 3.8874, 3.8899, 3.8924, 3.8948, 3.8973, 3.8997, 3.902, 3.9044, 3.9077, 3.9108, 3.9133, 3.916, 3.9185, 3.9211, 3.9231, 3.9251, 3.9271, 3.9288, 3.9304, 3.932, 3.9337, 3.9355, 3.9375, 3.9399, 3.9421, 3.9438, 3.9453, 3.9468, 3.9483, 3.9498, 3.9513, 3.9528, 3.9543, 3.9558, 3.9573, 3.9587, 3.9607, 3.9636, 3.9659, 3.9681, 3.9703, 3.9724, 3.9745, 3.9763, 3.9781, 3.9798, 3.9816, 3.9839, 3.9864, 3.9883, 3.9898, 3.9912, 3.9926, 3.9938, 3.9954, 3.9969, 3.9984, 3.0001, 3.0016, 3.0033, 3.0049, 3.0067, 3.0084, 3.01, 3.0119, 3.0137, 3.0155, 3.0174, 3.0193, 3.0212, 3.0231, 3.0249, 3.0267, 3.0284, 3.0299, 3.0318, 3.0336, 3.0353, 3.0369, 3.0384, 3.0397, 3.0411, 3.0424, 3.0437, 3.0449, 3.0462, 3.0476, 3.049, 3.0505, 3.052, 3.0535, 3.0553, 3.0576, 3.0598, 3.0617, 3.0636, 3.0655, 3.0675, 3.0696, 3.0718, 3.0741, 3.0763, 3.0783, 3.0802, 3.0823, 3.0844, 3.0869, 3.0897, 3.0922], "5": [0.9922, 0.993, 0.9949, 0.9978, 1.0006, 1.003, 1.0054, 1.0078, 1.0102, 1.0126, 1.0149, 1.0173, 1.0199, 1.0225, 1.025, 1.0273, 1.0294, 1.0316, 1.0341, 1.0368, 1.0392, 1.0414, 1.0432, 1.0452, 1.0475, 1.0499, 1.0526, 1.0545, 1.0553, 1.0563, 1.0575, 1.0589, 1.0602, 1.0616, 1.0631, 1.0648, 1.0666, 1.0687, 1.071, 1.0737, 1.076, 1.0781, 1.0801, 1.0822, 1.0844, 1.0872, 1.0904, 1.093, 1.0953, 1.0977, 1.1029, 1.117, 1.1293, 1.1411, 1.1525, 1.1636, 1.174, 1.1853, 1.1963, 1.2078, 1.2201, 1.235, 1.2436, 1.2474, 1.2501, 1.2527, 1.2554, 1.2585, 1.2615, 1.2639, 1.2664, 1.2686, 1.2711, 1.2738, 1.2773, 1.2806, 1.2839, 1.2873, 1.291, 1.2944, 1.2976, 1.3008, 1.304, 1.3072, 1.3111, 1.3151, 1.3189, 1.3227, 1.3269, 1.3305, 1.3338, 1.3371, 1.3414, 1.3459, 1.3489, 1.3518, 1.3548, 1.3577, 1.3607, 1.3637, 1.3666, 1.3695, 1.3722, 1.3754, 1.3786, 1.3818, 1.3855, 1.3894, 1.3932, 1.3972, 1.402, 1.4082, 1.4158, 1.4233, 1.4297, 1.4364, 1.443, 1.449, 1.4553, 1.4609, 1.4659, 1.4666, 1.4666, 1.4669, 1.4673, 1.4674, 1.4673, 1.4671, 1.4672, 1.4673, 1.4673, 1.4674, 1.4677, 1.4684, 1.4696, 1.4713, 1.4731, 1.4746, 1.4764, 1.4783, 1.4803, 1.4821, 1.484, 1.4862, 1.4885, 1.4912, 1.4941, 1.4972, 1.5003, 1.5035, 1.5068, 1.51, 1.5132, 1.5164, 1.5197, 1.5229, 1.5262, 1.5295, 1.5326, 1.5362, 1.5394, 1.5425, 1.5456, 1.5493, 1.5532, 1.5571, 1.5614, 1.5658, 1.5703, 1.575, 1.5798, 1.5837, 1.5867, 1.5899, 1.5929, 1.5958, 1.5986, 1.6024, 1.6067, 1.6106, 1.6145, 1.6184, 1.621, 1.6235, 1.626, 1.6294, 1.6334, 1.6374, 1.6403, 1.6432, 1.6461, 1.649, 1.6519, 1.6548, 1.6582, 1.6617, 1.6649, 1.668, 1.6714, 1.6747, 1.6779, 1.681, 1.6841, 1.6871, 1.6903, 1.6954, 1.7007, 1.7047, 1.7083, 1.7136, 1.7174, 1.7199, 1.7221, 1.7244, 1.7269, 1.7285, 1.7298, 1.7312, 1.7324, 1.7344, 1.737, 1.7399, 1.7431, 1.7466, 1.7504, 1.7545, 1.7585, 1.7624, 1.7669, 1.771, 1.7743, 1.7774, 1.7807, 1.7841, 1.7874, 1.7911, 1.7946, 1.798, 1.801, 1.8038, 1.8067, 1.8098, 1.8129, 1.8161, 1.8193, 1.8226, 1.8256, 1.8285, 1.8313, 1.834, 1.8373, 1.8396, 1.842, 1.8443, 1.8466, 1.8489, 1.8509, 1.8529, 1.8551, 1.8574, 1.8597, 1.8616, 1.8637, 1.8658, 1.868, 1.8702, 1.8719, 1.8748, 1.8785, 1.8823, 1.8858, 1.8895, 1.893, 1.8965, 1.9001, 1.9036, 1.9071, 1.9103, 1.9132, 1.9169, 1.9207, 1.9244, 1.9277, 1.9298, 1.9294, 1.9297, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9353, 1.9355, 1.9358, 1.9362, 1.9368, 1.9374, 1.9378, 1.9382, 1.9384, 1.9386, 1.9388, 1.9391, 1.9395, 1.9401, 1.9408, 1.9416, 1.9426, 1.9437, 1.9448, 1.9459, 1.947, 1.9481, 1.9492, 1.9506, 1.9521, 1.9538, 1.9556, 1.9574, 1.9592, 1.9612, 1.9633, 1.9652, 1.967, 1.9687, 1.9705, 1.9724, 1.9745, 1.9766, 1.9789, 1.9811, 1.9835, 1.9861, 1.9886, 1.9914, 1.9941, 1.9969, 1.9997, 2.0024, 2.0049, 2.0078, 2.0103, 2.0133, 2.0159, 2.0185, 2.0217, 2.0245, 2.0272, 2.0296, 2.0319, 2.0343, 2.0367, 2.0387, 2.0406, 2.0421, 2.0436, 2.0454, 2.0471, 2.049, 2.051, 2.0529, 2.0551, 2.0574, 2.0582, 2.0591, 2.0599, 2.061, 2.062, 2.0634, 2.0649, 2.0665, 2.0683, 2.0705, 2.073, 2.0755, 2.0779, 2.0805, 2.0832, 2.0864, 2.0902, 2.0932, 2.096, 2.0991, 2.1125, 2.1252, 2.1372, 2.1488, 2.1599, 2.1708, 2.1808, 2.1926, 2.2038, 2.2156, 2.2301, 2.2414, 2.2462, 2.2492, 2.2518, 2.2544, 2.2574, 2.2605, 2.2634, 2.266, 2.2687, 2.2716, 2.2752, 2.2791, 2.2827, 2.2862, 2.2905, 2.2945, 2.2983, 2.3021, 2.306, 2.3103, 2.3153, 2.3197, 2.3243, 2.3292, 2.333, 2.3367, 2.3406, 2.3452, 2.349, 2.3525, 2.3562, 2.3599, 2.3636, 2.3672, 2.3706, 2.3739, 2.3774, 2.3809, 2.3848, 2.3889, 2.393, 2.3972, 2.4028, 2.4101, 2.4178, 2.425, 2.4313, 2.4388, 2.4451, 2.4511, 2.458, 2.464, 2.4701, 2.4764, 2.4824, 2.4884, 2.4933, 2.4985, 2.5035, 2.508, 2.5128, 2.5172, 2.5211, 2.5248, 2.5284, 2.5324, 2.5362, 2.5402, 2.5421, 2.542, 2.5421, 2.5425, 2.5431, 2.5438, 2.5447, 2.5457, 2.547, 2.5484, 2.5498, 2.5513, 2.5528, 2.5544, 2.556, 2.5576, 2.5593, 2.5609, 2.5626, 2.5641, 2.5655, 2.5667, 2.5677, 2.5687, 2.5694, 2.5694, 2.57, 2.5711, 2.5721, 2.5731, 2.5741, 2.5751, 2.5764, 2.578, 2.5799, 2.582, 2.5837, 2.5854, 2.5872, 2.5891, 2.5912, 2.5933, 2.596, 2.5986, 2.6025, 2.6073, 2.6121, 2.617, 2.6207, 2.6239, 2.6269, 2.63, 2.6332, 2.6368, 2.6405, 2.6437, 2.6464, 2.6487, 2.6515, 2.6542, 2.657, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6574, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6633, 2.6632, 2.6633, 2.6637, 2.6643, 2.665, 2.666, 2.6672, 2.6685, 2.67, 2.6716, 2.6735, 2.6753, 2.6775, 2.6797, 2.6818, 2.6839, 2.686, 2.6884, 2.6909, 2.6953, 2.7009, 2.7054, 2.7086, 2.7133, 2.7163, 2.7186, 2.7203, 2.7219, 2.7236, 2.7254, 2.7273, 2.7284, 2.7297, 2.7322, 2.7347, 2.7376, 2.7409, 2.7446, 2.7483, 2.7522, 2.7562, 2.7603, 2.7643, 2.7685, 2.7726, 2.7767, 2.7806, 2.7852, 2.7899, 2.7945, 2.7989, 2.803, 2.8064, 2.8094, 2.8126, 2.8158, 2.8191, 2.8226, 2.826, 2.8295, 2.833, 2.8366, 2.8392, 2.8418, 2.8443, 2.8469, 2.8493, 2.8515, 2.8538, 2.8559, 2.858, 2.86, 2.862, 2.8639, 2.8658, 2.8677, 2.8696, 2.8716, 2.8747, 2.8789, 2.8831, 2.8871, 2.8908, 2.8944, 2.8979, 2.9014, 2.9051, 2.9097, 2.9146, 2.9193, 2.9238, 2.9283, 2.9323, 2.9362, 2.9405, 2.9444, 2.9485, 2.9529, 2.9572, 2.9615, 2.9656, 2.9692, 2.9729, 2.9766, 2.9803, 2.9844, 2.9889, 2.9933, 2.9978, 3.0021, 3.0063, 3.0105, 3.0147, 3.0189, 3.0231, 3.0274, 3.0315, 3.035, 3.0386, 3.0414, 3.0438, 3.0462, 3.0494, 3.0527, 3.0569, 3.0611, 3.0651, 3.0691, 3.0737, 3.0779, 3.082, 3.0864, 3.0916, 3.0959, 3.0984, 3.1039, 3.118, 3.1302, 3.1421, 3.1534, 3.1645, 3.1753, 3.1859, 3.1972, 3.2087, 3.2209, 3.2359, 3.2441, 3.2477, 3.2503, 3.2529, 3.2557, 3.2588, 3.2619, 3.2645, 3.2671, 3.2698, 3.2726, 3.2765, 3.2805, 3.2845, 3.2885, 3.2923, 3.2958, 3.2987, 3.3016, 3.3044, 3.3071, 3.3103, 3.3137, 3.3168, 3.3198, 3.3232, 3.3271, 3.3301, 3.3332, 3.3371, 3.3429, 3.3476, 3.3509, 3.3543, 3.3577, 3.361, 3.3644, 3.3676, 3.3708, 3.3738, 3.3773, 3.3805, 3.3841, 3.3879, 3.3917, 3.3956, 3.3994, 3.405, 3.4115, 3.4188, 3.4257, 3.4311, 3.4385, 3.4449, 3.4507, 3.456, 3.4604, 3.4645, 3.4689, 3.4738, 3.4774, 3.4808, 3.4841, 3.4874, 3.4906, 3.4931, 3.4956, 3.4981, 3.5005, 3.503, 3.5055, 3.5085, 3.5113, 3.5141, 3.5169, 3.5195, 3.5224, 3.5255, 3.5289, 3.5326, 3.5356, 3.5382, 3.5407, 3.5426, 3.5441, 3.5454, 3.547, 3.549, 3.5513, 3.5539, 3.5568, 3.5598, 3.563, 3.5662, 3.5695, 3.5729, 3.5764, 3.5798, 3.5828, 3.5851, 3.5874, 3.5896, 3.592, 3.5944, 3.5969, 3.5996, 3.6039, 3.6082, 3.6125, 3.6165, 3.6197, 3.6218, 3.6243, 3.6264, 3.6287, 3.6309, 3.6333, 3.6372, 3.6404, 3.6432, 3.6456, 3.6487, 3.6522, 3.6561, 3.6604, 3.6643, 3.6688, 3.6726, 3.6762, 3.68, 3.6832, 3.6861, 3.6891, 3.695, 3.7008, 3.7051, 3.7078, 3.711, 3.7141, 3.7162, 3.7177, 3.7191, 3.7205, 3.7218, 3.7231, 3.7244, 3.7278, 3.7308, 3.7333, 3.736, 3.739, 3.7423, 3.7458, 3.7494, 3.7529, 3.7565, 3.76, 3.7635, 3.7672, 3.771, 3.7746, 3.7782, 3.7819, 3.7859, 3.7899, 3.7939, 3.7978, 3.8017, 3.8051, 3.809, 3.8128, 3.8168, 3.8208, 3.8248, 3.8291, 3.8332, 3.837, 3.8397, 3.8424, 3.8451, 3.8477, 3.8503, 3.853, 3.8554, 3.8568, 3.8581, 3.8593, 3.8604, 3.8615, 3.8626, 3.8636, 3.8647, 3.8658, 3.8669, 3.868, 3.869, 3.8701, 3.8712, 3.8723, 3.8743, 3.8767, 3.8791, 3.8814, 3.8837, 3.886, 3.8884, 3.8907, 3.893, 3.8952, 3.8976, 3.8997, 3.902, 3.9042, 3.907, 3.9095, 3.9113, 3.9131, 3.9149, 3.9166, 3.9188, 3.9212, 3.9236, 3.9259, 3.928, 3.93, 3.9318, 3.9329, 3.9336, 3.934, 3.9342, 3.9344, 3.9345, 3.9346, 3.9346, 3.9349, 3.9353, 3.9359, 3.9366, 3.9374, 3.9384, 3.9395, 3.9408, 3.9422, 3.9437, 3.9453, 3.947, 3.9486, 3.9502, 3.9519, 3.9538, 3.9558, 3.9578, 3.9599, 3.9621, 3.9641, 3.9657, 3.9673, 3.9689, 3.9705, 3.9726, 3.9748, 3.9771, 3.979, 3.9807, 3.9826, 3.9846, 3.9867, 3.9888, 3.9909, 3.9929, 3.995, 3.9971, 3.9992, 3.0012, 3.0029, 3.005, 3.0071, 3.0089, 3.0109, 3.0128, 3.0146, 3.0167, 3.0188, 3.0209, 3.0229, 3.0248, 3.0267, 3.0285, 3.0303, 3.0322, 3.0341, 3.036, 3.0376, 3.0391, 3.0405, 3.0419, 3.0433, 3.0447, 3.0462, 3.0477, 3.0492, 3.0508, 3.0524, 3.054, 3.0563, 3.0587, 3.0608, 3.0629, 3.0649], "6": [0.9939, 0.9947, 0.9966, 0.9995, 1.0023, 1.0046, 1.007, 1.0093, 1.0117, 1.014, 1.0164, 1.0188, 1.0213, 1.024, 1.0266, 1.0294, 1.0321, 1.0352, 1.038, 1.0405, 1.0428, 1.0452, 1.0476, 1.0501, 1.0522, 1.0541, 1.0572, 1.0603, 1.0628, 1.0653, 1.0678, 1.0706, 1.0735, 1.0763, 1.0788, 1.0813, 1.0839, 1.087, 1.0908, 1.0941, 1.0971, 1.0996, 1.1139, 1.1262, 1.1379, 1.1497, 1.1608, 1.1717, 1.1826, 1.1935, 1.2048, 1.2166, 1.2314, 1.242, 1.2466, 1.2494, 1.2518, 1.2545, 1.2576, 1.2606, 1.2633, 1.2657, 1.2681, 1.2706, 1.2736, 1.2774, 1.2812, 1.2849, 1.2884, 1.292, 1.296, 1.2995, 1.3031, 1.3067, 1.3112, 1.3158, 1.3201, 1.3245, 1.3293, 1.333, 1.3371, 1.3419, 1.3467, 1.3501, 1.3535, 1.3569, 1.3603, 1.3636, 1.3669, 1.3702, 1.3735, 1.3769, 1.3802, 1.3838, 1.3877, 1.3916, 1.3954, 1.3993, 1.4059, 1.4131, 1.4207, 1.4275, 1.4336, 1.4408, 1.4466, 1.4524, 1.4584, 1.4638, 1.4692, 1.4744, 1.4788, 1.4829, 1.4872, 1.4912, 1.4953, 1.4997, 1.5046, 1.5097, 1.5144, 1.519, 1.5239, 1.5287, 1.5335, 1.5378, 1.5414, 1.5452, 1.5495, 1.5539, 1.5588, 1.5631, 1.5639, 1.5607, 1.5587, 1.5577, 1.5574, 1.5575, 1.558, 1.5588, 1.5601, 1.5614, 1.563, 1.564, 1.5605, 1.5582, 1.557, 1.5565, 1.5565, 1.5569, 1.5575, 1.5586, 1.5601, 1.5621, 1.5645, 1.5672, 1.57, 1.573, 1.5764, 1.58, 1.5829, 1.5855, 1.5877, 1.5901, 1.5927, 1.5955, 1.5983, 1.6022, 1.6071, 1.612, 1.6173, 1.6211, 1.6245, 1.6278, 1.6309, 1.6352, 1.6391, 1.6427, 1.6457, 1.6478, 1.6504, 1.6534, 1.6566, 1.6591, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6593, 1.6617, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6626, 1.6625, 1.6626, 1.6629, 1.6633, 1.664, 1.665, 1.6663, 1.6678, 1.6695, 1.6715, 1.6736, 1.676, 1.6784, 1.6809, 1.6833, 1.6857, 1.688, 1.6902, 1.6947, 1.6995, 1.7049, 1.7091, 1.714, 1.7186, 1.722, 1.7266, 1.7291, 1.7316, 1.7342, 1.7368, 1.7398, 1.7429, 1.7461, 1.7494, 1.7528, 1.7563, 1.7599, 1.7634, 1.767, 1.7706, 1.7742, 1.7778, 1.7813, 1.7851, 1.7888, 1.792, 1.7952, 1.7982, 1.8011, 1.8039, 1.8068, 1.81, 1.8133, 1.8167, 1.8201, 1.8238, 1.8274, 1.831, 1.8347, 1.8378, 1.8401, 1.8425, 1.8447, 1.8471, 1.8494, 1.8514, 1.8534, 1.8557, 1.8586, 1.8614, 1.864, 1.8665, 1.869, 1.8715, 1.8753, 1.8805, 1.8844, 1.888, 1.8915, 1.8952, 1.899, 1.9028, 1.9064, 1.9098, 1.9126, 1.9162, 1.92, 1.9238, 1.9275, 1.9302, 1.9326, 1.935, 1.9373, 1.9402, 1.9434, 1.9466, 1.9499, 1.9527, 1.9553, 1.9579, 1.9605, 1.9633, 1.9653, 1.9672, 1.9691, 1.971, 1.9731, 1.9752, 1.9773, 1.9791, 1.9805, 1.9816, 1.9826, 1.9834, 1.9841, 1.9848, 1.9857, 1.9869, 1.9881, 1.9896, 1.9912, 1.9929, 1.9948, 1.9968, 1.9987, 2.0006, 2.0026, 2.0045, 2.0064, 2.0084, 2.0103, 2.0122, 2.0142, 2.0161, 2.018, 2.0202, 2.0222, 2.0242, 2.0261, 2.0278, 2.0294, 2.031, 2.0327, 2.0345, 2.0363, 2.0378, 2.0392, 2.0406, 2.042, 2.0434, 2.0448, 2.0461, 2.0475, 2.049, 2.0505, 2.0523, 2.0541, 2.0569, 2.06, 2.0626, 2.065, 2.0676, 2.0703, 2.0733, 2.076, 2.0786, 2.081, 2.0838, 2.0871, 2.0909, 2.0938, 2.0965, 2.0992, 2.1129, 2.1244, 2.1368, 2.1478, 2.1599, 2.1701, 2.1814, 2.1917, 2.2035, 2.2156, 2.2302, 2.2414, 2.2464, 2.2491, 2.2517, 2.2542, 2.2573, 2.2603, 2.2631, 2.2655, 2.268, 2.2705, 2.2723, 2.2737, 2.2746, 2.2752, 2.2756, 2.2757, 2.2753, 2.2752, 2.2754, 2.2759, 2.2766, 2.2778, 2.2793, 2.2811, 2.2834, 2.286, 2.289, 2.2922, 2.2953, 2.2984, 2.3016, 2.305, 2.3086, 2.3133, 2.3176, 2.3218, 2.3261, 2.3307, 2.3342, 2.3381, 2.3425, 2.347, 2.3504, 2.3536, 2.357, 2.3604, 2.3638, 2.3672, 2.3705, 2.3738, 2.3772, 2.3807, 2.3844, 2.3884, 2.3924, 2.3964, 2.4007, 2.408, 2.4152, 2.4226, 2.4286, 2.4345, 2.4407, 2.446, 2.4514, 2.4571, 2.4621, 2.4671, 2.4726, 2.4773, 2.4813, 2.4851, 2.4888, 2.4928, 2.4966, 2.5003, 2.5044, 2.5087, 2.5131, 2.5174, 2.5219, 2.5263, 2.5304, 2.535, 2.5391, 2.5432, 2.5479, 2.5532, 2.5585, 2.5638, 2.5689, 2.5741, 2.5792, 2.5832, 2.5862, 2.5889, 2.5915, 2.5945, 2.5973, 2.6005, 2.6049, 2.6091, 2.6135, 2.6184, 2.6217, 2.6246, 2.6281, 2.632, 2.6364, 2.6393, 2.6422, 2.645, 2.648, 2.6509, 2.6538, 2.657, 2.6605, 2.6638, 2.6672, 2.6705, 2.6737, 2.677, 2.6801, 2.6832, 2.6861, 2.6889, 2.6923, 2.6972, 2.7024, 2.7069, 2.7117, 2.7146, 2.7167, 2.7187, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.7198, 2.6769, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6626, 2.6625, 2.6626, 2.6628, 2.6632, 2.6639, 2.6648, 2.666, 2.6675, 2.6691, 2.6711, 2.6731, 2.6754, 2.6778, 2.6803, 2.6827, 2.685, 2.6873, 2.6895, 2.6928, 2.6981, 2.7038, 2.7078, 2.7121, 2.7158, 2.7186, 2.7207, 2.7226, 2.7244, 2.7268, 2.7281, 2.7293, 2.7305, 2.7316, 2.7327, 2.7344, 2.7366, 2.7393, 2.7426, 2.7462, 2.7498, 2.7532, 2.7571, 2.7606, 2.7641, 2.7676, 2.7713, 2.7748, 2.7786, 2.7822, 2.7863, 2.7902, 2.7942, 2.7981, 2.8018, 2.8054, 2.8091, 2.8129, 2.8169, 2.821, 2.8252, 2.8293, 2.8335, 2.8372, 2.8399, 2.8424, 2.8451, 2.8478, 2.8504, 2.8528, 2.8551, 2.8573, 2.8595, 2.8615, 2.8635, 2.8654, 2.8672, 2.869, 2.8709, 2.8729, 2.8769, 2.8808, 2.8845, 2.888, 2.8916, 2.8952, 2.8987, 2.9022, 2.9066, 2.9107, 2.9143, 2.918, 2.921, 2.9238, 2.9266, 2.929, 2.9313, 2.9337, 2.9361, 2.9384, 2.9408, 2.9432, 2.946, 2.9492, 2.9523, 2.9553, 2.9586, 2.9617, 2.9643, 2.9667, 2.969, 2.9713, 2.9735, 2.9758, 2.978, 2.9801, 2.9826, 2.9857, 2.9888, 2.9917, 2.9946, 2.9976, 3.0008, 3.004, 3.0071, 3.0101, 3.013, 3.016, 3.0191, 3.0224, 3.0254, 3.0282, 3.031, 3.0338, 3.0367, 3.0391, 3.0412, 3.0434, 3.0455, 3.0476, 3.0499, 3.0523, 3.0549, 3.0592, 3.0627, 3.0657, 3.0688, 3.0716, 3.0744, 3.0768, 3.0787, 3.0806, 3.0827, 3.0855, 3.0892, 3.0927, 3.0956, 3.0984, 3.1084, 3.1212, 3.1333, 3.1448, 3.1563, 3.1673, 3.1781, 3.189, 3.2, 3.2117, 3.2251, 3.2387, 3.2452, 3.2483, 3.2509, 3.2534, 3.2563, 3.2593, 3.2623, 3.2645, 3.2667, 3.2689, 3.271, 3.2732, 3.2757, 3.2781, 3.2808, 3.2835, 3.2861, 3.2888, 3.2915, 3.294, 3.2964, 3.2987, 3.301, 3.3033, 3.3056, 3.3078, 3.311, 3.3144, 3.3177, 3.3212, 3.3252, 3.3294, 3.3329, 3.3365, 3.3405, 3.3446, 3.3482, 3.3514, 3.3544, 3.3575, 3.3606, 3.3638, 3.367, 3.3703, 3.3736, 3.377, 3.3804, 3.3835, 3.3877, 3.3918, 3.3957, 3.3997, 3.4063, 3.4131, 3.4202, 3.4266, 3.4342, 3.4417, 3.4477, 3.4538, 3.4597, 3.4652, 3.4708, 3.4768, 3.4826, 3.4884, 3.4938, 3.4998, 3.5057, 3.5114, 3.5172, 3.5229, 3.5287, 3.5347, 3.5408, 3.5473, 3.5545, 3.562, 3.5692, 3.5761, 3.5825, 3.5869, 3.5909, 3.5945, 3.5982, 3.603, 3.6077, 3.6122, 3.617, 3.6211, 3.6246, 3.6282, 3.632, 3.6362, 3.6396, 3.6426, 3.6453, 3.6479, 3.651, 3.6543, 3.6571, 3.6596, 3.66, 3.66, 3.66, 3.66, 3.66, 3.66, 3.66, 3.66, 3.66, 3.66, 3.66, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6626, 3.6625, 3.6626, 3.6629, 3.6634, 3.6642, 3.6653, 3.6666, 3.6681, 3.6699, 3.6719, 3.674, 3.6764, 3.6787, 3.6812, 3.6836, 3.6859, 3.6884, 3.6917, 3.6984, 3.7038, 3.7077, 3.7123, 3.7159, 3.7186, 3.7206, 3.7224, 3.7243, 3.7263, 3.7279, 3.7291, 3.7302, 3.7313, 3.733, 3.7349, 3.7373, 3.7402, 3.7438, 3.7475, 3.7511, 3.7545, 3.7576, 3.7604, 3.7632, 3.766, 3.7687, 3.7724, 3.7764, 3.7803, 3.7846, 3.789, 3.7933, 3.7976, 3.8017, 3.8056, 3.8097, 3.8139, 3.8183, 3.8228, 3.8273, 3.8319, 3.8363, 3.8392, 3.842, 3.8447, 3.8474, 3.8501, 3.8526, 3.8547, 3.8566, 3.8586, 3.8607, 3.8627, 3.8641, 3.8654, 3.8667, 3.8684, 3.8699, 3.8715, 3.873, 3.8756, 3.8785, 3.881, 3.8838, 3.8864, 3.889, 3.8916, 3.894, 3.8963, 3.8986, 3.9009, 3.9032, 3.9055, 3.9078, 3.91, 3.9118, 3.9136, 3.9154, 3.9177, 3.9202, 3.9227, 3.9251, 3.9275, 3.9295, 3.932, 3.9346, 3.9371, 3.939, 3.941, 3.943, 3.9452, 3.947, 3.9486, 3.9501, 3.9516, 3.9531, 3.9545, 3.956, 3.9575, 3.959, 3.9614, 3.9642, 3.9667, 3.9692, 3.9717, 3.9741, 3.9764, 3.9784, 3.9801, 3.9817, 3.9837, 3.9856, 3.9876, 3.9896, 3.9916, 3.9935, 3.9954, 3.9974, 3.9994, 3.0013, 3.0033, 3.0052, 3.0072, 3.0091, 3.011, 3.013, 3.0149, 3.0172, 3.0196, 3.0219, 3.0242, 3.0263, 3.0282, 3.0302, 3.0322, 3.0341, 3.036, 3.0376, 3.039, 3.0405, 3.0419, 3.0433, 3.0447, 3.0461, 3.0476, 3.0491, 3.0507, 3.0521, 3.0537, 3.056, 3.0587, 3.0609, 3.0629, 3.0649, 3.0669, 3.069, 3.0712, 3.0736, 3.0757, 3.0777, 3.0798], "7": [0.9949, 0.9957, 0.9976, 1.0004, 1.0032, 1.0056, 1.0079, 1.0103, 1.0127, 1.015, 1.0174, 1.0199, 1.0225, 1.0251, 1.0277, 1.0304, 1.033, 1.036, 1.0387, 1.041, 1.0433, 1.0457, 1.0481, 1.0507, 1.0528, 1.0549, 1.0586, 1.0599, 1.0605, 1.0611, 1.0618, 1.0625, 1.0633, 1.0644, 1.0656, 1.0669, 1.0685, 1.0703, 1.0724, 1.075, 1.0777, 1.0802, 1.083, 1.0861, 1.0897, 1.0929, 1.0955, 1.0981, 1.1083, 1.1211, 1.1332, 1.1451, 1.1562, 1.1673, 1.1781, 1.189, 1.1995, 1.2117, 1.2251, 1.2386, 1.2451, 1.2482, 1.2508, 1.2533, 1.2561, 1.2591, 1.262, 1.2643, 1.2664, 1.2685, 1.271, 1.2735, 1.2764, 1.2794, 1.2826, 1.2859, 1.2893, 1.2926, 1.296, 1.2992, 1.3026, 1.3061, 1.3098, 1.3142, 1.318, 1.3217, 1.3245, 1.3264, 1.3275, 1.3277, 1.3278, 1.3286, 1.3292, 1.3292, 1.3292, 1.3293, 1.3296, 1.3301, 1.3306, 1.3313, 1.3325, 1.3341, 1.336, 1.3388, 1.342, 1.3457, 1.3485, 1.3515, 1.3547, 1.358, 1.3613, 1.3644, 1.3678, 1.3711, 1.3743, 1.3776, 1.3809, 1.3847, 1.3889, 1.3931, 1.3972, 1.4028, 1.4102, 1.4173, 1.4241, 1.4297, 1.4357, 1.4416, 1.4472, 1.4529, 1.4586, 1.4634, 1.4679, 1.4727, 1.4767, 1.481, 1.4853, 1.4899, 1.4945, 1.4991, 1.504, 1.5097, 1.5151, 1.5204, 1.5253, 1.5309, 1.5365, 1.5414, 1.5468, 1.5532, 1.5597, 1.5662, 1.5725, 1.5787, 1.5836, 1.5872, 1.5904, 1.5934, 1.5961, 1.599, 1.6023, 1.6044, 1.6058, 1.6076, 1.6094, 1.6117, 1.6149, 1.6188, 1.622, 1.6252, 1.6294, 1.6349, 1.6385, 1.6416, 1.6444, 1.6472, 1.65, 1.6528, 1.6558, 1.6591, 1.6624, 1.6656, 1.6689, 1.672, 1.6751, 1.6781, 1.6811, 1.684, 1.6868, 1.6896, 1.6937, 1.699, 1.7043, 1.7093, 1.7151, 1.7182, 1.7212, 1.7234, 1.7258, 1.7279, 1.7293, 1.7306, 1.7319, 1.7331, 1.7334, 1.7334, 1.7371, 1.7388, 1.7407, 1.7427, 1.7457, 1.7492, 1.7531, 1.7572, 1.7607, 1.7628, 1.7641, 1.7649, 1.7655, 1.7659, 1.7661, 1.7662, 1.7663, 1.7664, 1.7668, 1.7673, 1.768, 1.7688, 1.7698, 1.7709, 1.7721, 1.7735, 1.7749, 1.7765, 1.7783, 1.7801, 1.7821, 1.7841, 1.7856, 1.7865, 1.787, 1.7873, 1.7875, 1.7877, 1.7881, 1.7887, 1.7895, 1.7906, 1.7918, 1.7931, 1.7947, 1.7965, 1.7984, 1.8004, 1.8024, 1.8047, 1.8072, 1.81, 1.8131, 1.8163, 1.8199, 1.8236, 1.8274, 1.8312, 1.8351, 1.838, 1.8403, 1.8426, 1.8449, 1.8473, 1.8494, 1.8514, 1.8534, 1.8553, 1.8577, 1.86, 1.8623, 1.8647, 1.8672, 1.8696, 1.872, 1.8767, 1.8811, 1.8851, 1.8887, 1.8923, 1.8959, 1.8995, 1.903, 1.9065, 1.9103, 1.9141, 1.9176, 1.9212, 1.9243, 1.9271, 1.9295, 1.9317, 1.934, 1.9364, 1.9389, 1.9413, 1.9437, 1.9462, 1.9488, 1.9511, 1.9536, 1.9559, 1.9584, 1.9609, 1.9633, 1.9653, 1.9672, 1.9691, 1.9706, 1.9717, 1.9726, 1.9734, 1.9739, 1.9744, 1.9749, 1.9755, 1.9763, 1.9771, 1.9781, 1.9793, 1.9805, 1.9818, 1.9835, 1.9853, 1.987, 1.9889, 1.9908, 1.9926, 1.9943, 1.9955, 1.9963, 1.9967, 1.997, 1.9972, 1.9973, 1.9974, 1.9974, 1.9976, 1.9979, 1.9984, 1.999, 1.9998, 2.0007, 2.0017, 2.0027, 2.0037, 2.0051, 2.0065, 2.0081, 2.0098, 2.0116, 2.0137, 2.0158, 2.018, 2.0208, 2.0233, 2.0257, 2.0282, 2.0305, 2.0328, 2.0352, 2.0375, 2.0394, 2.0413, 2.0432, 2.045, 2.0468, 2.0486, 2.0506, 2.0525, 2.0545, 2.0579, 2.0607, 2.0633, 2.0659, 2.0684, 2.0715, 2.0744, 2.0775, 2.0804, 2.0838, 2.0876, 2.0913, 2.094, 2.0967, 2.0997, 2.1129, 2.125, 2.1372, 2.1485, 2.1599, 2.1708, 2.1817, 2.1926, 2.2038, 2.2153, 2.2302, 2.2415, 2.2464, 2.2491, 2.2516, 2.254, 2.2571, 2.2601, 2.2629, 2.2651, 2.2674, 2.2695, 2.2719, 2.2747, 2.2779, 2.281, 2.2844, 2.2881, 2.2922, 2.296, 2.2997, 2.3034, 2.3072, 2.3118, 2.316, 2.3206, 2.3252, 2.3297, 2.3333, 2.3371, 2.3411, 2.3455, 2.349, 2.3522, 2.3552, 2.3585, 2.3618, 2.3651, 2.3684, 2.3716, 2.3749, 2.3782, 2.3815, 2.3853, 2.3892, 2.393, 2.3974, 2.4056, 2.4161, 2.4256, 2.4327, 2.44, 2.4462, 2.4522, 2.4585, 2.4644, 2.4707, 2.4771, 2.483, 2.4887, 2.494, 2.4995, 2.5048, 2.5103, 2.5162, 2.522, 2.5276, 2.5316, 2.5343, 2.5358, 2.5367, 2.5373, 2.5377, 2.5379, 2.538, 2.5383, 2.5389, 2.5398, 2.541, 2.5424, 2.5455, 2.5526, 2.5601, 2.5675, 2.5745, 2.5816, 2.5859, 2.5901, 2.5935, 2.5964, 2.5993, 2.6043, 2.6087, 2.6123, 2.6162, 2.6193, 2.6215, 2.6238, 2.6261, 2.6285, 2.631, 2.6346, 2.6386, 2.6421, 2.6455, 2.6479, 2.6502, 2.653, 2.6568, 2.661, 2.6651, 2.669, 2.6725, 2.676, 2.6793, 2.682, 2.6847, 2.6872, 2.6901, 2.6966, 2.7016, 2.7067, 2.7116, 2.7166, 2.7206, 2.7239, 2.7271, 2.7291, 2.7308, 2.7325, 2.7339, 2.7353, 2.7369, 2.7386, 2.7404, 2.7426, 2.7453, 2.7484, 2.7514, 2.7539, 2.7563, 2.7588, 2.7614, 2.7639, 2.7665, 2.7692, 2.7718, 2.7745, 2.7772, 2.7799, 2.7828, 2.7858, 2.7888, 2.7918, 2.7948, 2.7977, 2.8003, 2.8028, 2.8051, 2.8075, 2.81, 2.8127, 2.8154, 2.8179, 2.8206, 2.823, 2.8252, 2.8272, 2.8292, 2.8311, 2.8331, 2.8363, 2.8385, 2.8411, 2.8432, 2.8456, 2.848, 2.85, 2.852, 2.854, 2.856, 2.8581, 2.8602, 2.8624, 2.8644, 2.8658, 2.8673, 2.8689, 2.8704, 2.8718, 2.8737, 2.8766, 2.8797, 2.8826, 2.8856, 2.8885, 2.8914, 2.8941, 2.8969, 2.8997, 2.9024, 2.9051, 2.9079, 2.9107, 2.9136, 2.9164, 2.9192, 2.922, 2.9247, 2.9273, 2.9296, 2.9318, 2.934, 2.9365, 2.939, 2.9415, 2.9431, 2.9445, 2.9456, 2.9463, 2.9467, 2.947, 2.9471, 2.9472, 2.9473, 2.9473, 2.9473, 2.9474, 2.9476, 2.948, 2.9486, 2.9492, 2.9501, 2.9511, 2.9521, 2.9534, 2.9548, 2.9564, 2.9581, 2.96, 2.962, 2.9638, 2.9654, 2.9669, 2.9684, 2.9699, 2.9715, 2.9732, 2.9751, 2.9769, 2.979, 2.981, 2.9832, 2.9856, 2.9881, 2.9906, 2.993, 2.9956, 2.998, 3.0005, 3.003, 3.0055, 3.0079, 3.0104, 3.0128, 3.0153, 3.0178, 3.0204, 3.023, 3.0254, 3.0277, 3.0299, 3.0323, 3.0346, 3.0369, 3.0388, 3.0406, 3.0424, 3.0442, 3.0459, 3.0476, 3.0497, 3.0517, 3.0536, 3.0562, 3.0592, 3.0619, 3.0644, 3.067, 3.0696, 3.0725, 3.0758, 3.079, 3.082, 3.0846, 3.0886, 3.093, 3.0968, 3.1055, 3.1192, 3.1314, 3.1432, 3.1545, 3.1656, 3.1764, 3.187, 3.1982, 3.2098, 3.2227, 3.237, 3.2445, 3.2478, 3.2504, 3.2529, 3.2556, 3.2586, 3.2616, 3.2645, 3.2677, 3.2711, 3.2751, 3.2798, 3.2841, 3.2883, 3.2922, 3.2962, 3.3, 3.3038, 3.3075, 3.3117, 3.316, 3.3199, 3.3242, 3.3288, 3.3326, 3.3362, 3.3401, 3.3442, 3.3479, 3.3512, 3.3546, 3.3578, 3.361, 3.364, 3.3672, 3.3703, 3.3735, 3.3768, 3.3801, 3.3834, 3.3875, 3.3915, 3.3954, 3.3995, 3.4065, 3.4135, 3.4209, 3.4269, 3.4325, 3.4386, 3.4439, 3.4485, 3.4541, 3.4595, 3.4644, 3.4695, 3.4746, 3.479, 3.4833, 3.4875, 3.4915, 3.4956, 3.4998, 3.504, 3.5083, 3.5124, 3.5167, 3.5209, 3.5253, 3.5298, 3.5342, 3.5391, 3.5438, 3.5489, 3.5537, 3.5581, 3.5612, 3.5638, 3.5646, 3.562, 3.5608, 3.5605, 3.5607, 3.5611, 3.5618, 3.5625, 3.5634, 3.5641, 3.5651, 3.567, 3.5695, 3.5723, 3.5749, 3.5776, 3.5804, 3.5827, 3.5846, 3.5864, 3.5884, 3.5905, 3.5925, 3.5947, 3.5969, 3.5993, 3.6032, 3.6074, 3.6118, 3.617, 3.6209, 3.6245, 3.6287, 3.6328, 3.6371, 3.6394, 3.6417, 3.6439, 3.6461, 3.6485, 3.6507, 3.6531, 3.6556, 3.6584, 3.6613, 3.6642, 3.6672, 3.6701, 3.6731, 3.676, 3.679, 3.682, 3.6849, 3.6876, 3.6905, 3.697, 3.7027, 3.7076, 3.7131, 3.7177, 3.7216, 3.7257, 3.7287, 3.7306, 3.7328, 3.735, 3.7374, 3.7396, 3.7415, 3.7433, 3.7453, 3.7473, 3.7495, 3.7518, 3.7541, 3.7565, 3.7589, 3.7614, 3.7638, 3.7664, 3.769, 3.7716, 3.7742, 3.7769, 3.7796, 3.7824, 3.7854, 3.7883, 3.7909, 3.7934, 3.7957, 3.798, 3.8002, 3.8023, 3.8042, 3.8062, 3.8082, 3.8102, 3.8123, 3.8145, 3.8166, 3.8188, 3.8211, 3.8234, 3.8257, 3.828, 3.8302, 3.8325, 3.8353, 3.8382, 3.8408, 3.8433, 3.8458, 3.8483, 3.8505, 3.8519, 3.8532, 3.8545, 3.8559, 3.8572, 3.8585, 3.8598, 3.8611, 3.8623, 3.8636, 3.8647, 3.8658, 3.8669, 3.868, 3.869, 3.8701, 3.8713, 3.8723, 3.8745, 3.8768, 3.8792, 3.8815, 3.8838, 3.886, 3.8883, 3.8906, 3.8929, 3.8956, 3.8984, 3.9012, 3.904, 3.9067, 3.9095, 3.9117, 3.9138, 3.9159, 3.9179, 3.92, 3.922, 3.9242, 3.9265, 3.9286, 3.9297, 3.9289, 3.9287, 3.9287, 3.9287, 3.9287, 3.9287, 3.9287, 3.9287, 3.9287, 3.9287, 3.9287, 3.932, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9353, 3.9354, 3.9357, 3.9362, 3.9368, 3.9376, 3.9385, 3.9395, 3.9407, 3.9421, 3.9436, 3.9452, 3.9468, 3.9484, 3.95, 3.9516, 3.9531, 3.9552, 3.9572, 3.959, 3.961, 3.9628, 3.9645, 3.9661, 3.9677, 3.9692, 3.9708, 3.9724, 3.9741, 3.9757, 3.9774, 3.9791, 3.9808, 3.9826, 3.9846, 3.9867, 3.9887, 3.9907, 3.9927, 3.9948, 3.9968, 3.9988, 3.0008, 3.0027, 3.0046, 3.0065, 3.0084, 3.0104, 3.0123, 3.0141, 3.0161], "8": [0.9958, 0.9966, 0.9985, 1.0011, 1.0035, 1.0059, 1.0083, 1.0107, 1.013, 1.0154, 1.0178, 1.0205, 1.0231, 1.0255, 1.0278, 1.0301, 1.0324, 1.0348, 1.037, 1.0388, 1.0405, 1.0422, 1.0438, 1.0454, 1.0471, 1.0488, 1.0506, 1.0523, 1.0542, 1.0575, 1.0608, 1.0635, 1.0658, 1.0681, 1.0708, 1.0734, 1.0758, 1.078, 1.08, 1.0816, 1.0829, 1.084, 1.0857, 1.0886, 1.092, 1.0947, 1.0975, 1.1097, 1.1223, 1.1344, 1.1461, 1.1574, 1.1684, 1.1792, 1.1901, 1.201, 1.2128, 1.2265, 1.2395, 1.2455, 1.2485, 1.2511, 1.2537, 1.2566, 1.2597, 1.2627, 1.2654, 1.2681, 1.2707, 1.2734, 1.2768, 1.2798, 1.2829, 1.2859, 1.289, 1.2922, 1.2953, 1.2984, 1.3015, 1.3045, 1.3077, 1.3118, 1.3158, 1.3194, 1.3232, 1.3274, 1.3311, 1.3353, 1.3395, 1.3435, 1.3472, 1.3502, 1.3533, 1.3564, 1.3595, 1.3625, 1.3654, 1.3684, 1.3713, 1.3743, 1.3774, 1.3806, 1.384, 1.3882, 1.3921, 1.3961, 1.4006, 1.4085, 1.4164, 1.4245, 1.4313, 1.4384, 1.4447, 1.4507, 1.457, 1.4625, 1.4681, 1.4737, 1.4779, 1.4819, 1.4857, 1.4897, 1.494, 1.4983, 1.5033, 1.5083, 1.5125, 1.5164, 1.5206, 1.5245, 1.5285, 1.5322, 1.5358, 1.539, 1.5424, 1.5461, 1.5503, 1.5546, 1.5588, 1.5626, 1.565, 1.5628, 1.5611, 1.5603, 1.5601, 1.5602, 1.5603, 1.5607, 1.5613, 1.5623, 1.5635, 1.5647, 1.5653, 1.5659, 1.5664, 1.5667, 1.5669, 1.5669, 1.5669, 1.5669, 1.5669, 1.5671, 1.5674, 1.5679, 1.5686, 1.5695, 1.5706, 1.5719, 1.5735, 1.5757, 1.5782, 1.5811, 1.5833, 1.5857, 1.5879, 1.5902, 1.5927, 1.5954, 1.5982, 1.6022, 1.6071, 1.612, 1.617, 1.6208, 1.6239, 1.627, 1.63, 1.6337, 1.6378, 1.6415, 1.6447, 1.6471, 1.649, 1.652, 1.6552, 1.6585, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.6604, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.662, 1.6619, 1.6618, 1.6618, 1.662, 1.6622, 1.6626, 1.6631, 1.6638, 1.6648, 1.6659, 1.6672, 1.6687, 1.6703, 1.6721, 1.6741, 1.6762, 1.6785, 1.6807, 1.683, 1.6851, 1.6874, 1.6902, 1.6948, 1.7007, 1.7056, 1.7097, 1.7147, 1.7181, 1.7209, 1.7231, 1.7254, 1.7277, 1.7291, 1.7304, 1.7317, 1.733, 1.7341, 1.7364, 1.7386, 1.7409, 1.7437, 1.7472, 1.751, 1.755, 1.759, 1.763, 1.7669, 1.7709, 1.7752, 1.7795, 1.7838, 1.7884, 1.793, 1.7974, 1.8016, 1.8055, 1.8097, 1.8141, 1.8186, 1.8233, 1.828, 1.8327, 1.8371, 1.8401, 1.8431, 1.846, 1.849, 1.8519, 1.8546, 1.8577, 1.8607, 1.8634, 1.8659, 1.8684, 1.8708, 1.8742, 1.8794, 1.8842, 1.8887, 1.8922, 1.8957, 1.8994, 1.903, 1.9062, 1.9094, 1.9119, 1.9145, 1.9176, 1.9215, 1.9254, 1.9289, 1.9298, 1.9298, 1.9298, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9299, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9346, 1.9347, 1.9349, 1.9353, 1.9357, 1.9363, 1.937, 1.9379, 1.9389, 1.9401, 1.9414, 1.9428, 1.9443, 1.9456, 1.9469, 1.9482, 1.9495, 1.9507, 1.9519, 1.9537, 1.9561, 1.9594, 1.9625, 1.9651, 1.9669, 1.9686, 1.9704, 1.9722, 1.9745, 1.9774, 1.9804, 1.9834, 1.9862, 1.9888, 1.9913, 1.994, 1.9967, 1.9994, 2.002, 2.0047, 2.0073, 2.0099, 2.0126, 2.0151, 2.0176, 2.0204, 2.023, 2.0257, 2.028, 2.0306, 2.033, 2.0355, 2.0377, 2.0396, 2.0415, 2.0433, 2.0451, 2.0469, 2.0487, 2.0507, 2.0526, 2.0547, 2.0584, 2.0617, 2.0642, 2.0662, 2.0692, 2.073, 2.0764, 2.0795, 2.082, 2.085, 2.0887, 2.0928, 2.0963, 2.1036, 2.1175, 2.1302, 2.1421, 2.1534, 2.1645, 2.1754, 2.1862, 2.1971, 2.2087, 2.2212, 2.2359, 2.244, 2.2476, 2.25, 2.2528, 2.2556, 2.2587, 2.2617, 2.2643, 2.2667, 2.2691, 2.2718, 2.2757, 2.2803, 2.2849, 2.2893, 2.2931, 2.2964, 2.2996, 2.3029, 2.3064, 2.3106, 2.3153, 2.3195, 2.324, 2.3288, 2.3326, 2.3363, 2.3401, 2.3439, 2.3475, 2.3511, 2.3545, 2.3579, 2.3613, 2.3645, 2.3678, 2.3711, 2.3744, 2.3778, 2.3813, 2.3854, 2.3896, 2.3938, 2.3981, 2.4044, 2.4116, 2.4194, 2.4259, 2.4311, 2.4376, 2.4435, 2.4487, 2.4545, 2.4599, 2.465, 2.4703, 2.4753, 2.4797, 2.4839, 2.4876, 2.4912, 2.495, 2.4987, 2.5028, 2.5066, 2.5104, 2.5139, 2.5176, 2.5215, 2.5255, 2.5299, 2.5344, 2.5393, 2.544, 2.5492, 2.5547, 2.5602, 2.5656, 2.5709, 2.5761, 2.5811, 2.5845, 2.5876, 2.5906, 2.5936, 2.5967, 2.5999, 2.6049, 2.6096, 2.6144, 2.6191, 2.6223, 2.6254, 2.6287, 2.6322, 2.636, 2.6389, 2.6416, 2.6441, 2.647, 2.6498, 2.6527, 2.6557, 2.6591, 2.6625, 2.6659, 2.6691, 2.6723, 2.6755, 2.6787, 2.6818, 2.6848, 2.6877, 2.691, 2.6964, 2.7023, 2.7071, 2.7121, 2.7158, 2.7187, 2.7211, 2.7231, 2.7252, 2.7275, 2.7287, 2.7299, 2.7311, 2.7323, 2.7334, 2.7352, 2.7374, 2.7399, 2.743, 2.7465, 2.7501, 2.7539, 2.7574, 2.7604, 2.7633, 2.7662, 2.7695, 2.7729, 2.7768, 2.7804, 2.7842, 2.7881, 2.792, 2.7959, 2.7997, 2.8033, 2.8066, 2.8106, 2.8142, 2.8183, 2.8226, 2.8268, 2.831, 2.8351, 2.8383, 2.8409, 2.8436, 2.8462, 2.8488, 2.8512, 2.8541, 2.8568, 2.8594, 2.8619, 2.8643, 2.8665, 2.8688, 2.871, 2.8741, 2.879, 2.8838, 2.8885, 2.893, 2.8971, 2.9007, 2.9041, 2.9075, 2.9099, 2.9119, 2.9139, 2.9158, 2.9177, 2.9196, 2.9213, 2.9238, 2.926, 2.9281, 2.9299, 2.932, 2.9347, 2.9372, 2.9391, 2.9407, 2.9422, 2.9436, 2.9449, 2.9461, 2.9474, 2.9486, 2.9498, 2.9511, 2.9526, 2.9541, 2.9556, 2.957, 2.9585, 2.9599, 2.9614, 2.9628, 2.964, 2.965, 2.9661, 2.9671, 2.9689, 2.9712, 2.9728, 2.9744, 2.9757, 2.977, 2.9782, 2.9795, 2.9808, 2.9821, 2.9836, 2.9852, 2.9867, 2.9883, 2.9898, 2.9913, 2.9929, 2.9944, 2.996, 2.9974, 2.999, 3.0006, 3.0021, 3.0036, 3.0052, 3.0069, 3.0086, 3.0104, 3.0123, 3.0143, 3.0163, 3.0186, 3.0211, 3.0236, 3.026, 3.0283, 3.0306, 3.033, 3.0353, 3.0375, 3.0394, 3.0411, 3.043, 3.0448, 3.0466, 3.0485, 3.0504, 3.0523, 3.0542, 3.0576, 3.0609, 3.0636, 3.0662, 3.069, 3.0722, 3.076, 3.0798, 3.0834, 3.0875, 3.0921, 3.0957, 3.0992, 3.114, 3.1264, 3.1383, 3.1498, 3.1606, 3.1718, 3.1827, 3.1936, 3.2049, 3.2167, 3.2316, 3.2421, 3.2467, 3.2494, 3.252, 3.2546, 3.2577, 3.2608, 3.2636, 3.2661, 3.2686, 3.2716, 3.2758, 3.281, 3.286, 3.2907, 3.2947, 3.2983, 3.302, 3.3061, 3.3102, 3.3139, 3.3173, 3.3209, 3.3245, 3.3286, 3.3321, 3.3355, 3.3391, 3.3432, 3.3471, 3.3505, 3.3539, 3.3573, 3.3607, 3.3641, 3.3674, 3.3707, 3.3739, 3.3775, 3.3808, 3.3847, 3.3888, 3.3929, 3.397, 3.4022, 3.4095, 3.4167, 3.4237, 3.4294, 3.4349, 3.4411, 3.4465, 3.4517, 3.4573, 3.4622, 3.4669, 3.4721, 3.4764, 3.4805, 3.4844, 3.488, 3.4915, 3.4953, 3.4991, 3.5029, 3.5067, 3.5101, 3.5133, 3.5164, 3.5199, 3.5233, 3.5266, 3.53, 3.5335, 3.5369, 3.5404, 3.544, 3.548, 3.5524, 3.5567, 3.5608, 3.5648, 3.5686, 3.5724, 3.5761, 3.5798, 3.5828, 3.5851, 3.5873, 3.5896, 3.592, 3.5945, 3.5971, 3.5999, 3.6045, 3.6089, 3.6132, 3.6176, 3.6205, 3.6232, 3.6257, 3.6283, 3.631, 3.634, 3.6374, 3.6408, 3.6439, 3.6463, 3.6488, 3.6516, 3.655, 3.6582, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.6593, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.662, 3.6618, 3.6618, 3.6619, 3.6621, 3.6624, 3.6628, 3.6635, 3.6643, 3.6653, 3.6663, 3.6676, 3.669, 3.6705, 3.6723, 3.6742, 3.6762, 3.6784, 3.6806, 3.6828, 3.6848, 3.6868, 3.6889, 3.6926, 3.6988, 3.7048, 3.7096, 3.7156, 3.7198, 3.7238, 3.7275, 3.7295, 3.7312, 3.733, 3.7352, 3.7376, 3.7403, 3.7431, 3.746, 3.7488, 3.7517, 3.7546, 3.7574, 3.7601, 3.7628, 3.7655, 3.7681, 3.7707, 3.7735, 3.7762, 3.7788, 3.7815, 3.7844, 3.7873, 3.7902, 3.7931, 3.7959, 3.7987, 3.8012, 3.8037, 3.8061, 3.8086, 3.8111, 3.8137, 3.8163, 3.8189, 3.8216, 3.8244, 3.8271, 3.8298, 3.8325, 3.8357, 3.8387, 3.8411, 3.8438, 3.8464, 3.8489, 3.851, 3.8527, 3.8545, 3.8562, 3.8579, 3.8595, 3.8611, 3.8627, 3.8643, 3.8658, 3.8674, 3.8689, 3.8705, 3.8721, 3.875, 3.8785, 3.8818, 3.8849, 3.888, 3.8912, 3.8943, 3.8972, 3.9006, 3.9065, 3.9119, 3.9168, 3.9213, 3.9259, 3.9301, 3.9341, 3.9382, 3.9424, 3.9465, 3.9507, 3.9549, 3.9592, 3.9635, 3.9673, 3.971, 3.9746, 3.9782, 3.9819, 3.9863, 3.9908, 3.9953, 3.0001, 3.0038, 3.0082, 3.0124, 3.0166, 3.0208, 3.025, 3.0292, 3.0331, 3.0367, 3.0398, 3.0424, 3.0448, 3.0475, 3.0508, 3.0539, 3.0587, 3.0628, 3.0666, 3.0709, 3.0753, 3.0792, 3.0837, 3.0885, 3.0922, 3.0946, 3.0967, 3.0988, 3.1095, 3.1221, 3.1342, 3.146, 3.1571, 3.1681, 3.1789, 3.1899, 3.2009, 3.2122, 3.2263, 3.2394, 3.2455, 3.2485, 3.2511, 3.2537, 3.2567, 3.2598, 3.2627, 3.2652, 3.2676, 3.2701], "9": [0.9977, 0.9985, 1.0004, 1.0031, 1.006, 1.0088, 1.0116, 1.0139, 1.0163, 1.0187, 1.0212, 1.0236, 1.0259, 1.0281, 1.0302, 1.0323, 1.0345, 1.0366, 1.0385, 1.0403, 1.042, 1.0434, 1.0446, 1.0459, 1.0475, 1.0492, 1.0509, 1.0527, 1.0545, 1.0572, 1.0598, 1.0622, 1.0644, 1.0668, 1.0693, 1.0719, 1.0747, 1.0773, 1.0798, 1.0823, 1.0851, 1.0886, 1.0927, 1.0965, 1.1006, 1.1149, 1.1272, 1.1391, 1.1506, 1.1616, 1.1725, 1.1834, 1.1944, 1.2057, 1.2176, 1.2326, 1.2426, 1.2469, 1.2495, 1.252, 1.2545, 1.2575, 1.2605, 1.263, 1.2654, 1.2679, 1.2705, 1.2735, 1.2773, 1.2806, 1.2844, 1.2881, 1.2918, 1.2954, 1.2989, 1.3024, 1.3061, 1.31, 1.315, 1.3193, 1.3239, 1.329, 1.333, 1.3369, 1.3408, 1.3451, 1.3486, 1.3513, 1.3537, 1.3566, 1.3599, 1.3633, 1.3666, 1.3698, 1.373, 1.3761, 1.3792, 1.3827, 1.3869, 1.391, 1.3952, 1.3993, 1.4064, 1.4144, 1.4224, 1.4294, 1.4373, 1.4444, 1.4513, 1.4583, 1.4643, 1.4704, 1.4755, 1.4797, 1.4838, 1.4879, 1.492, 1.4963, 1.5006, 1.505, 1.5094, 1.5136, 1.5177, 1.522, 1.5262, 1.5305, 1.5349, 1.5391, 1.5436, 1.5485, 1.5536, 1.5583, 1.5626, 1.567, 1.5714, 1.5759, 1.5804, 1.5838, 1.5866, 1.5893, 1.592, 1.5948, 1.5977, 1.6011, 1.6054, 1.6103, 1.6154, 1.6199, 1.6233, 1.6272, 1.6311, 1.6351, 1.6383, 1.6411, 1.6437, 1.6463, 1.649, 1.6518, 1.6545, 1.6579, 1.6612, 1.6644, 1.6676, 1.6707, 1.6738, 1.6769, 1.6799, 1.6828, 1.6857, 1.6883, 1.6918, 1.6968, 1.7013, 1.7053, 1.709, 1.7139, 1.7172, 1.7196, 1.7216, 1.7236, 1.7257, 1.7277, 1.729, 1.7301, 1.7324, 1.7348, 1.7373, 1.7401, 1.7425, 1.7451, 1.7478, 1.7506, 1.7535, 1.7563, 1.7591, 1.762, 1.7648, 1.7675, 1.7706, 1.7735, 1.7763, 1.7792, 1.782, 1.7852, 1.7884, 1.7914, 1.7946, 1.7976, 1.8005, 1.8032, 1.806, 1.8088, 1.8117, 1.8148, 1.8179, 1.8204, 1.8225, 1.8248, 1.8272, 1.8298, 1.8325, 1.836, 1.8386, 1.841, 1.8434, 1.8458, 1.8481, 1.85, 1.8522, 1.8544, 1.8571, 1.8596, 1.862, 1.8643, 1.8666, 1.8685, 1.8702, 1.8719, 1.8735, 1.875, 1.876, 1.8766, 1.8769, 1.8772, 1.8777, 1.8784, 1.8793, 1.8804, 1.8817, 1.8831, 1.8846, 1.8864, 1.8883, 1.8904, 1.8926, 1.895, 1.8975, 1.9001, 1.9027, 1.9052, 1.9083, 1.9123, 1.916, 1.9196, 1.9227, 1.9256, 1.9281, 1.9307, 1.9337, 1.9369, 1.9397, 1.942, 1.9444, 1.9467, 1.9492, 1.9517, 1.9541, 1.9565, 1.9589, 1.9615, 1.9643, 1.9665, 1.9687, 1.9709, 1.973, 1.975, 1.9769, 1.9786, 1.9804, 1.9832, 1.9863, 1.9894, 1.9925, 1.9958, 1.999, 2.0015, 2.0039, 2.0063, 2.0087, 2.0111, 2.0135, 2.0158, 2.0183, 2.0209, 2.0235, 2.0258, 2.0281, 2.0303, 2.0324, 2.0346, 2.0368, 2.0386, 2.0403, 2.0417, 2.0428, 2.0437, 2.0445, 2.0451, 2.0456, 2.046, 2.0464, 2.047, 2.0476, 2.0484, 2.0486, 2.0486, 2.0486, 2.0486, 2.0486, 2.0486, 2.0486, 2.0486, 2.0486, 2.0486, 2.0487, 2.0489, 2.0492, 2.0496, 2.0501, 2.0507, 2.0515, 2.0523, 2.0533, 2.0543, 2.056, 2.0577, 2.0594, 2.0613, 2.063, 2.0648, 2.0667, 2.0685, 2.0707, 2.0732, 2.0757, 2.0779, 2.0802, 2.0824, 2.0848, 2.0872, 2.0905, 2.0932, 2.0958, 2.0983, 2.1021, 2.116, 2.1283, 2.1402, 2.1516, 2.1627, 2.1736, 2.1845, 2.1954, 2.2068, 2.2189, 2.2339, 2.2432, 2.2471, 2.2497, 2.2522, 2.2548, 2.2578, 2.2607, 2.2631, 2.2654, 2.2678, 2.2706, 2.2737, 2.2779, 2.2818, 2.2858, 2.2897, 2.2933, 2.2965, 2.3, 2.3035, 2.3074, 2.3123, 2.3168, 2.321, 2.3261, 2.3308, 2.3348, 2.3384, 2.3423, 2.3464, 2.3497, 2.3524, 2.3554, 2.3584, 2.3615, 2.3648, 2.368, 2.3711, 2.3746, 2.3793, 2.3843, 2.3897, 2.3952, 2.4011, 2.4095, 2.4181, 2.4256, 2.4307, 2.4363, 2.4421, 2.4469, 2.4531, 2.4587, 2.4637, 2.4689, 2.4744, 2.4793, 2.484, 2.4883, 2.4922, 2.4962, 2.5001, 2.5032, 2.5063, 2.5097, 2.5133, 2.517, 2.5209, 2.5247, 2.5287, 2.5328, 2.5368, 2.5408, 2.5449, 2.5495, 2.5543, 2.559, 2.5638, 2.5683, 2.5728, 2.5774, 2.5818, 2.5848, 2.5877, 2.5905, 2.5932, 2.596, 2.599, 2.6036, 2.6086, 2.6135, 2.6184, 2.6215, 2.6244, 2.6273, 2.6301, 2.6333, 2.6371, 2.6407, 2.6435, 2.6455, 2.6471, 2.6481, 2.6481, 2.6481, 2.6481, 2.6481, 2.6481, 2.6481, 2.648, 2.648, 2.648, 2.6481, 2.6484, 2.6488, 2.6495, 2.6502, 2.6513, 2.6547, 2.659, 2.6636, 2.6678, 2.6719, 2.676, 2.68, 2.6837, 2.6865, 2.6896, 2.6949, 2.7004, 2.7046, 2.7078, 2.7117, 2.7149, 2.7172, 2.7188, 2.7203, 2.7218, 2.7233, 2.7249, 2.7267, 2.7279, 2.7305, 2.7331, 2.7357, 2.7388, 2.7421, 2.7461, 2.7498, 2.7539, 2.7573, 2.7606, 2.7639, 2.7671, 2.7703, 2.7735, 2.7768, 2.78, 2.7833, 2.7869, 2.7904, 2.7939, 2.7972, 2.8002, 2.803, 2.8059, 2.8089, 2.8121, 2.8154, 2.8188, 2.8223, 2.8258, 2.8293, 2.8329, 2.8358, 2.8373, 2.838, 2.8385, 2.8388, 2.8389, 2.839, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8391, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8486, 2.8487, 2.8489, 2.8493, 2.8498, 2.8505, 2.8512, 2.8521, 2.8531, 2.8541, 2.8554, 2.8567, 2.8581, 2.8595, 2.861, 2.8626, 2.8642, 2.866, 2.8677, 2.8695, 2.8714, 2.874, 2.8781, 2.8821, 2.886, 2.8897, 2.8932, 2.897, 2.9007, 2.9042, 2.9077, 2.9107, 2.9136, 2.9172, 2.9213, 2.925, 2.9282, 2.9306, 2.9329, 2.936, 2.9395, 2.9429, 2.9458, 2.948, 2.95, 2.9521, 2.954, 2.956, 2.958, 2.9599, 2.9619, 2.9645, 2.9669, 2.9692, 2.9713, 2.9732, 2.9752, 2.9772, 2.9792, 2.9813, 2.9837, 2.9862, 2.9888, 2.9914, 2.9941, 2.9967, 2.9994, 3.002, 3.0045, 3.0071, 3.0097, 3.0124, 3.015, 3.0175, 3.0207, 3.0236, 3.0263, 3.0289, 3.0315, 3.034, 3.0366, 3.0386, 3.0402, 3.042, 3.0437, 3.0454, 3.0472, 3.049, 3.0509, 3.0529, 3.0551, 3.0586, 3.0617, 3.0643, 3.0668, 3.0696, 3.0727, 3.0755, 3.078, 3.0804, 3.0828, 3.0855, 3.0891, 3.0925, 3.095, 3.0979, 3.1096, 3.1221, 3.1342, 3.146, 3.1572, 3.1682, 3.179, 3.1899, 3.2009, 3.2126, 3.2263, 3.2393, 3.2453, 3.2484, 3.2509, 3.2534, 3.2561, 3.2591, 3.2619, 3.2643, 3.2668, 3.2695, 3.2723, 3.2758, 3.2795, 3.283, 3.2866, 3.2901, 3.2936, 3.297, 3.3003, 3.3037, 3.3074, 3.3121, 3.3167, 3.321, 3.3254, 3.3293, 3.3321, 3.3341, 3.3357, 3.337, 3.3386, 3.3405, 3.3431, 3.346, 3.3484, 3.3509, 3.3535, 3.3561, 3.3588, 3.3615, 3.3642, 3.3669, 3.3696, 3.3722, 3.375, 3.3777, 3.3806, 3.3837, 3.3872, 3.3908, 3.3945, 3.3982, 3.4037, 3.4102, 3.4169, 3.423, 3.4289, 3.4345, 3.4407, 3.4461, 3.4515, 3.4572, 3.4621, 3.4669, 3.4719, 3.4762, 3.4803, 3.484, 3.4881, 3.4918, 3.4957, 3.4997, 3.5038, 3.5079, 3.512, 3.5159, 3.5199, 3.5238, 3.5279, 3.5321, 3.5365, 3.5408, 3.5453, 3.5505, 3.5558, 3.5612, 3.5661, 3.5715, 3.5768, 3.5818, 3.5852, 3.5883, 3.5912, 3.5942, 3.5973, 3.6008, 3.6058, 3.6108, 3.6162, 3.6204, 3.6237, 3.6269, 3.63, 3.6332, 3.6366, 3.6405, 3.6438, 3.6461, 3.6471, 3.6493, 3.6526, 3.6568, 3.6611, 3.6653, 3.6689, 3.6723, 3.6759, 3.6797, 3.6829, 3.6858, 3.6886, 3.6919, 3.6968, 3.7024, 3.7067, 3.7091, 3.7122, 3.7144, 3.7161, 3.7174, 3.7186, 3.7197, 3.7207, 3.7218, 3.723, 3.7276, 3.7308, 3.7334, 3.7362, 3.7389, 3.7415, 3.7442, 3.7469, 3.7497, 3.7525, 3.7553, 3.7581, 3.7609, 3.7638, 3.7667, 3.7696, 3.7726, 3.7755, 3.7783, 3.7812, 3.7842, 3.7874, 3.7906, 3.7936, 3.7959, 3.7973, 3.7982, 3.7987, 3.7991, 3.7994, 3.7995, 3.7996, 3.7997, 3.8001, 3.8006, 3.8013, 3.8021, 3.8031, 3.8042, 3.8055, 3.807, 3.8087, 3.8106, 3.8127, 3.815, 3.8175, 3.8203, 3.8232, 3.8262, 3.8292, 3.8323, 3.8358, 3.8386, 3.8412, 3.8437, 3.8463, 3.8488, 3.8511, 3.8532, 3.8553, 3.8573, 3.8592, 3.8611, 3.8629, 3.8647, 3.8665, 3.8683, 3.8701, 3.872, 3.8754, 3.8794, 3.8832, 3.8869, 3.8906, 3.894, 3.8974, 3.9009, 3.9048, 3.9083, 3.9114, 3.9142, 3.917, 3.9198, 3.9231, 3.9266, 3.9298, 3.9327, 3.9351, 3.9378, 3.9405, 3.9436, 3.946, 3.9483, 3.9504, 3.9526, 3.9547, 3.9568, 3.9589, 3.9611, 3.9633, 3.965, 3.9667, 3.9684, 3.9705, 3.9729, 3.9754, 3.9778, 3.9797, 3.9817, 3.9839, 3.9862, 3.9885, 3.9908, 3.9931, 3.9954, 3.9977, 3.9997, 4.0012, 4.0024, 4.0029, 4.0029, 4.0029, 4.0029, 4.0029, 4.0029, 4.0029, 4.0029, 4.003, 4.0034, 4.0038, 4.0044, 4.0051, 4.0059, 4.0069, 4.008, 4.0092, 4.0105, 4.0121, 4.0137, 4.0153, 4.0171, 4.0188, 4.0208, 4.0227, 4.0244, 4.026, 4.0276, 4.0291, 4.0308, 4.0325, 4.0342, 4.036, 4.0376, 4.039, 4.0404, 4.0416, 4.0429, 4.0443, 4.0456, 4.047, 4.0485, 4.0499, 4.0515, 4.0531, 4.0546, 4.057, 4.0592, 4.0613, 4.0633, 4.0652, 4.0673, 4.0695, 4.0718, 4.0743, 4.0765, 4.0786, 4.0806, 4.0828, 4.0851, 4.0878, 4.0913, 4.0939, 4.0966, 4.0988, 4.1068, 4.12, 4.1321, 4.144, 4.1549, 4.1662], "10": [0.9987, 0.9995, 1.0013, 1.004, 1.0069, 1.0097, 1.0125, 1.0148, 1.0172, 1.0197, 1.0223, 1.0247, 1.027, 1.0291, 1.0311, 1.0333, 1.0355, 1.0375, 1.0393, 1.041, 1.0427, 1.0441, 1.0455, 1.0471, 1.0489, 1.0507, 1.0525, 1.0544, 1.0574, 1.0599, 1.0623, 1.0647, 1.0672, 1.0698, 1.0726, 1.0754, 1.078, 1.0806, 1.0832, 1.0862, 1.0898, 1.0934, 1.0967, 1.0993, 1.1091, 1.1219, 1.134, 1.1458, 1.1569, 1.1679, 1.1788, 1.1897, 1.2007, 1.2125, 1.2261, 1.2393, 1.2454, 1.2483, 1.2507, 1.2531, 1.2557, 1.2585, 1.2613, 1.2636, 1.2651, 1.266, 1.2665, 1.2669, 1.2671, 1.2672, 1.2673, 1.2676, 1.2679, 1.2685, 1.2694, 1.2708, 1.2723, 1.2747, 1.2776, 1.2804, 1.2836, 1.2871, 1.291, 1.2946, 1.2982, 1.3018, 1.3056, 1.3097, 1.3147, 1.3191, 1.3237, 1.3283, 1.3322, 1.3356, 1.3395, 1.3442, 1.3482, 1.3517, 1.3553, 1.359, 1.3626, 1.3661, 1.3692, 1.3726, 1.376, 1.3795, 1.383, 1.387, 1.3907, 1.3944, 1.3983, 1.4037, 1.4102, 1.4173, 1.4243, 1.4306, 1.4377, 1.4443, 1.4505, 1.4577, 1.4646, 1.4716, 1.4779, 1.4841, 1.4901, 1.4959, 1.5006, 1.5032, 1.5065, 1.5108, 1.5156, 1.5205, 1.5253, 1.5304, 1.5355, 1.5406, 1.5457, 1.5514, 1.5574, 1.5634, 1.569, 1.5744, 1.5798, 1.5842, 1.5877, 1.5917, 1.5953, 1.5991, 1.6048, 1.6106, 1.6165, 1.621, 1.6246, 1.6289, 1.6339, 1.638, 1.6412, 1.6441, 1.6466, 1.6485, 1.6505, 1.6526, 1.6548, 1.6573, 1.6599, 1.6624, 1.665, 1.6675, 1.6701, 1.6726, 1.6751, 1.6777, 1.6799, 1.6825, 1.6849, 1.6873, 1.6903, 1.6975, 1.703, 1.7065, 1.7085, 1.7115, 1.7138, 1.7155, 1.7168, 1.7179, 1.719, 1.72, 1.7211, 1.7223, 1.7275, 1.7307, 1.733, 1.7356, 1.7382, 1.7412, 1.7442, 1.7473, 1.7502, 1.7527, 1.7551, 1.7576, 1.7601, 1.7627, 1.7653, 1.7678, 1.7696, 1.7707, 1.7713, 1.7717, 1.772, 1.772, 1.772, 1.772, 1.772, 1.772, 1.772, 1.772, 1.772, 1.772, 1.772, 1.7721, 1.7725, 1.7732, 1.7741, 1.7754, 1.777, 1.7786, 1.7808, 1.7832, 1.7861, 1.789, 1.792, 1.7952, 1.7983, 1.8011, 1.8038, 1.8065, 1.8091, 1.8107, 1.812, 1.8126, 1.8129, 1.8132, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.8134, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.7987, 1.799, 1.7996, 1.8005, 1.8017, 1.8032, 1.8048, 1.8061, 1.8071, 1.8079, 1.809, 1.8104, 1.8121, 1.8142, 1.8166, 1.8194, 1.8227, 1.8261, 1.8297, 1.8334, 1.8369, 1.8396, 1.8421, 1.8447, 1.8472, 1.8497, 1.8519, 1.8541, 1.8564, 1.8585, 1.8606, 1.8626, 1.8647, 1.8667, 1.8688, 1.8709, 1.8735, 1.8781, 1.8825, 1.8867, 1.8904, 1.8937, 1.8974, 1.9014, 1.9049, 1.9082, 1.911, 1.9135, 1.9169, 1.9201, 1.9228, 1.9254, 1.9279, 1.9302, 1.9325, 1.9349, 1.9374, 1.94, 1.9427, 1.9453, 1.9475, 1.9497, 1.9518, 1.954, 1.956, 1.9581, 1.9614, 1.9641, 1.9662, 1.9682, 1.9698, 1.9715, 1.9734, 1.9763, 1.9791, 1.9818, 1.9843, 1.9866, 1.9892, 1.992, 1.9949, 1.9978, 2.0007, 2.0035, 2.0063, 2.0092, 2.012, 2.0149, 2.0178, 2.0209, 2.0239, 2.0266, 2.0293, 2.032, 2.0348, 2.0374, 2.0394, 2.0412, 2.0431, 2.045, 2.0472, 2.0497, 2.0524, 2.0556, 2.0599, 2.0635, 2.0671, 2.0709, 2.075, 2.0786, 2.0817, 2.0845, 2.0878, 2.0913, 2.0938, 2.0963, 2.0991, 2.1137, 2.1253, 2.138, 2.1486, 2.1607, 2.1716, 2.1824, 2.1934, 2.2046, 2.2165, 2.2312, 2.2419, 2.2464, 2.249, 2.2515, 2.2539, 2.2567, 2.2595, 2.2622, 2.2645, 2.2671, 2.2699, 2.2731, 2.2772, 2.281, 2.2845, 2.2886, 2.292, 2.2953, 2.2987, 2.3022, 2.3057, 2.3102, 2.3153, 2.32, 2.3251, 2.3303, 2.3341, 2.3374, 2.3408, 2.3446, 2.3481, 2.3516, 2.3547, 2.3576, 2.3612, 2.3647, 2.3683, 2.3715, 2.3747, 2.378, 2.3814, 2.3853, 2.3894, 2.3932, 2.3971, 2.4018, 2.4082, 2.4149, 2.422, 2.4288, 2.4359, 2.4427, 2.4475, 2.4527, 2.4584, 2.4638, 2.4698, 2.4766, 2.4821, 2.4865, 2.4905, 2.4947, 2.4989, 2.5027, 2.506, 2.5091, 2.5119, 2.5146, 2.5178, 2.5216, 2.526, 2.531, 2.5362, 2.5414, 2.5468, 2.5528, 2.5588, 2.5647, 2.5705, 2.5757, 2.5817, 2.5852, 2.5879, 2.5906, 2.5934, 2.5964, 2.5993, 2.6036, 2.6081, 2.6126, 2.6178, 2.6213, 2.6247, 2.6278, 2.6314, 2.6357, 2.6398, 2.6434, 2.6456, 2.6464, 2.6486, 2.6518, 2.6556, 2.6597, 2.664, 2.6682, 2.6725, 2.6766, 2.6805, 2.684, 2.6869, 2.6903, 2.6961, 2.7004, 2.7039, 2.7072, 2.7116, 2.7155, 2.718, 2.72, 2.7218, 2.7237, 2.7257, 2.7282, 2.7311, 2.7338, 2.7368, 2.7402, 2.7436, 2.7467, 2.751, 2.755, 2.7582, 2.7612, 2.7641, 2.7671, 2.77, 2.773, 2.7761, 2.7793, 2.7825, 2.786, 2.7894, 2.7928, 2.7962, 2.7994, 2.8024, 2.8054, 2.8084, 2.8117, 2.815, 2.8183, 2.8218, 2.8254, 2.8289, 2.8321, 2.8348, 2.8378, 2.8402, 2.8426, 2.8449, 2.8473, 2.8494, 2.8514, 2.8533, 2.8559, 2.8586, 2.8613, 2.8639, 2.8663, 2.8687, 2.8701, 2.8701, 2.8701, 2.8701, 2.8701, 2.8701, 2.8701, 2.8701, 2.8701, 2.87, 2.8701, 2.8702, 2.8705, 2.871, 2.8717, 2.8725, 2.8746, 2.8773, 2.8804, 2.8837, 2.8873, 2.8909, 2.8941, 2.8975, 2.902, 2.9061, 2.91, 2.9132, 2.9165, 2.9197, 2.9236, 2.9272, 2.9301, 2.9329, 2.9358, 2.939, 2.9424, 2.9458, 2.9487, 2.9514, 2.9541, 2.9569, 2.9596, 2.9623, 2.9646, 2.9661, 2.9673, 2.9682, 2.9691, 2.9701, 2.9713, 2.9727, 2.9743, 2.9762, 2.9781, 2.9802, 2.9823, 2.9847, 2.9873, 2.9899, 2.9926, 2.9953, 2.9981, 3.0008, 3.0034, 3.006, 3.0084, 3.0108, 3.0132, 3.0156, 3.0181, 3.0207, 3.0232, 3.0257, 3.0279, 3.03, 3.0321, 3.0343, 3.0365, 3.0383, 3.04, 3.0417, 3.0433, 3.0446, 3.0459, 3.0475, 3.0492, 3.051, 3.0529, 3.0548, 3.0579, 3.0603, 3.0627, 3.0651, 3.0673, 3.0698, 3.0724, 3.0753, 3.0779, 3.0805, 3.0832, 3.0862, 3.0899, 3.0934, 3.0965, 3.0991, 3.1116, 3.124, 3.136, 3.1477, 3.1588, 3.1697, 3.1806, 3.1915, 3.2027, 3.214, 3.2287, 3.2407, 3.2458, 3.2487, 3.2511, 3.2535, 3.2562, 3.259, 3.2618, 3.2642, 3.2668, 3.2695, 3.2723, 3.2756, 3.2789, 3.2823, 3.2856, 3.2892, 3.2928, 3.2962, 3.2995, 3.3028, 3.3061, 3.3099, 3.3145, 3.3185, 3.3224, 3.3269, 3.3309, 3.3346, 3.3383, 3.3423, 3.3465, 3.3495, 3.3526, 3.3557, 3.3589, 3.3621, 3.3651, 3.3682, 3.3692, 3.3692, 3.3692, 3.3692, 3.3692, 3.3692, 3.3694, 3.3697, 3.3699, 3.3701, 3.3704, 3.3711, 3.3721, 3.3735, 3.3753, 3.3774, 3.3799, 3.3827, 3.3862, 3.3898, 3.3933, 3.3968, 3.4015, 3.4083, 3.4152, 3.4225, 3.4291, 3.4363, 3.4434, 3.4499, 3.4566, 3.4619, 3.4677, 3.4739, 3.4789, 3.4836, 3.4879, 3.492, 3.496, 3.4996, 3.5031, 3.5063, 3.5091, 3.512, 3.5153, 3.5184, 3.5217, 3.5254, 3.5292, 3.5332, 3.5373, 3.5413, 3.5452, 3.5497, 3.5544, 3.5591, 3.5639, 3.5683, 3.5728, 3.5773, 3.5817, 3.5845, 3.5871, 3.5899, 3.5927, 3.5954, 3.5982, 3.6017, 3.6063, 3.6109, 3.6157, 3.6197, 3.6227, 3.6256, 3.6284, 3.6315, 3.636, 3.64, 3.6432, 3.6454, 3.647, 3.6498, 3.6534, 3.6574, 3.6616, 3.6658, 3.6699, 3.6739, 3.6777, 3.6815, 3.6848, 3.6874, 3.6907, 3.6949, 3.6987, 3.702, 3.7053, 3.7083, 3.7118, 3.7145, 3.7167, 3.7186, 3.7203, 3.722, 3.7238, 3.7257, 3.7287, 3.7311, 3.733, 3.7352, 3.7379, 3.7409, 3.744, 3.7472, 3.7502, 3.7528, 3.7553, 3.7579, 3.7605, 3.7631, 3.7657, 3.7683, 3.7708, 3.7732, 3.7751, 3.7765, 3.7778, 3.7792, 3.7809, 3.783, 3.7854, 3.7879, 3.7906, 3.7933, 3.796, 3.7987, 3.8012, 3.8037, 3.8063, 3.8087, 3.8114, 3.8142, 3.8169, 3.8197, 3.8227, 3.8257, 3.8286, 3.8316, 3.8349, 3.838, 3.8405, 3.8431, 3.8456, 3.8481, 3.8504, 3.8523, 3.8542, 3.8562, 3.8581, 3.8599, 3.8616, 3.8633, 3.865, 3.8666, 3.8682, 3.8698, 3.8714, 3.8715, 3.8715, 3.8716, 3.872, 3.8725, 3.8739, 3.8759, 3.8782, 3.8806, 3.8829, 3.8854, 3.8879, 3.8904, 3.8927, 3.8949, 3.8973, 3.8996, 3.9018, 3.9039, 3.9061, 3.9084, 3.9107, 3.9125, 3.9144, 3.9161, 3.9178, 3.9196, 3.9211, 3.9223, 3.9235, 3.9247, 3.9259, 3.9274, 3.9288, 3.9303, 3.9317, 3.9332, 3.9352, 3.9372, 3.9392, 3.9408, 3.9424, 3.9441, 3.9457, 3.9473, 3.9489, 3.9505, 3.952, 3.9536, 3.9543, 3.9544, 3.9544, 3.9548, 3.9553, 3.9562, 3.9572, 3.9585, 3.96, 3.9617, 3.9632, 3.9645, 3.9657, 3.9669, 3.9685, 3.9705, 3.9724, 3.9742, 3.9757, 3.9772, 3.9787, 3.9801, 3.9816, 3.9832, 3.9849, 3.9866, 3.9883, 3.9899, 3.9916, 3.9932, 3.9948, 3.9964, 3.998, 3.9993, 3.0006, 3.0019, 3.0032, 3.0045, 3.0058, 3.0071, 3.0083, 3.0096, 3.011, 3.0126, 3.0142, 3.0159, 3.0176, 3.0196, 3.0217, 3.0237, 3.0255, 3.0274, 3.0292, 3.0309, 3.0326, 3.0344, 3.0361, 3.0377, 3.039, 3.0401, 3.0413, 3.0425, 3.0438, 3.0452, 3.0466, 3.048, 3.0494, 3.0508, 3.0523, 3.0537, 3.0558, 3.0585, 3.061, 3.0631, 3.0651, 3.0655, 3.0661, 3.0671, 3.0683, 3.07, 3.0719, 3.0739, 3.0759, 3.0777, 3.0797], "11": [0.9996, 1.0004, 1.0022, 1.005, 1.0078, 1.0107, 1.0138, 1.0165, 1.0192, 1.0219, 1.0245, 1.0269, 1.0292, 1.0315, 1.0338, 1.0361, 1.038, 1.0398, 1.0412, 1.0425, 1.044, 1.0457, 1.0475, 1.0493, 1.0513, 1.0531, 1.0555, 1.059, 1.0617, 1.064, 1.0666, 1.0693, 1.0722, 1.075, 1.0776, 1.0803, 1.0833, 1.0867, 1.0907, 1.094, 1.0972, 1.1017, 1.1161, 1.1284, 1.14, 1.1517, 1.1628, 1.1736, 1.1845, 1.1954, 1.2069, 1.2189, 1.2339, 1.2431, 1.2471, 1.2497, 1.2522, 1.2547, 1.2576, 1.2606, 1.263, 1.2652, 1.2673, 1.2698, 1.2725, 1.276, 1.2796, 1.2831, 1.2866, 1.2899, 1.2937, 1.2971, 1.3005, 1.304, 1.3079, 1.3131, 1.3178, 1.3223, 1.3277, 1.3318, 1.3355, 1.3389, 1.3425, 1.3463, 1.3496, 1.3529, 1.3559, 1.3587, 1.3616, 1.3647, 1.368, 1.3713, 1.3746, 1.3779, 1.3813, 1.3853, 1.3894, 1.3934, 1.3976, 1.4035, 1.4112, 1.4194, 1.4265, 1.4343, 1.4421, 1.4488, 1.4559, 1.4621, 1.4676, 1.4726, 1.4764, 1.48, 1.4836, 1.4871, 1.4907, 1.4944, 1.4983, 1.5026, 1.5069, 1.5106, 1.5141, 1.5176, 1.5211, 1.5247, 1.5284, 1.5324, 1.5362, 1.5398, 1.5436, 1.5476, 1.5519, 1.5562, 1.56, 1.5629, 1.5646, 1.5669, 1.5705, 1.5746, 1.5785, 1.5822, 1.5846, 1.587, 1.5893, 1.5916, 1.5937, 1.5962, 1.5985, 1.6019, 1.6048, 1.6048, 1.6049, 1.6053, 1.6062, 1.6076, 1.6094, 1.6117, 1.6145, 1.6175, 1.6197, 1.6218, 1.624, 1.6263, 1.6286, 1.6311, 1.6338, 1.6372, 1.6399, 1.6423, 1.6441, 1.6452, 1.6471, 1.6497, 1.6524, 1.6557, 1.6591, 1.6625, 1.6656, 1.6686, 1.6716, 1.6747, 1.6775, 1.6796, 1.6816, 1.6837, 1.6858, 1.6881, 1.6907, 1.6953, 1.6995, 1.7032, 1.7065, 1.7106, 1.7149, 1.7176, 1.7195, 1.7214, 1.7232, 1.7251, 1.7273, 1.7285, 1.7296, 1.7316, 1.7337, 1.7361, 1.7392, 1.7428, 1.7465, 1.7501, 1.7542, 1.7579, 1.7611, 1.7643, 1.7676, 1.771, 1.7739, 1.7762, 1.7779, 1.7795, 1.7813, 1.7836, 1.7862, 1.789, 1.792, 1.7952, 1.7985, 1.8018, 1.8049, 1.8079, 1.8118, 1.8155, 1.8193, 1.8231, 1.8267, 1.8304, 1.8343, 1.8372, 1.8393, 1.8414, 1.8435, 1.8455, 1.8476, 1.8498, 1.852, 1.8543, 1.8567, 1.859, 1.8612, 1.8634, 1.8653, 1.8671, 1.8689, 1.8707, 1.8725, 1.8764, 1.8803, 1.8839, 1.8875, 1.891, 1.8941, 1.8972, 1.9012, 1.9052, 1.9089, 1.9121, 1.9149, 1.9176, 1.9202, 1.9226, 1.9252, 1.9277, 1.9296, 1.9316, 1.9339, 1.9368, 1.9396, 1.9423, 1.9446, 1.9465, 1.9484, 1.9503, 1.9521, 1.9539, 1.9557, 1.9575, 1.9593, 1.961, 1.9637, 1.9661, 1.9685, 1.9708, 1.9727, 1.9745, 1.9763, 1.9781, 1.9799, 1.9818, 1.9841, 1.9867, 1.9894, 1.9921, 1.995, 1.9979, 2.0008, 2.0036, 2.0064, 2.0091, 2.012, 2.0148, 2.0177, 2.0207, 2.0237, 2.0264, 2.0288, 2.0309, 2.0327, 2.034, 2.0349, 2.0356, 2.0361, 2.0365, 2.0369, 2.0373, 2.0379, 2.0386, 2.0393, 2.04, 2.0406, 2.0414, 2.0424, 2.0436, 2.0448, 2.0462, 2.0475, 2.0488, 2.0501, 2.0514, 2.0526, 2.0539, 2.0557, 2.0578, 2.0598, 2.0616, 2.0635, 2.0653, 2.0671, 2.069, 2.071, 2.0732, 2.0753, 2.0772, 2.0792, 2.0811, 2.083, 2.0852, 2.0876, 2.0907, 2.0931, 2.095, 2.0969, 2.0987, 2.1084, 2.1211, 2.1327, 2.145, 2.1562, 2.1672, 2.1781, 2.189, 2.2, 2.2117, 2.2251, 2.2387, 2.2451, 2.2478, 2.2496, 2.2513, 2.253, 2.2548, 2.2571, 2.2599, 2.2627, 2.2655, 2.2683, 2.2712, 2.2745, 2.2778, 2.2816, 2.2852, 2.2887, 2.2922, 2.2956, 2.2988, 2.302, 2.3054, 2.309, 2.3137, 2.318, 2.3222, 2.3271, 2.3312, 2.3348, 2.3382, 2.3416, 2.3452, 2.3485, 2.3515, 2.3538, 2.3565, 2.3595, 2.3627, 2.3658, 2.3689, 2.372, 2.375, 2.3783, 2.3815, 2.3853, 2.3891, 2.3928, 2.3967, 2.4013, 2.4084, 2.4156, 2.4234, 2.4303, 2.438, 2.4443, 2.4512, 2.4576, 2.463, 2.4684, 2.4744, 2.4793, 2.4836, 2.4877, 2.4917, 2.4957, 2.4995, 2.5027, 2.5061, 2.5097, 2.5133, 2.5171, 2.5209, 2.5248, 2.5286, 2.5327, 2.5365, 2.539, 2.5405, 2.5415, 2.542, 2.5422, 2.5424, 2.5424, 2.5426, 2.5433, 2.5454, 2.5501, 2.5558, 2.5616, 2.5671, 2.5728, 2.5786, 2.5834, 2.5869, 2.5905, 2.5941, 2.5977, 2.6024, 2.608, 2.6134, 2.6188, 2.6227, 2.6265, 2.6309, 2.6359, 2.6393, 2.6424, 2.6452, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6476, 2.6477, 2.6481, 2.6488, 2.6496, 2.6507, 2.652, 2.6536, 2.6555, 2.6578, 2.6603, 2.6629, 2.6655, 2.6681, 2.6708, 2.6734, 2.676, 2.6784, 2.6804, 2.6823, 2.6842, 2.6863, 2.6886, 2.693, 2.6992, 2.7032, 2.7065, 2.7086, 2.7124, 2.7152, 2.717, 2.7181, 2.7191, 2.7201, 2.7211, 2.722, 2.726, 2.7299, 2.7324, 2.7348, 2.737, 2.739, 2.7413, 2.7435, 2.7455, 2.7474, 2.7496, 2.7518, 2.7541, 2.7564, 2.7587, 2.7611, 2.7637, 2.7664, 2.7692, 2.7721, 2.7752, 2.7784, 2.7817, 2.7853, 2.789, 2.7926, 2.7963, 2.7998, 2.8027, 2.8053, 2.8084, 2.8117, 2.8152, 2.8187, 2.8224, 2.8261, 2.8298, 2.8336, 2.8371, 2.8395, 2.8419, 2.8443, 2.8467, 2.849, 2.851, 2.8529, 2.8555, 2.8585, 2.8612, 2.8639, 2.8662, 2.8688, 2.8713, 2.8753, 2.8801, 2.8841, 2.8878, 2.8914, 2.8949, 2.8984, 2.9018, 2.9057, 2.9107, 2.9142, 2.9177, 2.9208, 2.9235, 2.9266, 2.929, 2.9313, 2.9336, 2.9359, 2.939, 2.9423, 2.9452, 2.9479, 2.95, 2.9521, 2.9541, 2.9561, 2.9581, 2.96, 2.9619, 2.9632, 2.9643, 2.9653, 2.9671, 2.9698, 2.9724, 2.9752, 2.9775, 2.9797, 2.9817, 2.9841, 2.9866, 2.9891, 2.9916, 2.9942, 2.9967, 2.9993, 3.0018, 3.0043, 3.0068, 3.0096, 3.0123, 3.015, 3.0178, 3.0211, 3.0242, 3.0271, 3.0297, 3.0322, 3.0345, 3.0361, 3.0371, 3.0379, 3.0385, 3.039, 3.0392, 3.0393, 3.0395, 3.0399, 3.0404, 3.0413, 3.0423, 3.0434, 3.0448, 3.0461, 3.0475, 3.0488, 3.0502, 3.0516, 3.0529, 3.0542, 3.0565, 3.0589, 3.0611, 3.0629, 3.0649, 3.0667, 3.0687, 3.0709, 3.0732, 3.0755, 3.0774, 3.0793, 3.0813, 3.0834, 3.0858, 3.0885, 3.0919, 3.0942, 3.0962, 3.0981, 3.1068, 3.1202, 3.1316, 3.1442, 3.1554, 3.1665, 3.1773, 3.1882, 3.1991, 3.2108, 3.2239, 3.2378, 3.2448, 3.2479, 3.2505, 3.2529, 3.2555, 3.2585, 3.2614, 3.2638, 3.2661, 3.2684, 3.2709, 3.2739, 3.2774, 3.281, 3.2846, 3.2881, 3.2915, 3.2948, 3.2982, 3.3015, 3.3049, 3.3087, 3.3138, 3.3181, 3.3223, 3.3271, 3.3312, 3.3349, 3.3387, 3.343, 3.3472, 3.3505, 3.3538, 3.357, 3.3599, 3.3627, 3.3652, 3.3674, 3.3698, 3.372, 3.3744, 3.377, 3.3798, 3.3827, 3.3861, 3.3895, 3.3929, 3.3964, 3.4001, 3.4057, 3.4119, 3.4186, 3.4251, 3.431, 3.4377, 3.4438, 3.4495, 3.4557, 3.461, 3.466, 3.4712, 3.4755, 3.4792, 3.4828, 3.4859, 3.4886, 3.491, 3.4935, 3.4961, 3.4986, 3.5009, 3.5033, 3.5059, 3.5084, 3.5108, 3.5124, 3.5134, 3.5141, 3.5145, 3.5147, 3.515, 3.5158, 3.5168, 3.5183, 3.5201, 3.5222, 3.5247, 3.5276, 3.531, 3.5346, 3.5383, 3.542, 3.5463, 3.5512, 3.5562, 3.5613, 3.5663, 3.5711, 3.5758, 3.5806, 3.5841, 3.587, 3.5899, 3.5928, 3.5958, 3.5989, 3.6033, 3.6082, 3.613, 3.618, 3.6211, 3.6227, 3.6246, 3.6272, 3.6305, 3.6349, 3.6391, 3.6427, 3.6455, 3.6469, 3.6488, 3.652, 3.6561, 3.6604, 3.6646, 3.6684, 3.6717, 3.6754, 3.6792, 3.6825, 3.6855, 3.6884, 3.6939, 3.7003, 3.7056, 3.7092, 3.7124, 3.7148, 3.7167, 3.718, 3.7192, 3.7203, 3.7214, 3.7225, 3.7236, 3.725, 3.7289, 3.7318, 3.7346, 3.7378, 3.7412, 3.7448, 3.7483, 3.7517, 3.7546, 3.7572, 3.7597, 3.7623, 3.7648, 3.7673, 3.7699, 3.7725, 3.7751, 3.7776, 3.7802, 3.7829, 3.7858, 3.7886, 3.7912, 3.7936, 3.796, 3.7984, 3.8007, 3.803, 3.8055, 3.8081, 3.811, 3.8142, 3.8175, 3.8205, 3.8223, 3.8238, 3.8257, 3.8278, 3.8302, 3.8328, 3.8362, 3.8388, 3.8412, 3.8436, 3.846, 3.8483, 3.8504, 3.8524, 3.8544, 3.8568, 3.8591, 3.8613, 3.8632, 3.8651, 3.8669, 3.8687, 3.8705, 3.872, 3.8744, 3.8776, 3.8806, 3.8835, 3.8864, 3.8893, 3.8922, 3.8947, 3.8973, 3.8999, 3.9025, 3.905, 3.9083, 3.9109, 3.9135, 3.9159, 3.9184, 3.9208, 3.9235, 3.9268, 3.9298, 3.9325, 3.9352, 3.9375, 3.9398, 3.9424, 3.9442, 3.9458, 3.9473, 3.9489, 3.9504, 3.952, 3.9535, 3.9549, 3.9567, 3.9591, 3.9613, 3.9631, 3.9648, 3.9663, 3.9678, 3.9693, 3.9709, 3.9729, 3.9745, 3.9762, 3.9779, 3.9793, 3.9806, 3.9819, 3.9835, 3.9851, 3.9868, 3.9886, 3.99, 3.9901, 3.9901, 3.9903, 3.9907, 3.9914, 3.9922, 3.9932, 3.9942, 3.9954, 3.9965, 3.9977, 3.9989, 4.0002, 4.0014, 4.0028, 4.0042, 4.0056, 4.0071, 4.0086, 4.0101, 4.0116, 4.013, 4.0146, 4.0159, 4.0172, 4.0185, 4.0199, 4.0213, 4.0226, 4.0239, 4.0252, 4.0264, 4.0276, 4.0288, 4.0301, 4.0313, 4.0326, 4.0339, 4.035, 4.0362, 4.0372, 4.0381, 4.0392, 4.0403, 4.0414, 4.0426, 4.0439, 4.0452, 4.0466, 4.048, 4.0495, 4.051, 4.0525, 4.054, 4.0562, 4.0585, 4.0608, 4.0628, 4.0649, 4.0669, 4.069, 4.0713, 4.0738, 4.0761, 4.0782, 4.0804, 4.0826, 4.085, 4.0876, 4.091]}}
+{"type": "standings", "standings": [{"slot": 3, "position": 1, "finished": true, "time": 187.528, "lap_reached": 3, "laps": [66.941, 58.154, 62.433], "leading": 30.133, "raced": 187.35}, {"slot": 9, "position": 2, "finished": true, "time": 189.658, "lap_reached": 3, "laps": [58.962, 70.047, 60.649], "leading": 37.583, "raced": 189.483}, {"slot": 1, "position": 3, "finished": true, "time": 190.514, "lap_reached": 3, "laps": [66.645, 58.626, 65.243], "leading": 6.7, "raced": 190.333}, {"slot": 0, "position": 4, "finished": true, "time": 190.902, "lap_reached": 3, "laps": [62.857, 64.462, 63.583], "leading": 33.8, "raced": 190.717}, {"slot": 11, "position": 5, "finished": true, "time": 192.796, "lap_reached": 3, "laps": [60.439, 64.77, 67.587], "leading": 35.8, "raced": 192.617}, {"slot": 2, "position": 6, "finished": true, "time": 193.76, "lap_reached": 3, "laps": [62.712, 65.43, 65.618], "leading": 22.867, "raced": 193.567}, {"slot": 4, "position": 7, "finished": false, "time": null, "lap_reached": 3, "laps": [68.817, 58.883], "leading": 0.0, "raced": 193.55}, {"slot": 10, "position": 8, "finished": false, "time": null, "lap_reached": 3, "laps": [69.452, 56.046], "leading": 17.117, "raced": 193.55}, {"slot": 8, "position": 9, "finished": false, "time": null, "lap_reached": 3, "laps": [74.953, 57.538], "leading": 0.0, "raced": 193.55}, {"slot": 6, "position": 10, "finished": false, "time": null, "lap_reached": 3, "laps": [66.027, 67.691], "leading": 9.067, "raced": 193.55}, {"slot": 5, "position": 11, "finished": false, "time": null, "lap_reached": 3, "laps": [71.124, 63.745], "leading": 0.0, "raced": 193.55}, {"slot": 7, "position": 12, "finished": false, "time": null, "lap_reached": 3, "laps": [69.54, 62.775], "leading": 1.15, "raced": 193.55}]}

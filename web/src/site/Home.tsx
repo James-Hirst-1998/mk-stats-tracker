@@ -4,6 +4,7 @@
 
 import { faceUrl } from "../ui/common";
 import { itemUrl } from "../ui/Items";
+import { ExampleButton } from "../ui/LoadRaces";
 import { UPDATES, longDate } from "./content";
 import { SiteFooter } from "./Footer";
 
@@ -69,17 +70,14 @@ export function Home() {
               bananas they drove into themselves, and a Pokey. Now there is a log.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
+              <ExampleButton className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-deep disabled:opacity-60">
+                See an example night
+              </ExampleButton>
               <a
                 href="#/stats"
-                className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-deep"
-              >
-                Open the stats
-              </a>
-              <a
-                href="#/setup"
                 className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-line-soft"
               >
-                Get set up
+                Load your own races
               </a>
             </div>
           </div>
@@ -134,8 +132,8 @@ export function Home() {
               Get set up →
             </h3>
             <p className="mt-1 text-sm text-ink-soft">
-              Rip your disc, bring your Mii over, set Dolphin up for four players, and
-              start tracking.
+              Homebrew on the Wii, your disc and Mii into Dolphin, four players set up,
+              and tracking.
             </p>
           </a>
           <a href="#/journey" className="card group block px-5 py-5 hover:bg-white">
