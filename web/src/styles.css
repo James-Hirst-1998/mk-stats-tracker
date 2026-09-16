@@ -59,12 +59,17 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* A card: white enough to read a table on, over the gradient. */
-.card {
-  @apply rounded-2xl border border-white/80 bg-white/85 backdrop-blur-sm;
-  box-shadow:
-    0 1px 2px rgba(16, 24, 40, 0.04),
-    0 8px 24px -12px rgba(16, 24, 40, 0.12);
+/* A card: white enough to read a table on, over the gradient. In the
+   components layer so a utility on the same element wins: the expanded
+   widget's bg-white was losing to bg-white/85 here, and the page showed
+   through its tables. */
+@layer components {
+  .card {
+    @apply rounded-2xl border border-white/80 bg-white/85 backdrop-blur-sm;
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.04),
+      0 8px 24px -12px rgba(16, 24, 40, 0.12);
+  }
 }
 
 @keyframes live-pulse {

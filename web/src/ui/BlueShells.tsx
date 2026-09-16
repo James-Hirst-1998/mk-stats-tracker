@@ -92,18 +92,25 @@ export function BlueList({
         const from = who(b.thrower, race);
         const to = who(b.target, race);
         return (
-          <li key={`${race.file}-${i}`} className="flex items-center gap-3 px-4 py-2 text-sm">
+          // Wraps on a phone: the thrower and target move down as one piece,
+          // then the result, rather than squeezing the result off the edge.
+          <li
+            key={`${race.file}-${i}`}
+            className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-sm"
+          >
             {races.length > 1 && (
               <span className="nums w-14 shrink-0 text-xs text-muted">race {race.n}</span>
             )}
             <span className="nums w-14 shrink-0 text-right text-xs text-muted">{b.t.toFixed(1)}s</span>
-            <Dot player={from.player} />
-            <span className={from.player != null ? "font-medium" : "text-ink-soft"}>{from.name}</span>
-            <span className="text-muted">→</span>
-            <Dot player={to.player} />
-            <span className={to.player != null ? "font-medium" : "text-ink-soft"}>{to.name}</span>
+            <span className="flex items-center gap-3 whitespace-nowrap">
+              <Dot player={from.player} />
+              <span className={from.player != null ? "font-medium" : "text-ink-soft"}>{from.name}</span>
+              <span className="text-muted">→</span>
+              <Dot player={to.player} />
+              <span className={to.player != null ? "font-medium" : "text-ink-soft"}>{to.name}</span>
+            </span>
             <span
-              className={`ml-auto rounded-full px-2 py-0.5 text-xs font-medium ${
+              className={`ml-auto rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${
                 b.landed ? "bg-[#4a3aa7]/10 text-[#4a3aa7]" : "bg-brand-soft text-brand"
               }`}
             >

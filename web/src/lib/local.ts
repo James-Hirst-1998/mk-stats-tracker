@@ -199,14 +199,15 @@ export async function loadFiles(picked: Picked[]) {
 }
 
 /** A real night shipped with the site, so somebody with no races of their own
- *  can see every screen. James chose which: four players, twelve races. Its
- *  players.json is left out, so it names characters rather than people. It
- *  goes through loadFiles like a dropped folder, so it is shown exactly as one. */
+ *  can see every screen. James chose which: four players, twelve races, with
+ *  their players.json, so Names shows who drove. It goes through loadFiles
+ *  like a dropped folder, so it is shown exactly as one. */
 const EXAMPLE = "cheeky-12-sept-15th-26";
 
 export async function loadExample(): Promise<string> {
   const dir = PREFIX + EXAMPLE;
-  if (await localSession(dir)) return dir;
+  // A copy cached before the names shipped has none, so it is loaded again.
+  if ((await localSession(dir))?.players) return dir;
   const get = async (name: string): Promise<Picked> => {
     const res = await fetch(`/examples/${EXAMPLE}/${name}`);
     if (!res.ok) throw new Error(`${name}: ${res.status}`);
@@ -216,7 +217,11 @@ export async function loadExample(): Promise<string> {
   const index = await get("session.json");
   const races = (parseJson(await index.file.text()) as { races?: { file: string }[] } | null)
     ?.races ?? [];
-  const picked = [index, ...(await Promise.all(races.map((r) => get(r.file))))];
+  const picked = [
+    index,
+    await get("players.json"),
+    ...(await Promise.all(races.map((r) => get(r.file)))),
+  ];
   const { loaded } = await loadFiles(picked);
   if (!loaded.length) throw new Error("the example did not load");
   return loaded[0];

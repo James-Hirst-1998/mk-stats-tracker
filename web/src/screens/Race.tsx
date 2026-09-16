@@ -361,20 +361,26 @@ function HitLog({ hits, labels }: { hits: HitLine[]; labels: Map<number, string>
       </h3>
       <ul className="divide-y divide-line-soft">
         {hits.map((h, i) => (
-          <li key={i} className="flex items-center gap-3 px-4 py-1.5 text-sm">
-            <span className="nums w-14 shrink-0 text-right text-xs text-muted">{h.t.toFixed(1)}s</span>
-            <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: colorOf(h.player) }} />
-            <span className="w-20 shrink-0 truncate font-medium">{labels.get(h.player)}</span>
-            {h.place != null && <span className="nums w-8 shrink-0 text-xs text-muted">P{h.place}</span>}
-            <ItemIcon name={h.cause} size={20} chip={false} />
-            <span className="text-ink-soft">
-              {h.caught ? "caught in the blast from " : ""}
-              {h.cause}
-              {h.by.length ? ` (${h.by.join(", ")})` : ""}
-              {h.guess ? <span className="text-muted"> · not certain</span> : null}
+          // One line from sm up. On a phone the cause goes on a second line,
+          // under the name, rather than being squeezed into a column a word wide.
+          <li key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 text-sm">
+            <span className="flex items-center gap-3">
+              <span className="nums w-14 shrink-0 text-right text-xs text-muted">{h.t.toFixed(1)}s</span>
+              <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: colorOf(h.player) }} />
+              <span className="w-20 shrink-0 truncate font-medium">{labels.get(h.player)}</span>
+              {h.place != null && <span className="nums w-8 shrink-0 text-xs text-muted">P{h.place}</span>}
             </span>
-            <span className="nums ml-auto shrink-0 text-xs text-muted">
+            <span className="nums ml-auto shrink-0 text-xs text-muted sm:order-last">
               {h.out != null ? `out ${h.out.toFixed(1)}s` : ""}
+            </span>
+            <span className="flex min-w-0 basis-full items-center gap-3 pl-[5.625rem] sm:flex-1 sm:basis-0 sm:pl-0">
+              <ItemIcon name={h.cause} size={20} chip={false} />
+              <span className="text-ink-soft">
+                {h.caught ? "caught in the blast from " : ""}
+                {h.cause}
+                {h.by.length ? ` (${h.by.join(", ")})` : ""}
+                {h.guess ? <span className="text-muted"> · not certain</span> : null}
+              </span>
             </span>
           </li>
         ))}

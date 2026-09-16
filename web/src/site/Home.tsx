@@ -94,7 +94,7 @@ export function Home() {
                   <img
                     src={faceUrl(e.who)}
                     alt=""
-                    className="h-8 w-8 shrink-0 rounded-full bg-line-soft object-cover"
+                    className="h-10 w-10 shrink-0 rounded-full bg-line-soft object-contain p-1.5"
                   />
                   <span className="min-w-0 flex-1 text-sm leading-snug text-ink-soft">
                     <b className="font-semibold text-ink">{e.who}</b> hit by {e.by}'s{" "}
