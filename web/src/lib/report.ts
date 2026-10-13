@@ -63,6 +63,7 @@ export function endsAt(log: RaceLog): Map<number, number> {
 
 /** A short name for whatever caused a hit. */
 export function hitBy(e: RaceEvent): string {
+  if (e.hazard) return e.hazard;
   if (e.object != null) return OBJECT_TYPES[e.object] ?? `item ${e.object}`;
   return DAMAGE_TYPES[e.damage as number]?.[1] ?? "something";
 }
@@ -157,7 +158,7 @@ export function summary(log: RaceLog): Map<number, RacerSummary> {
         row.hitsTaken += 1;
         if (e.for != null) row.out += e.for;
         if (e.caught) row.caught += 1;
-        if (!isByItem(e.damage)) row.hazards += 1;
+        if (e.hazard || !isByItem(e.damage)) row.hazards += 1;
       }
     }
     // Who threw it is only credited when the despawn window named exactly one

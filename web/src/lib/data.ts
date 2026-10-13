@@ -15,7 +15,7 @@ import {
   useLocalSessions,
 } from "./local";
 import { RaceLog } from "./racelog";
-import { sessionStats, type PlayersFile, type SessionStats } from "./stats";
+import { sessionStats, settleLaunches, type PlayersFile, type SessionStats } from "./stats";
 
 export const POLL_MS = 2000;
 
@@ -93,6 +93,7 @@ async function loadRace(dir: string, file: string): Promise<RaceLog> {
     text = await res.text();
   }
   const log = new RaceLog(file, text);
+  settleLaunches(log);
   logs.set(key, log);
   return log;
 }

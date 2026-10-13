@@ -24,7 +24,7 @@ export function AwardList({
       key: "magnet",
       title: "Blue shell magnet",
       who: <Who ids={awards.blueMagnet.players} named={named} />,
-      note: `${awards.blueMagnet.count} taken`,
+      note: `${awards.blueMagnet.count} locked on and got them`,
     });
 
   if (awards.sniper)
