@@ -42,6 +42,11 @@ export interface RaceEvent {
   caught?: boolean;
   after?: boolean;
   guess?: boolean;
+  /** The victim's position when it hit them. */
+  place?: number;
+  /** What on the course did it, for a launch no item can have caused. Set
+   *  by `settleLaunches`, never in the file. */
+  hazard?: string;
   from?: number;
   to?: number;
   lap?: number;

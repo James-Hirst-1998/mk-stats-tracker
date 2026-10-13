@@ -84,6 +84,9 @@ const HAZARD_CAUSES = [
   "a Thwomp, then respawned",
   "a Zapper",
   "fire",
+  "a Bob-omb car",
+  "a cannonball",
+  "something on the track",
   "something",
 ];
 
@@ -144,8 +147,11 @@ export interface Row {
   landed: number;
   taken: number;
   caught: number;
+  /** Blue shells that locked on to them and got them. */
   blues: number;
-  /** Blue shells thrown at them while leading that never landed. */
+  /** Blue shells that went off on somebody else and caught them too. */
+  bluesCaught: number;
+  /** Blue shells that locked on to them and did not get them. */
   bluesDodged: number;
   boosts: number;
   out: number;
@@ -183,7 +189,8 @@ export interface RaceStats {
   winner: Winner | null;
   firstBlood: FirstBlood | null;
   rows: Map<number, Row>;
-  /** Every blue shell thrown, who it was aimed at, and whether it landed. */
+  /** Every blue shell thrown, who it locked on to, whether it got them, and
+   *  who else it caught. */
   blueShells: BlueShell[];
   log: RaceLog;
 }
@@ -293,9 +300,11 @@ export function raceRows(log: RaceLog): Map<number, Row> {
       landed: landed(r),
       taken: r.hitsTaken,
       caught: r.caught,
-      blues: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT)
+      blues: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT && !e.caught)
         .length,
-      bluesDodged: blues.filter((b) => b.target === slot && !b.landed).length,
+      bluesCaught: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT && e.caught)
+        .length,
+      bluesDodged: blues.filter((b) => b.target === slot && !b.hit).length,
       boosts: uses.filter((e) => BOOST_ITEMS.has(e.item as number)).length,
       out: round(r.out, 1),
       got: mine.filter((e) => e.type === "hold").length,
@@ -505,6 +514,7 @@ export interface Totals {
   landed: number;
   taken: number;
   blues: number;
+  bluesCaught: number;
   bluesDodged: number;
   boosts: number;
   out: number;
@@ -537,6 +547,7 @@ export function totalsOf(rows: Row[]): Totals {
     landed: sum((r) => r.landed),
     taken: sum((r) => r.taken),
     blues: sum((r) => r.blues),
+    bluesCaught: sum((r) => r.bluesCaught),
     bluesDodged: sum((r) => r.bluesDodged),
     boosts: sum((r) => r.boosts),
     out: round(sum((r) => r.out), 1),
@@ -767,7 +778,10 @@ function tickerLine(
     const victim = who(e.slot);
     const by = e.by ?? [];
     const tail = by.length ? ` (${by.map(who).join(", ")})` : "";
-    if (e.object === BLUE_OBJECT) return `Blue shell: ${victim}${tail}`;
+    if (e.object === BLUE_OBJECT)
+      return e.caught
+        ? `${victim} caught in a blue shell's blast${tail}`
+        : `Blue shell: ${victim}${tail}`;
     if (e.caught) return `${victim} caught in the blast${tail}`;
     return `${victim} hit by ${causeOf(e)}${tail}`;
   }
@@ -917,24 +931,27 @@ export function hitMatrix(races: RaceStats[], players: Player[]): HitMatrix {
   };
 }
 
-// --- blue shells: thrown, landed, dodged -----------------------------------
+// --- launches: what each Blue Shell and Bob-omb actually got ----------------
 
-export interface BlueShell {
-  t: number;
-  /** Who threw it. */
-  thrower: number;
-  /** Who was leading when it was thrown, or null if nobody was still racing.
-   *  A shell goes for whoever leads when it gets there, so when the lead
-   *  changed while it was in the air this is not who it ended up chasing. */
-  target: number | null;
-  landed: boolean;
-  /** Who it landed on, if it did. Normally the target; it can be somebody
-   *  else when the lead changed while it was in the air, or the leader
-   *  crossed the line first. */
-  victim: number | null;
-  /** When it landed, if it did. */
-  hitT: number | null;
-}
+const BLUE_ITEM = 7;
+const BOMB_ITEM = 6;
+/** World-object type of the Bob-omb, the other thing that launches you. */
+const BOMB_OBJECT = 9;
+/** The damage type for being launched, by either of them. */
+const LAUNCHED = 7;
+
+/** Seconds before it goes off that a Blue Shell stops changing target. Of
+ *  175 shells that landed, the leader this long before the first hit was
+ *  among the victims in 166; at the hit itself 147, at 3s 159; and 171 once
+ *  a leader who crossed the line and got away is allowed for (`lockedOn`,
+ *  analysis/blue_shell_lock.py). As played it is "about three seconds". */
+export const BLUE_LOCK = 2;
+
+/** When the lock falls, in seconds after the throw: 148 of the 175 shells
+ *  that landed locked between these two. Only used for a shell that hit
+ *  nobody, where there is no hit to count back from. */
+const LOCK_FROM = 1;
+const LOCK_TO = 6;
 
 /** How long after a Blue Shell a launch nobody read can be put down to it.
  *  Read hits name the shell's owner and need no window. Paired that way, the
@@ -942,60 +959,59 @@ export interface BlueShell {
  *  guessed launches came 3.4s and 5.6s after a throw. */
 export const BLUE_FLIGHT = 15;
 
-/** World-object type of the Bob-omb, the other thing that launches you. */
-const BOMB_OBJECT = 9;
+/** A launch nobody read can be put down to a Bob-omb dropped up to this many
+ *  seconds before (the logger's own window; 38 of 42 read Bob-omb hits), by
+ *  somebody within BOMB_REACH laps of the victim when it went off (all 42
+ *  were within 0.071). */
+const BOMB_FUSE = 3;
+const BOMB_REACH = 0.08;
 
-/** Every Blue Shell thrown, paired with the launched hit it produced. A shell
- *  that never landed on anybody was dodged, by whoever was leading when it
- *  was thrown: a cannon, a Mushroom timed right, a Star, or a Bill.
+/** No Blue Shell or Bob-omb used in this many seconds before a launch means
+ *  neither can have done it: the longest either took to go off was 37.5s. */
+const LIVE = 40;
+
+/** What launches you on the courses that do it themselves. These are the
+ *  only two courses where a launch came with nothing live: 3 on GBA Shy Guy
+ *  Beach and 3 at once on Moonview Highway, 2026-10-12. The names are from
+ *  knowing the courses; the log only says "launched". */
+const COURSE_LAUNCHERS: Record<number, string> = {
+  10: "a Bob-omb car",
+  31: "a cannonball",
+};
+
+/** Settles what launched each racer, once, as a log is loaded, so every view
+ *  tells the same story. It changes the log's own hit events:
  *
- *  A hit whose object was read says whose shell it was in `by`, and goes to
- *  that racer's latest shell. Pairing on time alone gave two Rainbow Road
- *  shells to one hit and called the other a dodge (EXPERIMENTS.md,
- *  2026-10-13). Being `caught` does not mean the shell missed: the logger
- *  calls whoever is in 1st the aimed victim, and when nobody in the blast is,
- *  every victim is `caught`. A launch with no object read is accepted by
- *  timing, within BLUE_FLIGHT. */
-export function blueShells(log: RaceLog): BlueShell[] {
-  const leader = leaderAt(log);
-  const uses = log.events
-    .filter((e) => e.type === "use" && e.item === 7 && e.slot != null)
-    .sort((a, b) => a.t - b.t);
+ *  - A guess the log cannot have meant is taken back.
+ *  - A launch nobody read goes to a Blue Shell or a Bob-omb when exactly one
+ *    of them fits, and to the course when neither was live. Still a guess.
+ *  - In each Blue Shell's blast, the one it was aimed at is the racer it
+ *    locked on to (`lockedOn`) and everybody else is `caught`.
+ *
+ *  The logger calls whoever is in 1st at the hit the aimed one. That is wrong
+ *  when the shell locked on and the leader was then passed, and with nobody
+ *  in 1st it calls every victim caught (EXPERIMENTS.md, 2026-10-13). */
+export function settleLaunches(log: RaceLog): void {
   const launches = log.events.filter(
-    (e) => e.type === "hit" && e.damage === 7 && e.slot != null,
+    (e) => e.type === "hit" && e.damage === LAUNCHED && e.slot != null,
   );
-  const unread = launches.filter(
-    (e) => e.guess && (e.object == null || impossibleGuess(e, log)),
-  );
-  const blasts = new Map<RaceEvent, RaceEvent[]>(uses.map((u) => [u, []]));
-  for (const h of launches) {
-    if (h.object !== BLUE_OBJECT || unread.includes(h)) continue;
-    const owner = uses.filter((u) => h.by?.includes(u.slot!) && u.t <= h.t).pop();
-    if (owner) blasts.get(owner)!.push(h);
-  }
-  const used = new Set<RaceEvent>();
-  return uses.map((u) => {
-    const target = leader(u.t);
-    const blast = blasts.get(u)!;
-    let hit: RaceEvent | undefined =
-      blast.find((h) => !h.caught && h.slot === target) ??
-      blast.find((h) => !h.caught) ??
-      blast[0];
-    if (!hit) {
-      const inFlight = (h: RaceEvent) =>
-        !used.has(h) && h.t >= u.t && h.t <= u.t + BLUE_FLIGHT;
-      hit = unread.find((h) => inFlight(h) && h.slot === target) ?? unread.find(inFlight);
-      if (hit) used.add(hit);
+  for (const h of launches)
+    if (h.guess && impossibleGuess(h, log)) {
+      h.object = null;
+      delete h.by;
+      delete h.caught;
     }
-    return {
-      t: round(u.t, 1),
-      thrower: u.slot!,
-      target,
-      landed: Boolean(hit),
-      victim: hit?.slot ?? null,
-      hitT: hit ? round(hit.t, 1) : null,
-    };
-  });
+  const lock = lockedOn(log);
+  const landed = new Set([...blueBlasts(log)].filter(([, b]) => b.length).map(([u]) => u));
+  for (const h of launches) if (h.object == null) nameLaunch(h, log, lock, landed);
+  for (const [u, blast] of blueBlasts(log)) {
+    if (!blast.length) continue;
+    const aimed = aimedAt(blast, lock(u.t, blast[0].t));
+    for (const h of blast) {
+      if (h === aimed) delete h.caught;
+      else h.caught = true;
+    }
+  }
 }
 
 /** A guess the log cannot have meant: it puts a launch down to a Blue Shell
@@ -1003,7 +1019,7 @@ export function blueShells(log: RaceLog): BlueShell[] {
  *  Koopa Cape on 2026-10-12, a Bob-omb dropped 0.07s after the leader was
  *  already in the air, by a racer 0.09 laps behind him. */
 function impossibleGuess(h: RaceEvent, log: RaceLog): boolean {
-  const item = h.object === BLUE_OBJECT ? 7 : h.object === BOMB_OBJECT ? 6 : null;
+  const item = h.object === BLUE_OBJECT ? BLUE_ITEM : h.object === BOMB_OBJECT ? BOMB_ITEM : null;
   if (item == null) return false;
   return !log.events.some(
     (u) =>
@@ -1013,6 +1029,138 @@ function impossibleGuess(h: RaceEvent, log: RaceLog): boolean {
       u.t <= h.t &&
       u.t >= h.t - BLUE_FLIGHT,
   );
+}
+
+/** Puts a launch nobody read down to the one thing that can have done it: a
+ *  Blue Shell still in the air that was locked on to this racer, or a
+ *  Bob-omb just dropped by somebody right next to them. Both, or two of
+ *  either, and it stays unnamed. Neither live, and it was the course. */
+function nameLaunch(
+  h: RaceEvent,
+  log: RaceLog,
+  lock: (t: number, hit: number) => (number | null)[],
+  landed: Set<RaceEvent>,
+): void {
+  const used = (item: number, within: number) =>
+    log.events.filter(
+      (u) =>
+        u.type === "use" && u.item === item && u.slot != null && u.t <= h.t && u.t >= h.t - within,
+    );
+  const at = log.progressAt(h.t);
+  const near = (slot: number) => {
+    const a = at.get(h.slot!);
+    const b = at.get(slot);
+    return a != null && b != null && Math.abs(a - b) <= BOMB_REACH;
+  };
+  const blues = used(BLUE_ITEM, BLUE_FLIGHT).filter(
+    (u) => !landed.has(u) && (lock(u.t, h.t).includes(h.slot!) || h.place === 1),
+  );
+  const bombs = used(BOMB_ITEM, BOMB_FUSE).filter((u) => near(u.slot!));
+  if (blues.length === 1 && !bombs.length) {
+    h.object = BLUE_OBJECT;
+    h.by = [blues[0].slot!];
+    h.guess = true;
+  } else if (new Set(bombs.map((u) => u.slot)).size === 1 && !blues.length) {
+    h.object = BOMB_OBJECT;
+    h.by = [bombs[0].slot!];
+    h.guess = true;
+  } else if (!used(BLUE_ITEM, LIVE).length && !used(BOMB_ITEM, LIVE).length) {
+    h.hazard = COURSE_LAUNCHERS[log.course ?? -1] ?? "something on the track";
+    h.guess = true;
+  }
+}
+
+/** Every Blue Shell thrown, with the launches it caused, first hit first. A
+ *  hit naming the shell's owner goes to that racer's latest shell thrown
+ *  before it. Pairing on time alone gave two Rainbow Road shells to one hit
+ *  and called the other a dodge (EXPERIMENTS.md, 2026-10-13). */
+function blueBlasts(log: RaceLog): Map<RaceEvent, RaceEvent[]> {
+  const uses = log.events
+    .filter((e) => e.type === "use" && e.item === BLUE_ITEM && e.slot != null)
+    .sort((a, b) => a.t - b.t);
+  const blasts = new Map<RaceEvent, RaceEvent[]>(uses.map((u) => [u, []]));
+  const hits = log.events
+    .filter((e) => e.type === "hit" && e.damage === LAUNCHED && e.object === BLUE_OBJECT)
+    .sort((a, b) => a.t - b.t);
+  for (const h of hits) {
+    const owner = uses.filter((u) => h.by?.includes(u.slot!) && u.t <= h.t).pop();
+    if (owner) blasts.get(owner)!.push(h);
+  }
+  return blasts;
+}
+
+/** Who a Blue Shell thrown at `t` that went off at `hit` was locked on to:
+ *  the leader BLUE_LOCK before it went off, or at the throw if it got there
+ *  quicker. When that leader crossed the line before it went off it can
+ *  have followed them over - 10 shells did - or gone for whoever leads at
+ *  the hit, so both come back, still-racing one last. */
+function lockedOn(log: RaceLog): (t: number, hit: number) => (number | null)[] {
+  const leader = leaderAt(log);
+  const finished = new Map(log.ofType("finish").map((f) => [f.slot!, f.t]));
+  return (t, hit) => {
+    const who = leader(Math.max(t, hit - BLUE_LOCK));
+    return who != null && (finished.get(who) ?? Infinity) <= hit ? [who, leader(hit)] : [who];
+  };
+}
+
+/** The one racer in a blast the shell was aimed at: the one it locked on to,
+ *  or failing that the one in 1st when it went off, or the only victim.
+ *  Nobody, when it locked on to somebody who got away and caught others. */
+function aimedAt(blast: RaceEvent[], locked: (number | null)[]): RaceEvent | undefined {
+  const first = blast.filter((h) => h.place === 1);
+  return (
+    locked.map((s) => blast.find((h) => h.slot === s)).find((h) => h) ??
+    (first.length === 1 ? first[0] : undefined) ??
+    (new Set(blast.map((h) => h.slot)).size === 1 ? blast[0] : undefined)
+  );
+}
+
+export interface BlueShell {
+  t: number;
+  /** Who threw it. */
+  thrower: number;
+  /** Who it locked on to. For a shell that hit nobody, the one racer who led
+   *  all through the time it would have locked; null when the lead changed
+   *  hands then, so nobody can be said to have dodged it. */
+  target: number | null;
+  /** Whether it got the racer it locked on to. A target it did not get
+   *  dodged it. */
+  hit: boolean;
+  /** Everybody else it launched: near the target when it went off. */
+  caught: number[];
+  /** When it went off, if it went off on anybody. */
+  hitT: number | null;
+}
+
+/** Every Blue Shell thrown and what it did, read off the settled events
+ *  (`settleLaunches`). A dodge is a target it did not get: a cannon, a
+ *  Mushroom timed right, a Star, a Bill, or crossing the line first. */
+export function blueShells(log: RaceLog): BlueShell[] {
+  const lock = lockedOn(log);
+  const steady = steadyLeader(log);
+  return [...blueBlasts(log)].map(([u, blast]) => {
+    const aimed = blast.find((h) => !h.caught);
+    return {
+      t: round(u.t, 1),
+      thrower: u.slot!,
+      target: aimed ? aimed.slot! : blast.length ? lock(u.t, blast[0].t).at(-1)! : steady(u.t),
+      hit: Boolean(aimed),
+      caught: blast.filter((h) => h.caught).map((h) => h.slot!),
+      hitT: blast.length ? round(blast[0].t, 1) : null,
+    };
+  });
+}
+
+/** The racer who led from LOCK_FROM to LOCK_TO after `t`, or null if the
+ *  lead changed hands in between. */
+function steadyLeader(log: RaceLog): (t: number) => number | null {
+  const leader = leaderAt(log);
+  const changes = log.ofType("pos", "finish").map((e) => e.t);
+  return (t) => {
+    const who = leader(t + LOCK_FROM);
+    const moved = changes.some((c) => c > t + LOCK_FROM && c <= t + LOCK_TO && leader(c) !== who);
+    return moved ? null : who;
+  };
 }
 
 /** Who was in first among the racers still racing at `t`, from the position

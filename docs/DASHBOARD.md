@@ -227,15 +227,25 @@ puts them on the ladder as well - see the decision below.
 - **Everything follows the slider**, the blue shell widget included. It used
   to be every race regardless, and was the one thing on the screen that
   did not move with the control above it, which read as a bug.
-- **A blue shell dodge is derived** (`stats.ts::blueShells`): a Blue Shell
-  that never landed on anybody, credited to whoever was leading among the
-  unfinished racers when it was thrown - a cannon, a Mushroom timed right, a
-  Star, a Bill. A hit belongs to the shell of the racer its `by` names,
-  however long it took (17.0s twice on 2026-10-12), and a `caught` hit still
-  means the shell landed. Only a launch whose object was not read is paired
-  by time, within 15s. A shell goes for whoever leads when it arrives, so a
-  dodge while the lead was changing hands can be credited to the wrong
-  racer. Measured in EXPERIMENTS.md under 2026-09-03 and 2026-10-13.
+- **Who a blue shell was aimed at is derived** (`stats.ts::settleLaunches`,
+  run once as each log loads so every view agrees). A shell goes for whoever
+  leads and locks on about 2s before it goes off, so the one it was aimed at
+  is the leader 2s before the first hit, or at the throw if it got there
+  quicker. When that leader had crossed the line by the hit it can have
+  followed them over or gone for whoever leads at the hit, so either counts.
+  Failing those, the victim in 1st at the hit, or a lone victim. Everyone else
+  in the blast was `caught`. "Blues" counts the first kind, "caught" the
+  second. A dodge is a shell that locked on and did not get them - a cannon, a
+  Mushroom timed right, a Star, a Bill, or crossing the line; for a shell that
+  hit nobody only a racer who led all the way from 1s to 6s after the throw
+  is credited, and otherwise it "hit nobody". A hit belongs to the shell of
+  the racer its `by` names, however long it took (17.0s twice on 2026-10-12).
+  A launch whose object was not read goes to a Blue Shell or a Bob-omb only
+  when exactly one fits (a shell still in the air locked on to them; a
+  Bob-omb dropped in the 3s before by somebody within 0.08 laps), and to the
+  course when neither was used in the 40s before: cannonballs on GBA Shy Guy
+  Beach, Bob-omb cars on Moonview Highway. Measured in EXPERIMENTS.md under
+  2026-09-03 and 2026-10-13, and by `analysis/blue_shell_lock.py`.
 - **Landed can exceed thrown.** A triple is one `use` in the log and each
   banana that lands is a hit, so a sniper can be "23 hits from 22 throws".
   Counting the three shots would mean watching each object in the pool, and

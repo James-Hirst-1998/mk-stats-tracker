@@ -16,6 +16,7 @@ mk/bin/python3 -m analysis.validate_damage
 | `validate_item_loss.py` | which hits knock the item out of your hands: 25 of 442 held-item clearings are losses, not throws |
 | `validate_attribution.py` | 312 of 365 hits carry somebody's name, against 176 before rams, Lightning and POW were attributed; both new rules checked against something they do not use |
 | `name_blue_shell.py` | blue shell flight time is 3.9–6.8s, the fallback when an explosion's object is missed |
+| `blue_shell_lock.py` | a blue shell is aimed at the leader 2s before it goes off: 166 of 175 that landed, 171 allowing for a leader who crossed the line; Bob-omb victims are within 0.071 laps of the dropper |
 | `find_item_objects.py` | superseded — kept as the record of reading `ItemDirector + 0x264` as a world item list, which it is not |
 | `validate_racers.py` | character and vehicle tables agree with each other on 84/84 racers, and with 17/17 labels from the recording notes |
 | `validate_progress.py` | ranking by race progress reproduces reported position 98–99% |

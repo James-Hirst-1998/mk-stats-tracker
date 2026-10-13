@@ -165,7 +165,7 @@ function Body({
             <thead>
               <tr className="border-y border-line-soft text-xs text-muted">
                 <th className="px-5 py-2 text-left font-medium">player</th>
-                {["finish", "time", "best lap", "led", "got", "thrown", "landed", "taken", "blues", "dodged", "boosts", "out"].map((h) => (
+                {["finish", "time", "best lap", "led", "got", "thrown", "landed", "taken", "blues", "caught", "dodged", "boosts", "out"].map((h) => (
                   <th key={h} className="px-2 py-2 text-right font-medium">{h}</th>
                 ))}
               </tr>
@@ -188,6 +188,7 @@ function Body({
                   <td className="px-2 py-2 text-right">{row.landed}</td>
                   <td className="px-2 py-2 text-right">{row.taken}</td>
                   <td className="px-2 py-2 text-right">{row.blues}</td>
+                  <td className="px-2 py-2 text-right">{row.bluesCaught}</td>
                   <td className="px-2 py-2 text-right">{row.bluesDodged}</td>
                   <td className="px-2 py-2 text-right">{row.boosts}</td>
                   <td className="px-2 py-2 text-right">{secs(row.out)}</td>
