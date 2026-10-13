@@ -923,55 +923,70 @@ export interface BlueShell {
   t: number;
   /** Who threw it. */
   thrower: number;
-  /** Who was leading when it was thrown - the racer it went for - or null if
-   *  nobody was still racing. */
+  /** Who was leading when it was thrown, or null if nobody was still racing.
+   *  A shell goes for whoever leads when it gets there, so when the lead
+   *  changed while it was in the air this is not who it ended up chasing. */
   target: number | null;
   landed: boolean;
-  /** Who it landed on, if it did. Normally the target; at the end of a race
-   *  a shell can land on somebody who had just crossed the line. */
+  /** Who it landed on, if it did. Normally the target; it can be somebody
+   *  else when the lead changed while it was in the air, or the leader
+   *  crossed the line first. */
   victim: number | null;
   /** When it landed, if it did. */
   hitT: number | null;
 }
 
-/** How long a Blue Shell is given to arrive. Over the 13 stored races the
- *  use-to-hit gap is 3.2-9.6s (median 5.2); 15s leaves room for a long
- *  course without pairing a shell with the one thrown after it. */
+/** How long after a Blue Shell a launch nobody read can be put down to it.
+ *  Read hits name the shell's owner and need no window. Paired that way, the
+ *  177 of 188 stored shells that landed took 1.8-17.0s (median 5.2); the two
+ *  guessed launches came 3.4s and 5.6s after a throw. */
 export const BLUE_FLIGHT = 15;
 
+/** World-object type of the Bob-omb, the other thing that launches you. */
+const BOMB_OBJECT = 9;
+
 /** Every Blue Shell thrown, paired with the launched hit it produced. A shell
- *  with no such hit within BLUE_FLIGHT was dodged, by whoever was leading when
- *  it was thrown: a cannon, a Mushroom timed right, a Star, or a Bill.
+ *  that never landed on anybody was dodged, by whoever was leading when it
+ *  was thrown: a cannon, a Mushroom timed right, a Star, or a Bill.
  *
- *  The hit is looked for on the leader at the throw first, and failing that
- *  on anybody - one of the 30 shells in the stored races landed on a racer
- *  who had passed the leader and crossed the line while it was in the air.
- *  A Bob-omb is the other thing that launches you, and is told apart by its
- *  object type; a launched hit with no object read is accepted only when the
- *  log marked it as a guess against a Blue Shell or Bob-omb use. Anybody
- *  else in the crater is `caught` and is not the hit. */
+ *  A hit whose object was read says whose shell it was in `by`, and goes to
+ *  that racer's latest shell. Pairing on time alone gave two Rainbow Road
+ *  shells to one hit and called the other a dodge (EXPERIMENTS.md,
+ *  2026-10-13). Being `caught` does not mean the shell missed: the logger
+ *  calls whoever is in 1st the aimed victim, and when nobody in the blast is,
+ *  every victim is `caught`. A launch with no object read is accepted by
+ *  timing, within BLUE_FLIGHT. */
 export function blueShells(log: RaceLog): BlueShell[] {
   const leader = leaderAt(log);
   const uses = log.events
     .filter((e) => e.type === "use" && e.item === 7 && e.slot != null)
     .sort((a, b) => a.t - b.t);
-  const launched = log.events.filter(
-    (e) =>
-      e.type === "hit" &&
-      e.damage === 7 &&
-      !e.caught &&
-      e.slot != null &&
-      (e.object === BLUE_OBJECT || (e.object == null && e.guess)),
+  const launches = log.events.filter(
+    (e) => e.type === "hit" && e.damage === 7 && e.slot != null,
   );
+  const unread = launches.filter(
+    (e) => e.guess && (e.object == null || impossibleGuess(e, log)),
+  );
+  const blasts = new Map<RaceEvent, RaceEvent[]>(uses.map((u) => [u, []]));
+  for (const h of launches) {
+    if (h.object !== BLUE_OBJECT || unread.includes(h)) continue;
+    const owner = uses.filter((u) => h.by?.includes(u.slot!) && u.t <= h.t).pop();
+    if (owner) blasts.get(owner)!.push(h);
+  }
   const used = new Set<RaceEvent>();
   return uses.map((u) => {
     const target = leader(u.t);
-    const inFlight = (h: RaceEvent) =>
-      !used.has(h) && h.t >= u.t && h.t <= u.t + BLUE_FLIGHT;
-    const hit =
-      launched.find((h) => inFlight(h) && h.slot === target) ??
-      launched.find(inFlight);
-    if (hit) used.add(hit);
+    const blast = blasts.get(u)!;
+    let hit: RaceEvent | undefined =
+      blast.find((h) => !h.caught && h.slot === target) ??
+      blast.find((h) => !h.caught) ??
+      blast[0];
+    if (!hit) {
+      const inFlight = (h: RaceEvent) =>
+        !used.has(h) && h.t >= u.t && h.t <= u.t + BLUE_FLIGHT;
+      hit = unread.find((h) => inFlight(h) && h.slot === target) ?? unread.find(inFlight);
+      if (hit) used.add(hit);
+    }
     return {
       t: round(u.t, 1),
       thrower: u.slot!,
@@ -981,6 +996,23 @@ export function blueShells(log: RaceLog): BlueShell[] {
       hitT: hit ? round(hit.t, 1) : null,
     };
   });
+}
+
+/** A guess the log cannot have meant: it puts a launch down to a Blue Shell
+ *  or Bob-omb its owner had not used yet. The one in the stored races is
+ *  Koopa Cape on 2026-10-12, a Bob-omb dropped 0.07s after the leader was
+ *  already in the air, by a racer 0.09 laps behind him. */
+function impossibleGuess(h: RaceEvent, log: RaceLog): boolean {
+  const item = h.object === BLUE_OBJECT ? 7 : h.object === BOMB_OBJECT ? 6 : null;
+  if (item == null) return false;
+  return !log.events.some(
+    (u) =>
+      u.type === "use" &&
+      u.item === item &&
+      h.by?.includes(u.slot!) &&
+      u.t <= h.t &&
+      u.t >= h.t - BLUE_FLIGHT,
+  );
 }
 
 /** Who was in first among the racers still racing at `t`, from the position

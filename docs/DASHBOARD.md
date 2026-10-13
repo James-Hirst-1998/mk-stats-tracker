@@ -228,11 +228,14 @@ puts them on the ladder as well - see the decision below.
   to be every race regardless, and was the one thing on the screen that
   did not move with the control above it, which read as a bug.
 - **A blue shell dodge is derived** (`stats.ts::blueShells`): a Blue Shell
-  `use` with no launched, un-caught, blue-object hit within 15s, credited to
-  whoever was leading among the unfinished racers when it was thrown - a
-  cannon, a Mushroom timed right, a Star, a Bill. The 15s comes from the
-  use-to-hit gaps in the stored races, 3.2-9.6s. The pairing is measured in
-  EXPERIMENTS.md under 2026-09-03.
+  that never landed on anybody, credited to whoever was leading among the
+  unfinished racers when it was thrown - a cannon, a Mushroom timed right, a
+  Star, a Bill. A hit belongs to the shell of the racer its `by` names,
+  however long it took (17.0s twice on 2026-10-12), and a `caught` hit still
+  means the shell landed. Only a launch whose object was not read is paired
+  by time, within 15s. A shell goes for whoever leads when it arrives, so a
+  dodge while the lead was changing hands can be credited to the wrong
+  racer. Measured in EXPERIMENTS.md under 2026-09-03 and 2026-10-13.
 - **Landed can exceed thrown.** A triple is one `use` in the log and each
   banana that lands is a hit, so a sniper can be "23 hits from 22 throws".
   Counting the three shots would mean watching each object in the pool, and

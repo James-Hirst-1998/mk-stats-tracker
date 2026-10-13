@@ -1,7 +1,7 @@
 // Blue shells: taken and dodged per player, and every one thrown in a race.
 //
-// A dodge is a shell that went for somebody who never took the launched hit
-// it should have produced - a cannon, a well-timed Mushroom, a Star, a Bill.
+// A dodge is a shell that never landed on anybody, credited to whoever was
+// leading when it was thrown - a cannon, a well-timed Mushroom, a Star, a Bill.
 // It is derived, not read, and the rule is in stats.ts (`blueShells`).
 
 import type { BlueShell, Player, RaceStats } from "../lib/stats";
