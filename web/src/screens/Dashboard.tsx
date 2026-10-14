@@ -507,10 +507,10 @@ function Body({
                 label: label(p),
                 character: face(p),
                 hit: totals[i].blues,
-                caught: totals[i].bluesCaught,
+                collateral: totals[i].bluesCollateral,
                 dodged: totals[i].bluesDodged,
               }))
-              .sort((a, b) => b.hit - a.hit || b.caught - a.caught || b.dodged - a.dodged)}
+              .sort((a, b) => b.hit - a.hit || b.collateral - a.collateral || b.dodged - a.dodged)}
           />
         </Widget>
 
@@ -673,7 +673,7 @@ function TotalsTable({
     ["landed", (t: (typeof totals)[0]) => t.landed],
     ["taken", (t: (typeof totals)[0]) => t.taken],
     ["blues", (t: (typeof totals)[0]) => t.blues],
-    ["caught", (t: (typeof totals)[0]) => t.bluesCaught],
+    ["collateral", (t: (typeof totals)[0]) => t.bluesCollateral],
     ["dodged", (t: (typeof totals)[0]) => t.bluesDodged],
     ["boosts", (t: (typeof totals)[0]) => t.boosts],
     ["out", (t: (typeof totals)[0]) => secs(t.out)],
@@ -721,8 +721,7 @@ function TotalsTable({
       <p className="px-5 py-3 text-xs text-muted">
         Got is items that landed in their hands; thrown is items used; landed is
         hits those caused. Blues are blue shells that locked on to them and got
-        them; caught is ones that went off on somebody else and caught them
-        too; dodged is ones that locked on and missed. Boosts are boost items used — mushrooms, golden, star, bullet;
+        them; collateral is ones aimed at somebody else that got them too; dodged is ones that locked on and missed. Boosts are boost items used — mushrooms, golden, star, bullet;
         trick and drift boosts are not in the logs.
       </p>
     </div>

@@ -146,7 +146,7 @@ export function PositionWorm({
             {labels.get(hover.player)} · P{hover.position} · {hover.t.toFixed(1)}s
           </div>
           <div className="text-ink-soft">
-            {hover.caught ? "caught in the blast from " : "hit by "}
+            {hover.caught ? "collateral from " : "hit by "}
             {hover.cause}
             {hover.by.length ? ` (${hover.by.join(", ")})` : ""}
           </div>

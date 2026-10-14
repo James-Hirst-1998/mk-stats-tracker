@@ -1,5 +1,6 @@
-// Blue shells: per player, the ones that got them, the ones that caught them
-// next to somebody else, and the ones they dodged; and every one thrown.
+// Blue shells: per player, the ones that got them, the collateral ones that
+// got them next to somebody else, and the ones they dodged; and every one
+// thrown.
 //
 // A shell is aimed at whoever it locked on to, the leader about two seconds
 // before it went off. A dodge is a shell that locked on and did not get them -
@@ -15,12 +16,12 @@ export interface BlueRow {
   label: string;
   character: string | null;
   hit: number;
-  caught: number;
+  collateral: number;
   dodged: number;
 }
 
 export function BlueBars({ rows }: { rows: BlueRow[] }) {
-  const all = (r: BlueRow) => r.hit + r.caught + r.dodged;
+  const all = (r: BlueRow) => r.hit + r.collateral + r.dodged;
   const top = Math.max(1, ...rows.map(all));
   if (rows.every((r) => all(r) === 0))
     return (
@@ -41,11 +42,11 @@ export function BlueBars({ rows }: { rows: BlueRow[] }) {
               <span className="nums shrink-0 text-sm">
                 <span className="font-semibold">{r.hit}</span>
                 <span className="text-xs text-muted"> hit</span>
-                {r.caught > 0 && (
+                {r.collateral > 0 && (
                   <>
                     <span className="text-muted"> · </span>
-                    <span className="font-semibold text-[#7a6cc9]">{r.caught}</span>
-                    <span className="text-xs text-muted"> caught</span>
+                    <span className="font-semibold text-[#7a6cc9]">{r.collateral}</span>
+                    <span className="text-xs text-muted"> collateral</span>
                   </>
                 )}
                 {r.dodged > 0 && (
@@ -65,8 +66,8 @@ export function BlueBars({ rows }: { rows: BlueRow[] }) {
               />
               <span
                 className="h-full"
-                style={{ width: `${(r.caught / top) * 100}%`, background: "#a99ee0" }}
-                title={`${r.caught} caught them going off on somebody else`}
+                style={{ width: `${(r.collateral / top) * 100}%`, background: "#a99ee0" }}
+                title={`${r.collateral} collateral: aimed at somebody else, got them too`}
               />
               <span
                 className="h-full"
@@ -113,7 +114,7 @@ export function BlueList({
       {all.map(({ race, b }, i) => {
         const from = who(b.thrower, race);
         const to = who(b.target, race);
-        const caught = b.caught.map((s) => who(s, race).name).join(", ");
+        const collateral = b.collateral.map((s) => who(s, race).name).join(", ");
         return (
           // Wraps on a phone: the thrower and target move down as one piece,
           // then the result, rather than squeezing the result off the edge.
@@ -140,7 +141,7 @@ export function BlueList({
                 </>
               )}
             </span>
-            {caught && <span className="text-xs text-muted">caught {caught}</span>}
+            {collateral && <span className="text-xs text-muted">collateral {collateral}</span>}
             <span
               className={`ml-auto rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${
                 b.hit || b.target == null

@@ -165,7 +165,7 @@ function Body({
             <thead>
               <tr className="border-y border-line-soft text-xs text-muted">
                 <th className="px-5 py-2 text-left font-medium">player</th>
-                {["finish", "time", "best lap", "led", "got", "thrown", "landed", "taken", "blues", "caught", "dodged", "boosts", "out"].map((h) => (
+                {["finish", "time", "best lap", "led", "got", "thrown", "landed", "taken", "blues", "collateral", "dodged", "boosts", "out"].map((h) => (
                   <th key={h} className="px-2 py-2 text-right font-medium">{h}</th>
                 ))}
               </tr>
@@ -188,7 +188,7 @@ function Body({
                   <td className="px-2 py-2 text-right">{row.landed}</td>
                   <td className="px-2 py-2 text-right">{row.taken}</td>
                   <td className="px-2 py-2 text-right">{row.blues}</td>
-                  <td className="px-2 py-2 text-right">{row.bluesCaught}</td>
+                  <td className="px-2 py-2 text-right">{row.bluesCollateral}</td>
                   <td className="px-2 py-2 text-right">{row.bluesDodged}</td>
                   <td className="px-2 py-2 text-right">{row.boosts}</td>
                   <td className="px-2 py-2 text-right">{secs(row.out)}</td>
@@ -377,7 +377,7 @@ function HitLog({ hits, labels }: { hits: HitLine[]; labels: Map<number, string>
             <span className="flex min-w-0 basis-full items-center gap-3 pl-[5.625rem] sm:flex-1 sm:basis-0 sm:pl-0">
               <ItemIcon name={h.cause} size={20} chip={false} />
               <span className="text-ink-soft">
-                {h.caught ? "caught in the blast from " : ""}
+                {h.caught ? "collateral from " : ""}
                 {h.cause}
                 {h.by.length ? ` (${h.by.join(", ")})` : ""}
                 {h.guess ? <span className="text-muted"> · not certain</span> : null}

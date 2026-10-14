@@ -234,8 +234,8 @@ puts them on the ladder as well - see the decision below.
   quicker. When that leader had crossed the line by the hit it can have
   followed them over or gone for whoever leads at the hit, so either counts.
   Failing those, the victim in 1st at the hit, or a lone victim. Everyone else
-  in the blast was `caught`. "Blues" counts the first kind, "caught" the
-  second. A dodge is a shell that locked on and did not get them - a cannon, a
+  in the blast was collateral (the log's `caught` flag). "Blues" counts the
+  first kind, "collateral" the second. A dodge is a shell that locked on and did not get them - a cannon, a
   Mushroom timed right, a Star, a Bill, or crossing the line; for a shell that
   hit nobody only a racer who led all the way from 1s to 6s after the throw
   is credited, and otherwise it "hit nobody". A hit belongs to the shell of
