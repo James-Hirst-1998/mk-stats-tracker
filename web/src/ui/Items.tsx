@@ -250,7 +250,7 @@ export function CausesTable({
                     <td key={c} className="px-1.5 py-1.5 text-center">
                       {got ? (
                         <span
-                          title={`${c}: ${got.count}${got.caught ? `, ${got.caught} caught in the blast` : ""}${got.guessed ? `, ${got.guessed} attribution not certain` : ""}`}
+                          title={`${c}: ${got.count}${got.caught ? `, ${got.caught} collateral` : ""}${got.guessed ? `, ${got.guessed} attribution not certain` : ""}`}
                         >
                           <span className="font-semibold">{got.count}</span>
                           {got.caught > 0 && (
@@ -269,8 +269,8 @@ export function CausesTable({
         </tbody>
       </table>
       <p className="px-4 py-3 text-xs text-muted">
-        A figure in brackets is how many of those were being caught in somebody
-        else's blast rather than being the one it went for. "Out" is the seconds
+        A figure in brackets is how many of those were collateral: hit when it
+        went off on somebody else rather than the one it went for. "Out" is the seconds
         the hits cost, over the hits whose end was seen.
       </p>
     </div>

@@ -149,8 +149,8 @@ export interface Row {
   caught: number;
   /** Blue shells that locked on to them and got them. */
   blues: number;
-  /** Blue shells that went off on somebody else and caught them too. */
-  bluesCaught: number;
+  /** Collateral: blue shells aimed at somebody else that got them too. */
+  bluesCollateral: number;
   /** Blue shells that locked on to them and did not get them. */
   bluesDodged: number;
   boosts: number;
@@ -190,7 +190,7 @@ export interface RaceStats {
   firstBlood: FirstBlood | null;
   rows: Map<number, Row>;
   /** Every blue shell thrown, who it locked on to, whether it got them, and
-   *  who else it caught. */
+   *  who else it got as collateral. */
   blueShells: BlueShell[];
   log: RaceLog;
 }
@@ -302,7 +302,7 @@ export function raceRows(log: RaceLog): Map<number, Row> {
       caught: r.caught,
       blues: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT && !e.caught)
         .length,
-      bluesCaught: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT && e.caught)
+      bluesCollateral: landedHits.filter((e) => e.slot === slot && e.object === BLUE_OBJECT && e.caught)
         .length,
       bluesDodged: blues.filter((b) => b.target === slot && !b.hit).length,
       boosts: uses.filter((e) => BOOST_ITEMS.has(e.item as number)).length,
@@ -514,7 +514,7 @@ export interface Totals {
   landed: number;
   taken: number;
   blues: number;
-  bluesCaught: number;
+  bluesCollateral: number;
   bluesDodged: number;
   boosts: number;
   out: number;
@@ -547,7 +547,7 @@ export function totalsOf(rows: Row[]): Totals {
     landed: sum((r) => r.landed),
     taken: sum((r) => r.taken),
     blues: sum((r) => r.blues),
-    bluesCaught: sum((r) => r.bluesCaught),
+    bluesCollateral: sum((r) => r.bluesCollateral),
     bluesDodged: sum((r) => r.bluesDodged),
     boosts: sum((r) => r.boosts),
     out: round(sum((r) => r.out), 1),
@@ -780,9 +780,9 @@ function tickerLine(
     const tail = by.length ? ` (${by.map(who).join(", ")})` : "";
     if (e.object === BLUE_OBJECT)
       return e.caught
-        ? `${victim} caught in a blue shell's blast${tail}`
+        ? `Collateral blue: ${victim}${tail}`
         : `Blue shell: ${victim}${tail}`;
-    if (e.caught) return `${victim} caught in the blast${tail}`;
+    if (e.caught) return `${victim} hit by ${causeOf(e)} as collateral${tail}`;
     return `${victim} hit by ${causeOf(e)}${tail}`;
   }
   if (e.type === "pos" && e.to === 1 && e.slot != null)
@@ -1126,8 +1126,9 @@ export interface BlueShell {
   /** Whether it got the racer it locked on to. A target it did not get
    *  dodged it. */
   hit: boolean;
-  /** Everybody else it launched: near the target when it went off. */
-  caught: number[];
+  /** Collateral: everybody else it launched, near the target when it went
+   *  off. The log marks these `caught`. */
+  collateral: number[];
   /** When it went off, if it went off on anybody. */
   hitT: number | null;
 }
@@ -1145,7 +1146,7 @@ export function blueShells(log: RaceLog): BlueShell[] {
       thrower: u.slot!,
       target: aimed ? aimed.slot! : blast.length ? lock(u.t, blast[0].t).at(-1)! : steady(u.t),
       hit: Boolean(aimed),
-      caught: blast.filter((h) => h.caught).map((h) => h.slot!),
+      collateral: blast.filter((h) => h.caught).map((h) => h.slot!),
       hitT: blast.length ? round(blast[0].t, 1) : null,
     };
   });
